@@ -11275,3 +11275,87 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     }
 }
 
+/* =========================================================
+   FLOATING WINDOW FONT TWEAK
+   smaller Obsidian Registry text in floating mode
+   Must be LAST
+   ========================================================= */
+
+#ib_floating_host.ib-theme-obsidianregistry .ib-floating-shell,
+#ib_floating_host.ib-theme-obsidianregistry .ib-board {
+    font-size: 13px !important;
+}
+
+/* location/header */
+#ib_floating_host.ib-theme-obsidianregistry .ib-header-location-text {
+    font-size: 15px !important;
+    line-height: 1.25 !important;
+}
+
+#ib_floating_host.ib-theme-obsidianregistry .ib-meta-pill {
+    font-size: 12px !important;
+    padding: 5px 9px !important;
+}
+
+/* section titles */
+#ib_floating_host.ib-theme-obsidianregistry .ib-section-title {
+    font-size: 15px !important;
+    letter-spacing: 0.8px !important;
+}
+
+/* character block */
+#ib_floating_host.ib-theme-obsidianregistry .ib-char-name,
+#ib_floating_host.ib-theme-obsidianregistry .ib-rel-toggle-name,
+#ib_floating_host.ib-theme-obsidianregistry .ib-compact-rel-name {
+    font-size: 14px !important;
+}
+
+#ib_floating_host.ib-theme-obsidianregistry .ib-tag,
+#ib_floating_host.ib-theme-obsidianregistry .ib-status-chip,
+#ib_floating_host.ib-theme-obsidianregistry .ib-presence-chip {
+    font-size: 11px !important;
+    padding: 3px 8px !important;
+}
+
+/* relationship card */
+#ib_floating_host.ib-theme-obsidianregistry .ib-rel-subtitle {
+    font-size: 13px !important;
+}
+
+#ib_floating_host.ib-theme-obsidianregistry .ib-meter-label {
+    font-size: 13px !important;
+    letter-spacing: 0.35px !important;
+}
+
+#ib_floating_host.ib-theme-obsidianregistry .ib-meter-value {
+    font-size: 12px !important;
+}
+
+/* thought text */
+#ib_floating_host.ib-theme-obsidianregistry .ib-rel-thought-text {
+    font-size: 14px !important;
+    line-height: 1.42 !important;
+}
+
+/* controls */
+#ib_floating_host.ib-theme-obsidianregistry .ib-control-btn {
+    font-size: 13px !important;
+}
+
+/* чуть ужимаем сами ромбы во floating, чтобы не занимали пол-экрана */
+#ib_floating_host.ib-theme-obsidianregistry.ib-bars-runic .ib-bar {
+    height: 18px !important;
+    background-size: 18px 18px !important;
+}
+
+#ib_floating_host.ib-theme-obsidianregistry.ib-bars-runic .ib-bar-fill {
+    -webkit-mask-size: 18px 18px !important;
+    mask-size: 18px 18px !important;
+
+    background-size:
+        36px 18px,
+        42px 18px,
+        48px 18px,
+        auto,
+        auto !important;
+}
