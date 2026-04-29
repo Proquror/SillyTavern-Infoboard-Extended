@@ -197,6 +197,19 @@ bloodmoon: {
     text: "#eee5d8",
     danger: "#d65f4f"
 },
+
+obsidianregistry: {
+    label: {
+        ru: "Obsidian Registry: тёмный RPG-архив, зелёное стекло и старое золото",
+        en: "Obsidian Registry: dark RPG archive, green glass and old gold"
+    },
+    bg: "#07130f",
+    bg2: "#10231b",
+    accent: "#d7c28a",
+    accent2: "#77b68c",
+    text: "#e4eee5",
+    danger: "#d9876f"
+},
     
     neonquest: {
     label: {
@@ -570,6 +583,7 @@ function GetThemeLocationIcon(theme = gTheme) {
     if (theme === "oraclemoon") return "🌙";
     if (theme === "bloodmoon") return "🦇";
         if (theme === "casefile") return "🔍";
+    if (theme === "obsidianregistry") return "⟡";
     if (theme === "neonquest") return "⚙️";
      return facultyThemes.includes(theme) ? "📜" : "📍";
 }
@@ -582,6 +596,7 @@ function GetThemeCharsIcon(theme = gTheme) {
     if (theme === "oraclemoon") return "✨";
     if (theme === "bloodmoon") return "✟";
     if (theme === "casefile") return "ID";
+    if (theme === "obsidianregistry") return "᯽";
     if (theme === "neonquest") return "👤";
         return facultyThemes.includes(theme) ? "🪶" : "💖";
 }
@@ -598,6 +613,7 @@ function GetThemeRelationsIcon(theme = gTheme) {
         terminal: "♡",
         bloodmoon: "🥀",
         casefile: "𖦏",
+        obsidianregistry: "✶",
         neonquest: "🤖"
     };
 
