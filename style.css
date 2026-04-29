@@ -11121,3 +11121,156 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
         height: 58px !important;
     }
 }
+
+/* =========================================================
+   OBSIDIAN REGISTRY HEADER CLEAN FIX
+   centered title + ornaments, no right card
+   Must be LAST
+   ========================================================= */
+
+/* убираем всю правую декоративную приблуду */
+.ib-theme-obsidianregistry .ib-title-wrap::before,
+.ib-theme-obsidianregistry .ib-title-wrap::after {
+    content: none !important;
+    display: none !important;
+    background: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* шапка теперь симметричная */
+.ib-theme-obsidianregistry .ib-title-wrap {
+    min-height: 76px !important;
+    padding: 18px 22px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    text-align: center !important;
+
+    background:
+        radial-gradient(circle at 50% 50%, rgba(215,194,138,0.055), transparent 38%),
+        linear-gradient(135deg, rgba(255,255,255,0.026), rgba(255,255,255,0.006)),
+        rgba(3, 10, 7, 0.66) !important;
+
+    border: 1px solid rgba(119, 182, 140, 0.24) !important;
+    border-radius: 8px !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.045),
+        inset 0 0 22px rgba(119,182,140,0.030),
+        0 0 14px rgba(119,182,140,0.045),
+        0 0 18px rgba(215,194,138,0.030) !important;
+}
+
+/* подзаголовок убираем */
+.ib-theme-obsidianregistry .ib-title-sub {
+    display: none !important;
+}
+
+/* центральный красивый заголовок */
+.ib-theme-obsidianregistry .ib-title {
+    margin: 0 !important;
+
+    width: 100% !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 16px !important;
+
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-style: italic !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+
+    font-size: 27px !important;
+    line-height: 1.1 !important;
+    letter-spacing: 0.9px !important;
+
+    color: #efe6c8 !important;
+
+    text-align: center !important;
+
+    text-shadow:
+        0 0 8px rgba(215,194,138,0.20),
+        0 0 18px rgba(119,182,140,0.11),
+        0 2px 3px rgba(0,0,0,0.48) !important;
+}
+
+/* вензеля по бокам */
+.ib-theme-obsidianregistry .ib-title-wrap .ib-title::before,
+.ib-theme-obsidianregistry .ib-title-wrap .ib-title::after {
+    display: inline-block !important;
+
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+
+    background: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+
+    color: #d7c28a !important;
+
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-style: normal !important;
+    font-weight: 400 !important;
+    font-size: 24px !important;
+    line-height: 1 !important;
+
+    opacity: 0.86 !important;
+
+    text-shadow:
+        0 0 7px rgba(215,194,138,0.30),
+        0 0 14px rgba(119,182,140,0.12) !important;
+}
+
+/* левый вензель */
+.ib-theme-obsidianregistry .ib-title-wrap .ib-title::before {
+    content: "꧁" !important;
+}
+
+/* правый вензель */
+.ib-theme-obsidianregistry .ib-title-wrap .ib-title::after {
+    content: "꧂" !important;
+}
+
+/* тонкая золотая линия под заголовком через фон шапки */
+.ib-theme-obsidianregistry .ib-title-wrap {
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            transparent 30%,
+            rgba(215,194,138,0.26) 48%,
+            rgba(215,194,138,0.26) 52%,
+            transparent 70%,
+            transparent 100%
+        ) center calc(50% + 22px) / 240px 1px no-repeat,
+
+        radial-gradient(circle at 50% 50%, rgba(215,194,138,0.055), transparent 38%),
+        linear-gradient(135deg, rgba(255,255,255,0.026), rgba(255,255,255,0.006)),
+        rgba(3, 10, 7, 0.66) !important;
+}
+
+/* мобильная версия */
+@media (max-width: 760px) {
+    .ib-theme-obsidianregistry .ib-title-wrap {
+        min-height: 66px !important;
+        padding: 15px 14px !important;
+    }
+
+    .ib-theme-obsidianregistry .ib-title {
+        font-size: 22px !important;
+        gap: 11px !important;
+    }
+
+    .ib-theme-obsidianregistry .ib-title-wrap .ib-title::before,
+    .ib-theme-obsidianregistry .ib-title-wrap .ib-title::after {
+        font-size: 19px !important;
+    }
+}
