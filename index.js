@@ -562,6 +562,11 @@ casefile: {
     main: "CASE FILE // SUBJECT RELATIONS",
     sub: "˖⌕ ۫ . . . .𖥔"
 },
+
+obsidianregistry: {
+    main: "Infoboard",
+    sub: ""
+},
         
         neonquest: {
     main: "𝄃𝄃𝄂𝄂𝄀RP BOARD𝄁𝄃𝄂𝄂𝄃",
