@@ -11274,3 +11274,13 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
         font-size: 19px !important;
     }
 }
+
+/* Obsidian title size tweak */
+.ib-theme-obsidianregistry .ib-title {
+    font-size: 32px !important;
+}
+
+.ib-theme-obsidianregistry .ib-title-wrap .ib-title::before,
+.ib-theme-obsidianregistry .ib-title-wrap .ib-title::after {
+    font-size: 26px !important;
+}
