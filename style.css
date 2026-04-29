@@ -10550,3 +10550,377 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
         mask-size: 16px 16px;
     }
 }
+
+/* =========================================================
+   OBSIDIAN REGISTRY POLISH
+   Elegant title card + better runic shards
+   Must be LAST
+   ========================================================= */
+
+
+/* =========================================================
+   OBSIDIAN TITLE REWORK
+   remove RANK FILE, make elegant Infoboard + gold frame/glare
+   ========================================================= */
+
+.ib-theme-obsidianregistry .ib-title-wrap {
+    min-height: 92px !important;
+    padding: 18px 206px 16px 18px !important;
+
+    background:
+        radial-gradient(circle at 80% 48%, rgba(215,194,138,0.08), transparent 25%),
+        linear-gradient(135deg, rgba(255,255,255,0.028), rgba(255,255,255,0.006)),
+        rgba(3, 10, 7, 0.62) !important;
+
+    border-color: rgba(119, 182, 140, 0.24) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.045),
+        inset 0 0 22px rgba(119,182,140,0.030),
+        0 0 14px rgba(119,182,140,0.045) !important;
+}
+
+/* title: elegant italic, not database label */
+.ib-theme-obsidianregistry .ib-title {
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-style: italic !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+
+    font-size: 26px !important;
+    line-height: 1.05 !important;
+    letter-spacing: 0.9px !important;
+
+    color: #efe6c8 !important;
+
+    text-shadow:
+        0 0 8px rgba(215,194,138,0.18),
+        0 0 18px rgba(119,182,140,0.10),
+        0 2px 3px rgba(0,0,0,0.48) !important;
+}
+
+/* no subtitle space */
+.ib-theme-obsidianregistry .ib-title-sub {
+    display: none !important;
+}
+
+/* kill old title pseudo junk */
+.ib-theme-obsidianregistry .ib-title::before,
+.ib-theme-obsidianregistry .ib-title::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* decorative golden frame, replacing RANK FILE */
+.ib-theme-obsidianregistry .ib-title-wrap::before {
+    content: "" !important;
+
+    position: absolute !important;
+    right: 118px !important;
+    top: 23px !important;
+    z-index: 3 !important;
+
+    width: 58px !important;
+    height: 48px !important;
+
+    background:
+        radial-gradient(circle at 50% 50%, rgba(215,194,138,0.10), transparent 56%),
+        rgba(3, 10, 7, 0.46) !important;
+
+    border: 2px solid rgba(215,194,138,0.62) !important;
+    border-radius: 5px !important;
+
+    box-shadow:
+        0 0 10px rgba(215,194,138,0.18),
+        0 0 16px rgba(119,182,140,0.10),
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        inset 0 -1px 0 rgba(0,0,0,0.28),
+        inset 0 0 12px rgba(215,194,138,0.055) !important;
+
+    pointer-events: none !important;
+}
+
+/* tiny sigil inside the frame */
+.ib-theme-obsidianregistry .ib-title-wrap::before {
+    background:
+        radial-gradient(circle at 50% 50%, rgba(215,194,138,0.12), transparent 54%),
+        linear-gradient(45deg, transparent 47%, rgba(215,194,138,0.32) 48%, rgba(215,194,138,0.32) 52%, transparent 53%),
+        linear-gradient(-45deg, transparent 47%, rgba(119,182,140,0.22) 48%, rgba(119,182,140,0.22) 52%, transparent 53%),
+        rgba(3, 10, 7, 0.48) !important;
+}
+
+/* right glass card with gold ribbon/glare */
+.ib-theme-obsidianregistry .ib-title-wrap::after {
+    content: "" !important;
+
+    position: absolute !important;
+    right: 14px !important;
+    top: 10px !important;
+    z-index: 1 !important;
+
+    width: 178px !important;
+    height: 72px !important;
+
+    border: 1px solid rgba(215,194,138,0.22) !important;
+    border-radius: 7px !important;
+
+    background:
+        /* soft gold orb */
+        radial-gradient(circle at 76% 28%, rgba(215,194,138,0.18), transparent 18%),
+
+        /* green glass glow */
+        radial-gradient(circle at 46% 54%, rgba(119,182,140,0.12), transparent 24%),
+
+        /* elegant diagonal gold ribbon */
+        linear-gradient(
+            115deg,
+            transparent 0%,
+            transparent 42%,
+            rgba(215,194,138,0.06) 43%,
+            rgba(215,194,138,0.24) 49%,
+            rgba(255,245,200,0.14) 52%,
+            rgba(215,194,138,0.10) 56%,
+            transparent 62%,
+            transparent 100%
+        ),
+
+        /* glass darkening */
+        linear-gradient(
+            90deg,
+            rgba(3,10,7,0.12),
+            rgba(215,194,138,0.08),
+            rgba(3,10,7,0.42)
+        ),
+
+        rgba(6, 16, 11, 0.58) !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.050),
+        inset 0 0 18px rgba(119,182,140,0.035),
+        0 0 14px rgba(119,182,140,0.045),
+        0 0 18px rgba(215,194,138,0.035) !important;
+
+    opacity: 0.94 !important;
+    pointer-events: none !important;
+}
+
+/* small gold underline/ribbon under the title text */
+.ib-theme-obsidianregistry .ib-title-wrap .ib-title {
+    position: relative !important;
+}
+
+.ib-theme-obsidianregistry .ib-title-wrap .ib-title::after {
+    content: "" !important;
+    display: block !important;
+
+    width: 112px !important;
+    height: 1px !important;
+    margin-top: 9px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(215,194,138,0.0),
+            rgba(215,194,138,0.68),
+            rgba(119,182,140,0.30),
+            rgba(215,194,138,0.0)
+        ) !important;
+
+    box-shadow:
+        0 0 8px rgba(215,194,138,0.20) !important;
+
+    opacity: 0.86 !important;
+}
+
+
+/* =========================================================
+   RUNIC SHARDS REWORK
+   larger darker glowing crystals, less sad diamond cereal
+   ========================================================= */
+
+.ib-bars-runic .ib-bar {
+    height: 22px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+
+    background-color: transparent !important;
+    box-shadow: none !important;
+
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cpath d='M11 2.4L19.6 11 11 19.6 2.4 11z' fill='rgba(5,14,10,.40)' stroke='%235d7a67' stroke-width='1.15' opacity='.62'/%3E%3Cpath d='M11 5.2L16.8 11 11 16.8 5.2 11z' fill='none' stroke='%235d7a67' stroke-width='.65' opacity='.36'/%3E%3C/svg%3E") !important;
+
+    background-repeat: repeat-x !important;
+    background-size: 22px 22px !important;
+    background-position: left center !important;
+}
+
+/* filled shards as clipped crystals */
+.ib-bars-runic .ib-bar-fill {
+    --ib-shard-1: #6fc792;
+    --ib-shard-2: #215b3f;
+    --ib-shard-3: #d7c28a;
+    --ib-shard-glow: rgba(111,199,146,0.32);
+
+    height: 100% !important;
+    border-radius: 0 !important;
+
+    background:
+        /* inner sparks */
+        radial-gradient(circle at 24% 42%, rgba(255,255,255,0.58) 0 1px, transparent 1.9px),
+        radial-gradient(circle at 56% 58%, rgba(255,255,255,0.30) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 78% 34%, rgba(215,194,138,0.42) 0 1px, transparent 1.8px),
+
+        /* shard highlight */
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,0.20) 0%,
+            transparent 24%,
+            transparent 62%,
+            rgba(0,0,0,0.22) 100%
+        ),
+
+        /* gem body */
+        linear-gradient(
+            135deg,
+            var(--ib-shard-1) 0%,
+            var(--ib-shard-3) 42%,
+            var(--ib-shard-2) 100%
+        ) !important;
+
+    background-size:
+        42px 22px,
+        48px 22px,
+        56px 22px,
+        auto,
+        auto !important;
+
+    box-shadow: none !important;
+
+    filter:
+        saturate(1.08)
+        brightness(0.86)
+        drop-shadow(0 0 4px var(--ib-shard-glow))
+        drop-shadow(0 0 9px var(--ib-shard-glow)) !important;
+
+    -webkit-mask-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cpath d='M11 2.4L19.6 11 11 19.6 2.4 11z' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: repeat-x;
+    -webkit-mask-size: 22px 22px;
+    -webkit-mask-position: left center;
+
+    mask-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cpath d='M11 2.4L19.6 11 11 19.6 2.4 11z' fill='black'/%3E%3C/svg%3E");
+    mask-repeat: repeat-x;
+    mask-size: 22px 22px;
+    mask-position: left center;
+}
+
+/* no inherited shimmer garbage */
+.ib-bars-runic .ib-bar-fill::before,
+.ib-bars-runic .ib-bar-fill::after {
+    content: none !important;
+    display: none !important;
+    opacity: 0 !important;
+}
+
+/* deeper shard colors */
+.ib-bars-runic .ib-bar-fill.ib-bar-affection-pos {
+    --ib-shard-1: #66bf89;
+    --ib-shard-2: #1f5b3b;
+    --ib-shard-3: #9fd8a9;
+    --ib-shard-glow: rgba(102,191,137,0.32);
+}
+
+.ib-bars-runic .ib-bar-fill.ib-bar-affection-neg {
+    --ib-shard-1: #c77861;
+    --ib-shard-2: #6b2a24;
+    --ib-shard-3: #d8a17f;
+    --ib-shard-glow: rgba(199,120,97,0.34);
+}
+
+.ib-bars-runic .ib-bar-fill.ib-bar-trust-pos {
+    --ib-shard-1: #73a9ba;
+    --ib-shard-2: #275769;
+    --ib-shard-3: #a7d1d8;
+    --ib-shard-glow: rgba(115,169,186,0.32);
+}
+
+.ib-bars-runic .ib-bar-fill.ib-bar-trust-neg {
+    --ib-shard-1: #c99b55;
+    --ib-shard-2: #6d4e20;
+    --ib-shard-3: #dcc082;
+    --ib-shard-glow: rgba(201,155,85,0.34);
+}
+
+.ib-bars-runic .ib-bar-fill.ib-bar-love-pos {
+    --ib-shard-1: #a783c2;
+    --ib-shard-2: #563574;
+    --ib-shard-3: #cfb4da;
+    --ib-shard-glow: rgba(167,131,194,0.34);
+}
+
+.ib-bars-runic .ib-bar-fill.ib-bar-love-neg {
+    --ib-shard-1: #bc5878;
+    --ib-shard-2: #672138;
+    --ib-shard-3: #d58aa2;
+    --ib-shard-glow: rgba(188,88,120,0.36);
+}
+
+/* Obsidian-specific empty shards: darker, more expensive */
+.ib-theme-obsidianregistry.ib-bars-runic .ib-bar {
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cpath d='M11 2.4L19.6 11 11 19.6 2.4 11z' fill='rgba(4,12,8,.45)' stroke='%235d7766' stroke-width='1.15' opacity='.68'/%3E%3Cpath d='M11 5.2L16.8 11 11 16.8 5.2 11z' fill='none' stroke='%23d7c28a' stroke-width='.55' opacity='.22'/%3E%3C/svg%3E") !important;
+}
+
+.ib-theme-obsidianregistry.ib-bars-runic .ib-meter-label {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #d7c28a;
+}
+
+.ib-theme-obsidianregistry.ib-bars-runic .ib-meter-value {
+    color: #a8b8aa;
+}
+
+
+/* mobile adjustments */
+@media (max-width: 760px) {
+    .ib-theme-obsidianregistry .ib-title-wrap {
+        min-height: 78px !important;
+        padding: 15px 128px 12px 12px !important;
+    }
+
+    .ib-theme-obsidianregistry .ib-title {
+        font-size: 21px !important;
+    }
+
+    .ib-theme-obsidianregistry .ib-title-wrap::before {
+        right: 78px !important;
+        top: 21px !important;
+        width: 44px !important;
+        height: 38px !important;
+    }
+
+    .ib-theme-obsidianregistry .ib-title-wrap::after {
+        right: 8px !important;
+        top: 10px !important;
+        width: 118px !important;
+        height: 58px !important;
+    }
+
+    .ib-bars-runic .ib-bar {
+        height: 19px !important;
+        background-size: 19px 19px !important;
+    }
+
+    .ib-bars-runic .ib-bar-fill {
+        -webkit-mask-size: 19px 19px !important;
+        mask-size: 19px 19px !important;
+        background-size:
+            38px 19px,
+            44px 19px,
+            50px 19px,
+            auto,
+            auto !important;
+    }
+}
