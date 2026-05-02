@@ -1396,13 +1396,14 @@ function SavePinnedNpcs() {
 }
 
 function IsPinnedNpc(name) {
-    return gPinnedNpcs.some(pinned => NamesLikelyMatch(pinned, name));
+    const normalized = NormalizeName(name);
+    return gPinnedNpcs.some(pinned => NormalizeName(pinned) === normalized);
 }
 
 function TogglePinnedNpc(name) {
     if (!name) return;
-
-    const existingIndex = gPinnedNpcs.findIndex(pinned => NamesLikelyMatch(pinned, name));
+    const normalized = NormalizeName(name);
+    const existingIndex = gPinnedNpcs.findIndex(pinned => NormalizeName(pinned) === normalized);
 
     if (existingIndex >= 0) {
         gPinnedNpcs.splice(existingIndex, 1);
