@@ -281,6 +281,7 @@ const kLang = {
         nsfw: "Интимный контекст",
         affection: "💚 Симпатия",
         trust: "💙 Доверие",
+		age: "♦ Возраст",
         love: "💜 Любовь",
         aversion: "❤️‍🩹 Неприязнь",
         distrust: "🧡 Недоверие",
@@ -348,6 +349,7 @@ unpinNpc: "Открепить NPC",
         rels: "Feelings Toward You",
         nsfw: "Intimate Context",
         affection: "💚 Affection",
+		age: "♦ Age",
         trust: "💙 Trust",
         love: "💜 Love",
         aversion: "❤️‍🩹 Aversion",
@@ -407,7 +409,7 @@ Append exactly one XML block at the end of every assistant response. Fill all va
 Format:
 <infoboard time="" date="" weather="" loc="">
 <chars>
-<c icon="" name="" tags="" mood="" />
+<c icon="" name="" age="" tags="" mood="" />
 </chars>
 <rels>
 <rel source="" target="{{user}}" a="" ac="" tr="" tc="" l="" lc="" status="" />
@@ -433,9 +435,11 @@ Rules:
 - Negative trust = distrust/suspicion/fear
 - Negative love = hatred/destructive obsession/anti-attachment
 - Relationship values must evolve logically
-- Put all NPC private thoughts into one <thk> block
+- age: age of the character (e.g., "24")
+- Put all NPC private thoughts (first person, present tense) into one <thk> block
 - One NPC per line in <thk>
-- Never include {{user}} thoughts in <thk>
+- Never include {{user}}'s thoughts in <thk>
+- Never decide for {{user}} in character's thoughts; only character's opinions on {{user}}, on {{user}}'s previous actions and appearance
 - Omit <nsfw /> if the scene is not intimate
 - No extra XML tags or commentary
 - Never output private NPC thoughts in the visible narrative text; private thoughts must appear only inside <thk>
@@ -456,7 +460,7 @@ Append exactly one XML block at the end of every assistant response. Fill all va
 Format:
 <infoboard time="" date="" weather="" loc="">
 <chars>
-<c icon="" name="" tags="" mood="" />
+<c icon="" name="" age="" tags="" mood="" />
 </chars>
 <rels>
 <rel source="" target="{{user}}" a="" ac="" tr="" tc="" l="" lc="" status="" />
@@ -482,9 +486,11 @@ Rules:
 - Negative trust = distrust/suspicion/fear
 - Negative love = hatred/destructive obsession/anti-attachment
 - Relationship values must evolve logically
-- Put all NPC private thoughts into one <thk> block
+- age: age of the character (e.g., "24")
+- Put all NPC private thoughts (first person, present tense) into one <thk> block
 - One NPC per line in <thk>
-- Never include {{user}} thoughts in <thk>
+- Never include {{user}}'s thoughts in <thk>
+- Never decide for {{user}} in character's thoughts; only character's opinions on {{user}}, on {{user}}'s previous actions and appearance
 - Omit <nsfw /> if the scene is not intimate
 - No extra XML tags or commentary
 - Never output private NPC thoughts in the visible narrative text; private thoughts must appear only inside <thk>
@@ -1108,12 +1114,15 @@ repairedXml: xmlForParsing !== xmlBlock ? xmlForParsing : ""
         .map(t => t.trim())
         .filter(Boolean)
         .slice(0, 4);
-
+    
+    // Добавляем парсинг возраста
+    const age = c.getAttribute("age") || "";
     const mood = c.getAttribute("mood") || "";
 
     result.chars.push({
         icon: c.getAttribute("icon") || "•",
         name,
+        age, // Сохраняем возраст
         tags,
         mood,
         presence: ParseFocusState(tags)
@@ -1151,7 +1160,8 @@ const pushRel = (rel) => {
         if (matches.length === 1) {
             return {
                 ...r,
-                source: matches[0].name
+                source: matches[0].name,
+                age: matches[0].age || "" // <--- Передаем возраст в rel
             };
         }
 
@@ -1452,15 +1462,17 @@ function RenderChars(chars) {
     <div class="ib-section ib-section-chars">
         <div class="ib-section-title">${GetThemeCharsIcon()} ${T("chars")}</div>
         <div class="ib-chars">
-${SortCharsByPriority(chars).map(c => {
+ ${SortCharsByPriority(chars).map(c => {
                 const visibleTags = (c.tags || []).filter(tag => !IsPresenceTag(tag));
                 const mood = String(c.mood || "").trim();
+                // Рендерим возраст как красивую плашку рядом с именем
+                const ageHtml = c.age ? `<span class="ib-age-chip">${EscapeHtml(c.age)}</span>` : "";
 
                 return `
                 <div class="ib-char">
                     <div class="ib-char-main">
                         <span class="ib-char-icon-wrap"><span class="ib-char-icon">${EscapeHtml(c.icon)}</span></span>
-                        <span class="ib-char-name">${RenderMaybeUnknown(c.name)}</span>
+                        <span class="ib-char-name">${RenderMaybeUnknown(c.name)} ${ageHtml}</span>
 <button
     type="button"
     class="ib-pin-btn ${IsPinnedNpc(c.name) ? "ib-pinned" : ""}"
@@ -1529,12 +1541,15 @@ function RenderRelCard(r, thoughts = [], prevState = null, rels = []) {
     const statusClass = GetStatusClass(r.status);
     const statusIcon = GetStatusIcon(r.status);
     const changed = GetChangedMetrics(prevState, r);
+    
+    // Возраст уже должен быть в r.age благодаря изменениям в ParseInfoboard
+    const ageHtml = r.age ? `<span class="ib-age-chip">${EscapeHtml(r.age)}</span>` : "";
 
     return `
     <div class="ib-rel-card ib-rel-accordion ${changed.a || changed.tr || changed.l ? "ib-rel-updated" : ""}">
         <div class="ib-rel-toggle" role="button" tabindex="0" aria-expanded="true" title="${EscapeHtml(T("closeNpc"))}">
             <div class="ib-rel-toggle-main">
-<span class="ib-rel-toggle-name">💕 ${EscapeHtml(r.source)} → ${EscapeHtml(r.target)}</span>
+<span class="ib-rel-toggle-name">💕 ${EscapeHtml(r.source)} ${ageHtml} → ${EscapeHtml(r.target)}</span>
                 <span class="ib-status-chip ${statusClass}">
     <span class="ib-status-icon">${EscapeHtml(statusIcon)}</span>
     <span>${EscapeHtml(r.status)}</span>
@@ -1665,11 +1680,12 @@ function RenderCompactRelations(state, prevState = null) {
         ${noChangedNote}
         ${rels.map(r => {
             const changed = GetChangedMetrics(prevState, r);
+            const ageHtml = r.age ? `<span class="ib-age-chip">${EscapeHtml(r.age)}</span>` : "";
 
             return `
             <div class="ib-compact-rel-item">
                 <div class="ib-compact-rel-name-row">
-                    <span class="ib-compact-rel-name">${EscapeHtml(r.source)}</span>
+                    <span class="ib-compact-rel-name">${EscapeHtml(r.source)} ${ageHtml}</span>
                     <span class="ib-compact-rel-status ${GetStatusClass(r.status)}">${EscapeHtml(GetStatusIcon(r.status))}</span>
                 </div>
 

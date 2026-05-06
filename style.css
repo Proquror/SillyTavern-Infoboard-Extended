@@ -11359,3 +11359,44 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
         auto,
         auto !important;
 }
+
+/* =========================================================
+   AGE CHIP STYLE (Beautiful version)
+   ========================================================= */
+
+/* Основной стиль плашки возраста */
+.ib-age-chip {
+    display: inline-block;
+    font-size: 0.8em;
+    opacity: 0.75;
+    margin-left: 6px;
+    padding: 1px 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    color: var(--ib-muted);
+    vertical-align: middle;
+    white-space: nowrap;
+    line-height: 1.3;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Адаптация для темных тем, чтобы плашка не была слишком светлой */
+.ib-theme-terminal .ib-age-chip,
+.ib-theme-systemlog .ib-age-chip {
+    background: rgba(56, 255, 122, 0.08);
+    color: #7fbc85;
+    border-color: rgba(56, 255, 122, 0.15);
+}
+
+.ib-theme-bloodmoon .ib-age-chip {
+    background: rgba(184, 69, 82, 0.12);
+    color: #d6a35f;
+    border-color: rgba(184, 69, 82, 0.18);
+}
+
+/* Чтобы имя и возраст не разрывались */
+.ib-char-name, .ib-rel-toggle-name, .ib-compact-rel-name {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
