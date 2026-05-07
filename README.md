@@ -1,4 +1,4 @@
-# Infoboard for SillyTavern
+# Infoboard for SillyTavern - Extended
 
 A state-aware XML infoboard extension for **SillyTavern**.
 
@@ -8,7 +8,7 @@ Built for roleplay, long scenes, and NPC-heavy chats.
 
 ---
 
-## Features
+## KanonMama's Original Features
 
 - built-in prompt injection
 - per-chat state memory
@@ -33,6 +33,25 @@ Built for roleplay, long scenes, and NPC-heavy chats.
 - debug XML viewer
 - export / import state
 - custom CSS overrides
+
+### Added/Reworked Features
+
+- infoboard's `kSystemPrompt` rework
+- `tagsRaw` limit `4 -> 6`
+- added `age plate` near NPCs names
+- the `presence` is now defined and stored in a separate `presence=""`, not in `tags`
+  - this is so because AI'd sometimes generate `gone for work` tag instead of `left`
+- pins rework (gotta test more)
+  - pinned NPCs will be injected
+  - AI will track what they think while being away from User (hopefully without meta-gaming, check prompt)
+  - added pop-up for pinned NPCs due to pins being stored locally for _ALL_ chats (so now you can un-pin them for other chats)
+- **IMPORTANT:** prompt injection via `{{InfoBoard}}` macro ONLY
+  - it allows you to place infoboard almost anywhere you want in the `context`
+  - but I think you should encase `{{InfoBoard}}` in some kind of `<post_lore></post_lore>` tags that are separate from your char history and its tags (if you have any)
+  - hopefully it should help AI avoid writing User's actions (not sure, gotta test)
+
+### TODO
+- rewrite pin logic, make them stored for each chat separately
 
 ---
 
