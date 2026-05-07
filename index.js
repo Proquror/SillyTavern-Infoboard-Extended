@@ -434,7 +434,7 @@ Optional only for explicitly intimate scenes:
 Rules of infoboard:
 - Output exactly one <infoboard> block in every message
 - Fill all values in Russian except of presence
-- CRITICAL: You MUST include ALL NPCs listed in the input [INFOBOARD STATE] in the output
+- CRITICAL: You MUST include ALL NPCs listed in the [INFOBOARD STATE]
 - Add one <c /> for each NPC currently present
 - Use the exact same full NPC name in <chars name="">, <rel source="">, and <thk>
 - Never shorten NPC names in <rel>
@@ -442,11 +442,11 @@ Rules of infoboard:
 - age: age of the character (e.g., "24")
 - tags: 1-4 short tags separated by |
 - Never put presence info in "tags" attribute
-- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate presence: focus | active | near | watching | background | left | offscreen
+- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate present NPCs: focus | active | near | watching | background | offscreen | left
 - presence: "background" used for NPCs that don't interact with {{user}} but can be directly seen or clearly heard by {{user}}
-- presence: "left" used for NPCs completely leaving the scene {{user}}'s in
+- presence: "left" is used ONLY for NPCs that are LEAVING the scene in your current output; NEVER use "left" for NPCs who left in previous turn
 - presence: "offscreen" or "not present" are ONLY for pinned NPCs in [INFOBOARD STATE]
-- presence: "offscreen" or "not present" are NPCs who left the scene and are currently elsewhere but pinned and tracked by User's choice
+- CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and has left the scene and/or is labeled as "offscreen" -> OMIT them completely from the output
 
 - "offscreen" or "not present" NPCs must focus on THEIR OWN tasks and plans independent from {{user}}'s
 - "offscreen" or "not present" NPCs CAN NOT know what {{user}} says or does; their thoughts MUST NOT reflect on what {{user}} is doing right now in the scene
@@ -503,7 +503,7 @@ Optional only for explicitly intimate scenes:
 Rules of infoboard:
 - Output exactly one <infoboard> block in every message
 - Fill all values in English
-- CRITICAL: You MUST include ALL NPCs listed in the input [INFOBOARD STATE] in the output
+- CRITICAL: You MUST include ALL NPCs listed in the [INFOBOARD STATE]
 - Add one <c /> for each NPC currently present
 - Use the exact same full NPC name in <chars name="">, <rel source="">, and <thk>
 - Never shorten NPC names in <rel>
@@ -511,11 +511,12 @@ Rules of infoboard:
 - age: age of the character (e.g., "24")
 - tags: 1-4 short tags separated by |
 - Never put presence info in "tags" attribute
-- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate presence: focus | active | near | watching | background | left | offscreen
+- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate present NPCs: focus | active | near | watching | background | offscreen | left
 - presence: "background" used for NPCs that don't interact with {{user}} but can be directly seen or clearly heard by {{user}}
-- presence: "left" used for NPCs completely leaving the scene {{user}}'s in
+- presence: "left" is used ONLY for NPCs that are LEAVING the scene in your current output; NEVER use "left" for NPCs who left in previous turn
 - presence: "offscreen" or "not present" are ONLY for pinned NPCs in [INFOBOARD STATE]
-- presence: "offscreen" or "not present" are NPCs who left the scene and are currently elsewhere but pinned and tracked by User's choice
+- CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and is about to leave the scene -> mark them as "left" in the next output
+- CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and labeled as "left" and/or is labeled as "offscreen" -> OMIT them completely from the next output
 
 - "offscreen" or "not present" NPCs must focus on THEIR OWN tasks and plans independent from {{user}}'s
 - "offscreen" or "not present" NPCs CAN NOT know what {{user}} says or does; their thoughts MUST NOT reflect on what {{user}} is doing right now in the scene
@@ -1305,11 +1306,21 @@ function BuildStateInjection() {
     if (gState.chars.length) {
         lines.push("NPCs:");
         for (const c of gState.chars) {
+            // --- НАЧАЛО ИСПРАВЛЕНИЯ ---
+            // Проверяем, закреплен ли персонаж
+            const isPinned = IsPinnedNpc(c.name);
+            // Проверяем, находится ли он "вне игры"
+            const isGone = ["offscreen", "leftScene"].includes(c.presence?.key);
+
+            // Если персонаж НЕ закреплен и ушел/за кадром -> НЕ инжектим его в промпт.
+            // Это позволит ИИ "забыть" его и удалить из следующего ответа.
+            if (!isPinned && isGone) {
+                continue;
+            }
+            // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
+
             const tags = (c.tags || []).join(", ");
-            // --- ВАЖНОЕ ИЗМЕНЕНИЕ ---
-            // Явно указываем текущий статус присутствия, чтобы ИИ не гадал
             const currentPresence = c.presence?.key || "unknown";
-            // Форматируем: Имя (presence) [tags]
             lines.push(`- ${c.name} (${currentPresence})${tags ? ` [${tags}]` : ""}`);
         }
     }
@@ -1317,16 +1328,42 @@ function BuildStateInjection() {
     if (gState.rels.length) {
         lines.push("Relations:");
         for (const r of gState.rels) {
+            // --- СИНХРОНИЗАЦИЯ RELATIONS ---
+            // Если мы скрыли персонажа из списка NPC, скрываем и его отношения,
+            // чтобы не смущать ИИ.
+            const charData = gState.chars.find(c => NamesLikelyMatch(c.name, r.source));
+            
+            if (charData) {
+                const isPinned = IsPinnedNpc(charData.name);
+                const isGone = ["offscreen", "leftScene"].includes(charData.presence?.key);
+                
+                if (!isPinned && isGone) {
+                    continue;
+                }
+            }
+            // -------------------------------
+
             lines.push(`- ${r.source}: A ${r.a} (${SignedText(r.ac)}), T ${r.tr} (${SignedText(r.tc)}), L ${r.l} (${SignedText(r.lc)}), ${r.status}`);
         }
     }
 
     if (gState.thoughts.length) {
-    lines.push("PRIVATE NPC THOUGHTS - internal memory only, never write these in visible narrative:");
-    for (const t of gState.thoughts) {
-        lines.push(`- ${t.name}: ${t.text}`);
+        lines.push("PRIVATE NPC THOUGHTS - internal memory only, never write these in visible narrative:");
+        for (const t of gState.thoughts) {
+            // --- СИНХРОНИЗАЦИЯ МЫСЛЕЙ ---
+            const charData = gState.chars.find(c => NamesLikelyMatch(c.name, t.name));
+            if (charData) {
+                const isPinned = IsPinnedNpc(charData.name);
+                const isGone = ["offscreen", "leftScene"].includes(charData.presence?.key);
+                if (!isPinned && isGone) {
+                    continue;
+                }
+            }
+            // ----------------------------
+            
+            lines.push(`- ${t.name}: ${t.text}`);
+        }
     }
-}
 
     if (gState.nsfw) {
         lines.push(`NSFW: F ${gState.nsfw.f} | P ${gState.nsfw.p}`);
@@ -2616,14 +2653,13 @@ $("#ib_display_mode option[value='both']").text(T("displayBoth"));
     UpdateThemePreview();
 }
 
-// Функция принимает распарсенные данные и предыдущее состояние, возвращает "пропатченные" данные
+// Функция принимает распарсенные данные и предыдущее состояние, возвращает "пропатченные" данные пинов
 function PatchPinnedData(parsed, prevState) {
     const prevChars = prevState?.chars || [];
     const prevRels = prevState?.rels || [];
     const prevThoughts = prevState?.thoughts || [];
 
-    // Определяем правильный тег для текущего языка
-    const offscreenTag = gLang === 'ru' ? 'за кадром' : 'offscreen'; 
+    const offscreenTag = gLang === 'ru' ? 'за кадром' : 'offscreen';
 
     // --- 1. Обработка персонажей (<chars>) ---
     const newChars = parsed.chars || [];
@@ -2632,51 +2668,54 @@ function PatchPinnedData(parsed, prevState) {
 
     // Обрабатываем тех, кого вернул ИИ
     newChars.forEach(c => {
+        const isPinned = IsPinnedNpc(c.name);
+        const isGone = ["offscreen", "leftScene"].includes(c.presence?.key);
+
+        // ИСПРАВЛЕНИЕ: Если персонаж НЕ закреплен и ушел/за кадром -> ПОЛНОСТЬЮ ИГНОРИРУЕМ.
+        // Мы не сохраняем его в состояние, тем самым "забывая" его.
+        if (!isPinned && isGone) {
+            return; 
+        }
+
         let charData = { ...c };
         
-        // Если закреплен и помечен как "вышел" -> отменяем уход
-        if (IsPinnedNpc(c.name)) {
-            const hasLeftTag = (charData.tags || []).some(t => NormalizeName(t) === "left" || NormalizeName(t) === "вышел");
-            if (charData.presence?.key === "leftScene" || hasLeftTag) {
-                // Убираем теги выхода
-                charData.tags = (charData.tags || []).filter(t => NormalizeName(t) !== "left" && NormalizeName(t) !== "вышел");
-                // Добавляем тег "за кадром", если его нет
-                if (!charData.tags.includes(offscreenTag)) {
-                    charData.tags.push(offscreenTag);
-                }
-                charData.presence = { key: "offscreen", cls: "ib-presence-offscreen" };
+        // Если закреплен и помечен как "вышел" -> отменяем уход, делаем "за кадром"
+        if (isPinned && isGone) {
+            charData.tags = (charData.tags || []).filter(t => NormalizeName(t) !== "left" && NormalizeName(t) !== "вышел");
+            if (!charData.tags.includes(offscreenTag)) {
+                charData.tags.push(offscreenTag);
             }
+            charData.presence = { key: "offscreen", cls: "ib-presence-offscreen" };
         }
         
         finalChars.push(charData);
         processedNames.add(NormalizeName(c.name));
     });
 
-    // Проверяем закрепленных, кого ИИ НЕ вернул
+    // Проверяем закрепленных, кого ИИ НЕ вернул (восстановление)
     gPinnedNpcs.forEach(pinName => {
         const normPin = NormalizeName(pinName);
         if (!processedNames.has(normPin)) {
             const oldChar = prevChars.find(ch => NormalizeName(ch.name) === normPin);
             if (oldChar) {
-                // Восстанавливаем из прошлого состояния
+				// Восстанавливаем из прошлого состояния
                 // ВАЖНО: Добавляем тег "на периферии" в список тегов для промпта
                 const restoredTags = [...(oldChar.tags || [])];
                 if (!restoredTags.includes(offscreenTag)) {
                     restoredTags.push(offscreenTag);
                 }
-
                 finalChars.push({ 
                     ...oldChar, 
                     tags: restoredTags,
                     presence: { key: "offscreen", cls: "ib-presence-offscreen" } 
                 });
             } else {
-                // Создаем новую запись
+				// Создаем новую запись
                 finalChars.push({
                     name: pinName,
                     icon: "📌",
                     age: "",
-                    tags: ["pinned", offscreenTag], // Используем offscreenTag
+                    tags: ["pinned", offscreenTag],
                     mood: "",
                     presence: { key: "offscreen", cls: "ib-presence-offscreen" }
                 });
@@ -2690,13 +2729,22 @@ function PatchPinnedData(parsed, prevState) {
     const processedRels = new Set();
 
     newRels.forEach(r => {
-        finalRels.push(r);
-        processedRels.add(NormalizeName(r.source));
+        // ИСПРАВЛЕНИЕ: Проверяем, есть ли персонаж в списке живых (finalChars).
+        // Если мы удалили его из chars выше (потому что он ушел и не закреплен), удаляем и связь.
+        const charStillPresent = finalChars.some(fc => NamesLikelyMatch(fc.name, r.source));
+        
+        if (charStillPresent) {
+            finalRels.push(r);
+            processedRels.add(NormalizeName(r.source));
+        }
     });
 
+    // Восстановление связей для закрепленных
     gPinnedNpcs.forEach(pinName => {
         const normPin = NormalizeName(pinName);
-        if (!processedRels.has(normPin)) {
+        // Только если закрепленный есть в finalChars, но нет в связях
+        const charExists = finalChars.some(fc => NamesLikelyMatch(fc.name, pinName));
+        if (charExists && !processedRels.has(normPin)) {
             const oldRel = prevRels.find(rel => NormalizeName(rel.source) === normPin);
             if (oldRel) {
                 finalRels.push(oldRel);
@@ -2712,18 +2760,28 @@ function PatchPinnedData(parsed, prevState) {
     });
 
     // --- 3. Обработка мыслей (<thoughts>) ---
-    const finalThoughts = parsed.thoughts ? [...parsed.thoughts] : [];
-    const thoughtNames = new Set(finalThoughts.map(t => NormalizeName(t.name)));
-    
-    gPinnedNpcs.forEach(pinName => {
-        const normPin = NormalizeName(pinName);
-        if (!thoughtNames.has(normPin)) {
-            const oldThought = prevThoughts.find(t => NormalizeName(t.name) === normPin);
-            if (oldThought) finalThoughts.push(oldThought);
+    const finalThoughts = [];
+    // Берем мысли только для тех, кто остался в finalChars
+    const validNames = finalChars.map(c => NormalizeName(c.name));
+
+    (parsed.thoughts || []).forEach(t => {
+        if (validNames.includes(NormalizeName(t.name))) {
+            finalThoughts.push(t);
         }
     });
 
-    // Возвращаем новый объект с обновленными данными
+    // Восстановление старых мыслей для закрепленных, если ИИ не вернул новые
+    gPinnedNpcs.forEach(pinName => {
+         const normPin = NormalizeName(pinName);
+         const hasThought = finalThoughts.some(t => NormalizeName(t.name) === normPin);
+         const charExists = finalChars.some(fc => NamesLikelyMatch(fc.name, pinName));
+
+         if (charExists && !hasThought) {
+             const oldThought = prevThoughts.find(t => NormalizeName(t.name) === normPin);
+             if (oldThought) finalThoughts.push(oldThought);
+         }
+    });
+
     return {
         ...parsed,
         chars: finalChars,
