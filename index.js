@@ -1,3 +1,6 @@
+import { macros } from '../../../macros/macro-system.js';
+import { power_user } from '../../../power-user.js';
+
 const kExtensionName = "SillyTavern-Infoboard";
 const kExtensionFolderPath = `scripts/extensions/third-party/${kExtensionName}`;
 const kSettingsFile = `${kExtensionFolderPath}/settings.html`;
@@ -308,12 +311,16 @@ const kLang = {
         nearby: "рядом",
         watching: "наблюдает",
         background: "на периферии",
+		offscreen: "за кадром",
         leftScene: "вышел",
         openNpc: "Открыть NPC",
         closeNpc: "Скрыть NPC",
         palettePreview: "Палитра темы",
         paletteMissing: "Превью палитры недоступно",
         hideThoughtLeaks: "Скрывать утёкшие мысли NPC из текста",
+		pinnedList: "Список закреплённых",
+		noPinned: "Нет закреплённых персонажей",
+		unpinFromList: "Открепить",
 compactMode: "Фильтр отношений",
 compactTop3: "Топ 3",
 compactTop1: "Топ 1",
@@ -377,12 +384,16 @@ unpinNpc: "Открепить NPC",
         nearby: "nearby",
         watching: "watching",
         background: "background",
+		offscreen: "offscreen",
         leftScene: "left",
         openNpc: "Open NPC",
         closeNpc: "Hide NPC",
         palettePreview: "Theme palette",
         paletteMissing: "Palette preview unavailable",
         hideThoughtLeaks: "Hide leaked NPC thoughts from visible text",
+		pinnedList: "Pinned List",
+		noPinned: "No pinned characters",
+		unpinFromList: "Unpin",
 compactMode: "Relationship Filter",
 compactTop3: "Top 3",
 compactTop1: "Top 1",
@@ -409,7 +420,7 @@ Append exactly one XML block at the end of every assistant response. Fill all va
 Format:
 <infoboard time="" date="" weather="" loc="">
 <chars>
-<c icon="" name="" age="" tags="" mood="" />
+<c icon="" name="" age="" tags="" mood="" presence="" />
 </chars>
 <rels>
 <rel source="" target="{{user}}" a="" ac="" tr="" tc="" l="" lc="" status="" />
@@ -420,32 +431,50 @@ Format:
 Optional only for explicitly intimate scenes:
 <nsfw f="" p="" />
 
-Rules:
+Rules of infoboard:
 - Output exactly one <infoboard> block in every message
-- Fill all values in Russian
+- Fill all values in Russian except of presence
+- CRITICAL: You MUST include ALL NPCs listed in the input [INFOBOARD STATE] in the output
 - Add one <c /> for each NPC currently present
 - Use the exact same full NPC name in <chars name="">, <rel source="">, and <thk>
 - Never shorten NPC names in <rel>
+- Never include User's character as an NPC in infoboard
+- age: age of the character (e.g., "24")
 - tags: 1-4 short tags separated by |
-- Use tags to indicate scene presence when relevant, for example: focus | рядом | наблюдает | на периферии | вышел
+- Never put presence info in "tags" attribute
+- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate presence: focus | active | near | watching | background | left | offscreen
+- presence: "background" used for NPCs that don't interact with {{user}} but can be directly seen or clearly heard by {{user}}
+- presence: "left" used for NPCs completely leaving the scene {{user}}'s in
+- presence: "offscreen" or "not present" are ONLY for pinned NPCs in [INFOBOARD STATE]
+- presence: "offscreen" or "not present" are NPCs who left the scene and are currently elsewhere but pinned and tracked by User's choice
+
+- "offscreen" or "not present" NPCs must focus on THEIR OWN tasks and plans independent from {{user}}'s
+- "offscreen" or "not present" NPCs CAN NOT know what {{user}} says or does; their thoughts MUST NOT reflect on what {{user}} is doing right now in the scene
+- "offscreen" or "not present" NPCs are NPCs that left the scene and is pinned in the state
+
 - Add one <rel /> per present NPC describing feelings toward {{user}} only
 - a, tr, l: from -100 to 100
-- ac, tc, lc: per-message change, usually within -5..+5 unless major event
+- ac, tc, lc: per-message change, usually within -2..+2 unless major event
 - Negative affection = aversion/dislike
 - Negative trust = distrust/suspicion/fear
 - Negative love = hatred/destructive obsession/anti-attachment
 - Relationship values must evolve logically
-- age: age of the character (e.g., "24")
 - Put all NPC private thoughts (first person, present tense) into one <thk> block
 - One NPC per line in <thk>
 - Never include {{user}}'s thoughts in <thk>
 - Never decide for {{user}} in character's thoughts; only character's opinions on {{user}}, on {{user}}'s previous actions and appearance
+
 - Omit <nsfw /> if the scene is not intimate
 - No extra XML tags or commentary
 - Never output private NPC thoughts in the visible narrative text; private thoughts must appear only inside <thk>
 - Never write <thk> thoughts as visible lines before the infoboard; no "Имя: мысль" thought list in narrative
 - mood: 1-3 words, visible current emotional state only; leave empty if unclear
 - Do not duplicate mood inside tags
+- Always generate <thk> thoughts for ALL pinned characters listed in the state, even if they are silent or in the offscreen
+- Maintain logical progression of relationship values (a, tr, l) for all present characters based on the conversation context
+
+- CRITICAL: NEVER perceive the location as a call to action - User stay where they said they are
+- CRITICAL: If it's not DIRECTLY asked by {{user}} - NEVER decide for {{user}} and NEVER describe or rewrite {{user}}'s speech or actions, it's User's character to play!
 
 <thk> strict format:
 - Use the exact full NPC name exactly as in <chars>
@@ -460,7 +489,7 @@ Append exactly one XML block at the end of every assistant response. Fill all va
 Format:
 <infoboard time="" date="" weather="" loc="">
 <chars>
-<c icon="" name="" age="" tags="" mood="" />
+<c icon="" name="" age="" tags="" mood="" presence="" />
 </chars>
 <rels>
 <rel source="" target="{{user}}" a="" ac="" tr="" tc="" l="" lc="" status="" />
@@ -471,32 +500,50 @@ Format:
 Optional only for explicitly intimate scenes:
 <nsfw f="" p="" />
 
-Rules:
+Rules of infoboard:
 - Output exactly one <infoboard> block in every message
 - Fill all values in English
+- CRITICAL: You MUST include ALL NPCs listed in the input [INFOBOARD STATE] in the output
 - Add one <c /> for each NPC currently present
 - Use the exact same full NPC name in <chars name="">, <rel source="">, and <thk>
 - Never shorten NPC names in <rel>
+- Never include User's character as an NPC in infoboard
+- age: age of the character (e.g., "24")
 - tags: 1-4 short tags separated by |
-- Use tags to indicate scene presence when relevant, for example: focus | near | watching | background | left
+- Never put presence info in "tags" attribute
+- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate presence: focus | active | near | watching | background | left | offscreen
+- presence: "background" used for NPCs that don't interact with {{user}} but can be directly seen or clearly heard by {{user}}
+- presence: "left" used for NPCs completely leaving the scene {{user}}'s in
+- presence: "offscreen" or "not present" are ONLY for pinned NPCs in [INFOBOARD STATE]
+- presence: "offscreen" or "not present" are NPCs who left the scene and are currently elsewhere but pinned and tracked by User's choice
+
+- "offscreen" or "not present" NPCs must focus on THEIR OWN tasks and plans independent from {{user}}'s
+- "offscreen" or "not present" NPCs CAN NOT know what {{user}} says or does; their thoughts MUST NOT reflect on what {{user}} is doing right now in the scene
+- "offscreen" or "not present" NPCs are NPCs that left the scene and is pinned in the state
+
 - Add one <rel /> per present NPC describing feelings toward {{user}} only
 - a, tr, l: from -100 to 100
-- ac, tc, lc: per-message change, usually within -5..+5 unless major event
+- ac, tc, lc: per-message change, usually within -2..+2 unless major event
 - Negative affection = aversion/dislike
 - Negative trust = distrust/suspicion/fear
 - Negative love = hatred/destructive obsession/anti-attachment
 - Relationship values must evolve logically
-- age: age of the character (e.g., "24")
 - Put all NPC private thoughts (first person, present tense) into one <thk> block
 - One NPC per line in <thk>
 - Never include {{user}}'s thoughts in <thk>
 - Never decide for {{user}} in character's thoughts; only character's opinions on {{user}}, on {{user}}'s previous actions and appearance
+
 - Omit <nsfw /> if the scene is not intimate
 - No extra XML tags or commentary
 - Never output private NPC thoughts in the visible narrative text; private thoughts must appear only inside <thk>
 - Never write <thk> thoughts as visible lines before the infoboard; no "Имя: мысль" thought list in narrative
 - mood: 1-3 words, visible current emotional state only; leave empty if unclear
 - Do not duplicate mood inside tags
+- Always generate <thk> thoughts for ALL pinned characters listed in the state, even if they are silent or in the offscreen
+- Maintain logical progression of relationship values (a, tr, l) for all present characters based on the conversation context
+
+- CRITICAL: NEVER perceive the location as a call to action - User stay where they said they are
+- CRITICAL: If it's not DIRECTLY asked by {{user}} - NEVER decide for {{user}} and NEVER describe or rewrite {{user}}'s speech or actions, it's User's character to play!
 
 <thk> strict format:
 - Use the exact full NPC name exactly as in <chars>
@@ -956,6 +1003,10 @@ function ParseFocusState(tags = []) {
         return { key: "watching", cls: "ib-presence-watch" };
     }
 
+    if (t.some(x => ["offscreen", "за кадром", "вне сцены", "not present"].includes(x))) {
+        return { key: "offscreen", cls: "ib-presence-offscreen" };
+    }
+
     if (t.some(x => ["background", "на периферии", "в фоне", "пассивен"].includes(x))) {
         return { key: "background", cls: "ib-presence-background" };
     }
@@ -995,6 +1046,11 @@ function IsPresenceTag(tag) {
         "на периферии",
         "в фоне",
         "пассивен",
+
+		"offscreen",
+        "за кадром",
+        "вне сцены",
+        "not present",
 
         "left",
         "вышел",
@@ -1113,19 +1169,49 @@ repairedXml: xmlForParsing !== xmlBlock ? xmlForParsing : ""
         .split("|")
         .map(t => t.trim())
         .filter(Boolean)
-        .slice(0, 4);
+        .slice(0, 6);
     
-    // Добавляем парсинг возраста
     const age = c.getAttribute("age") || "";
     const mood = c.getAttribute("mood") || "";
+    
+    // --- ОБРАБОТКА PRESENCE ---
+    const rawPresence = c.getAttribute("presence") || "";
+    let presence = null;
+
+    // Если ИИ указал атрибут presence, парсим его
+    if (rawPresence) {
+        const p = NormalizeName(rawPresence);
+        
+        // Карта соответствия: значение атрибута -> {ключ перевода, CSS класс}
+        // Классы взяты из вашей функции ParseFocusState для совместимости
+        const presenceMap = {
+            "focus":      { key: "focus",      cls: "ib-presence-focus" },
+            "active":     { key: "activeHere", cls: "ib-presence-active" },
+            "near":       { key: "nearby",     cls: "ib-presence-near" },
+            "nearby":     { key: "nearby",     cls: "ib-presence-near" },
+            "watching":   { key: "watching",   cls: "ib-presence-watch" },
+            "background": { key: "background", cls: "ib-presence-background" },
+            "offscreen":  { key: "offscreen",  cls: "ib-presence-offscreen" },
+            "left":       { key: "leftScene",  cls: "ib-presence-left" }
+        };
+
+        if (presenceMap[p]) {
+            presence = presenceMap[p];
+        }
+    }
+
+    // Если атрибута нет (или он кривой), пытаемся понять из тегов (старый метод fallback)
+    if (!presence) {
+        presence = ParseFocusState(tags);
+    }
 
     result.chars.push({
         icon: c.getAttribute("icon") || "•",
         name,
-        age, // Сохраняем возраст
+        age,
         tags,
         mood,
-        presence: ParseFocusState(tags)
+        presence
     });
 });
 
@@ -1220,7 +1306,11 @@ function BuildStateInjection() {
         lines.push("NPCs:");
         for (const c of gState.chars) {
             const tags = (c.tags || []).join(", ");
-            lines.push(`- ${c.name}${tags ? ` [${tags}]` : ""}`);
+            // --- ВАЖНОЕ ИЗМЕНЕНИЕ ---
+            // Явно указываем текущий статус присутствия, чтобы ИИ не гадал
+            const currentPresence = c.presence?.key || "unknown";
+            // Форматируем: Имя (presence) [tags]
+            lines.push(`- ${c.name} (${currentPresence})${tags ? ` [${tags}]` : ""}`);
         }
     }
 
@@ -1433,7 +1523,8 @@ function GetPresencePriority(c) {
         nearby: 2,
         watching: 3,
         background: 4,
-        leftScene: 5
+        offscreen: 5,
+        leftScene: 6
     };
 
     return map[key] ?? 10;
@@ -1462,11 +1553,11 @@ function RenderChars(chars) {
     <div class="ib-section ib-section-chars">
         <div class="ib-section-title">${GetThemeCharsIcon()} ${T("chars")}</div>
         <div class="ib-chars">
- ${SortCharsByPriority(chars).map(c => {
+${SortCharsByPriority(chars).map(c => {
                 const visibleTags = (c.tags || []).filter(tag => !IsPresenceTag(tag));
                 const mood = String(c.mood || "").trim();
                 // Рендерим возраст как красивую плашку рядом с именем
-                const ageHtml = c.age ? `<span class="ib-age-chip">${EscapeHtml(c.age)}</span>` : "";
+                const ageHtml = c.age ? `<span class="ib-age-chip">${EscapeHtml(c.age)} </span>` : "";
 
                 return `
                 <div class="ib-char">
@@ -1543,7 +1634,7 @@ function RenderRelCard(r, thoughts = [], prevState = null, rels = []) {
     const changed = GetChangedMetrics(prevState, r);
     
     // Возраст уже должен быть в r.age благодаря изменениям в ParseInfoboard
-    const ageHtml = r.age ? `<span class="ib-age-chip">${EscapeHtml(r.age)}</span>` : "";
+    const ageHtml = r.age ? `<span class="ib-age-chip">${EscapeHtml(r.age)} </span>` : "";
 
     return `
     <div class="ib-rel-card ib-rel-accordion ${changed.a || changed.tr || changed.l ? "ib-rel-updated" : ""}">
@@ -1680,7 +1771,7 @@ function RenderCompactRelations(state, prevState = null) {
         ${noChangedNote}
         ${rels.map(r => {
             const changed = GetChangedMetrics(prevState, r);
-            const ageHtml = r.age ? `<span class="ib-age-chip">${EscapeHtml(r.age)}</span>` : "";
+            const ageHtml = r.age ? `<span class="ib-age-chip">${EscapeHtml(r.age)} </span>` : "";
 
             return `
             <div class="ib-compact-rel-item">
@@ -1725,6 +1816,7 @@ function RenderBoard(state, isFresh = false, prevState = null) {
                 </div>
 
                 <div class="ib-compact-controls">
+	<div class="ib-control-btn ib-btn-pins" title="${EscapeHtml(T("pinnedList"))}">📍</div>
     <div class="ib-control-btn ib-btn-debug" title="${EscapeHtml(T("debugXml"))}">&lt;/&gt;</div>
     <div class="ib-control-btn ib-btn-full" title="Full">▣</div>
     <div class="ib-control-btn ib-btn-collapse" title="Collapse">✕</div>
@@ -1742,6 +1834,7 @@ function RenderBoard(state, isFresh = false, prevState = null) {
                     </div>
 
                    <div class="ib-panel-controls">
+	<div class="ib-control-btn ib-btn-pins" title="${EscapeHtml(T("pinnedList"))}">📍</div>
     <div class="ib-control-btn ib-btn-debug" title="${EscapeHtml(T("debugXml"))}">&lt;/&gt;</div>
     <div class="ib-control-btn ib-btn-compact" title="Compact">▤</div>
     <div class="ib-control-btn ib-btn-collapse" title="Collapse">—</div>
@@ -1812,6 +1905,7 @@ function WireAccordionControls(boardEl) {
 function WireBoardControls(boardEl) {
     if (!boardEl) return;
 
+    // 1. Кнопки режима (компактный/полный/свернутый)
     boardEl.querySelectorAll(".ib-btn-compact").forEach(btn => {
         btn.addEventListener("click", () => {
             const isCompact = boardEl.classList.contains("ib-mode-compact");
@@ -1839,68 +1933,142 @@ function WireBoardControls(boardEl) {
         });
     }
 
-boardEl.querySelectorAll(".ib-btn-debug").forEach(btn => {
-    btn.addEventListener("click", () => {
-        const host = boardEl.closest(".ib-board-host, #ib_floating_host");
-        const raw = host?.dataset?.rawXml || "";
-        if (!raw) return;
+    // 2. Кнопка показа сырого XML (Debug)
+    boardEl.querySelectorAll(".ib-btn-debug").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const host = boardEl.closest(".ib-board-host, #ib_floating_host");
+            const raw = host?.dataset?.rawXml || "";
+            if (!raw) return;
 
-        let debugWrap = host.querySelector(".ib-debug-wrap");
+            let debugWrap = host.querySelector(".ib-debug-wrap");
 
-        if (debugWrap) {
-            debugWrap.remove();
-            btn.classList.remove("ib-active");
-            return;
+            if (debugWrap) {
+                debugWrap.remove();
+                btn.classList.remove("ib-active");
+                return;
+            }
+
+            debugWrap = document.createElement("div");
+            debugWrap.className = "ib-debug-wrap";
+
+            const copyBtn = document.createElement("button");
+            copyBtn.type = "button";
+            copyBtn.className = "ib-debug-copy";
+            copyBtn.textContent = T("copyXml");
+
+            copyBtn.addEventListener("click", async (e) => {
+                e.stopPropagation();
+                try {
+                    await navigator.clipboard.writeText(raw);
+                    copyBtn.textContent = T("copiedXml");
+                    setTimeout(() => { copyBtn.textContent = T("copyXml"); }, 1200);
+                } catch (err) {
+                    console.warn("[IB] Copy XML failed:", err);
+                }
+            });
+
+            const pre = document.createElement("pre");
+            pre.className = "ib-debug-xml";
+            pre.textContent = raw;
+
+            debugWrap.appendChild(copyBtn);
+            debugWrap.appendChild(pre);
+            host.appendChild(debugWrap);
+
+            btn.classList.add("ib-active");
+        });
+    });
+
+    // 3. Кнопки закрепления внутри карточек NPC
+    boardEl.querySelectorAll(".ib-pin-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const name = btn.dataset.ibPin || "";
+            if (!name) return;
+            TogglePinnedNpc(name);
+            ReprocessChat();
+        });
+    });
+
+    // 4. Логика списка закреплённых (Кнопка 📍)
+    const closePinsPopupHandler = (e) => {
+        // Если клик был НЕ по попапу и НЕ по кнопке открытия -> закрываем
+        if (!e.target.closest(".ib-pins-popup") && !e.target.closest(".ib-btn-pins")) {
+            boardEl.querySelectorAll(".ib-pins-popup").forEach(p => p.remove());
+            document.removeEventListener("click", closePinsPopupHandler);
         }
+    };
 
-        debugWrap = document.createElement("div");
-        debugWrap.className = "ib-debug-wrap";
-
-        const copyBtn = document.createElement("button");
-        copyBtn.type = "button";
-        copyBtn.className = "ib-debug-copy";
-        copyBtn.textContent = T("copyXml");
-
-        copyBtn.addEventListener("click", async (e) => {
+    boardEl.querySelectorAll(".ib-btn-pins").forEach(btn => {
+        btn.addEventListener("click", (e) => {
             e.stopPropagation();
 
-            try {
-                await navigator.clipboard.writeText(raw);
-                copyBtn.textContent = T("copiedXml");
+            // Проверяем, открыт ли уже попап
+            const existingPopup = boardEl.querySelector(".ib-pins-popup");
 
-                setTimeout(() => {
-                    copyBtn.textContent = T("copyXml");
-                }, 1200);
-            } catch (err) {
-                console.warn("[IB] Copy XML failed:", err);
+            // Всегда чистим старые попапы перед действием
+            boardEl.querySelectorAll(".ib-pins-popup").forEach(p => p.remove());
+
+            // Если попап УЖЕ БЫЛ открыт, то мы его только что удалили выше.
+            // Выходим, чтобы не создавать его заново (Toggle OFF).
+            if (existingPopup) {
+                return;
             }
+
+            // Если попапа не было, создаем новый (Toggle ON)
+            const popup = document.createElement("div");
+            popup.className = "ib-pins-popup";
+
+            let content = `<div class="ib-pins-header">${EscapeHtml(T("pinnedList"))}</div>`;
+
+            if (gPinnedNpcs.length === 0) {
+                content += `<div class="ib-pins-empty">${EscapeHtml(T("noPinned"))}</div>`;
+            } else {
+                content += `<div class="ib-pins-list">`;
+                gPinnedNpcs.forEach(name => {
+                    content += `
+                    <div class="ib-pins-item">
+                        <span class="ib-pins-name">${EscapeHtml(name)}</span>
+                        <button class="ib-pins-unpin-btn" data-ib-unpin="${EscapeHtml(name)}">
+                            ${EscapeHtml(T("unpinFromList"))}
+                        </button>
+                    </div>`;
+                });
+                content += `</div>`;
+            }
+
+            popup.innerHTML = content;
+
+            boardEl.style.position = "relative"; // Для позиционирования
+            boardEl.appendChild(popup);
+
+            // Вычисляем координаты
+            const btnRect = btn.getBoundingClientRect();
+            const boardRect = boardEl.getBoundingClientRect();
+
+            popup.style.top = `${btnRect.bottom - boardRect.top + 2}px`;
+            popup.style.right = `${boardRect.right - btnRect.right}px`;
+
+            // Обработка клика по кнопке "Открепить" внутри списка
+            popup.querySelectorAll(".ib-pins-unpin-btn").forEach(unpinBtn => {
+                unpinBtn.addEventListener("click", (ev) => {
+                    ev.stopPropagation();
+                    const nameToUnpin = unpinBtn.dataset.ibUnpin;
+                    TogglePinnedNpc(nameToUnpin);
+                    popup.remove(); // Закрываем после действия
+                    ReprocessChat();
+                });
+            });
+
+            // Вешаем обработчик на документ для закрытия по клику "мимо"
+            // setTimeout нужен, чтобы текущий клик не закрыл попап сразу же
+            setTimeout(() => {
+                document.addEventListener("click", closePinsPopupHandler);
+            }, 10);
         });
-
-        const pre = document.createElement("pre");
-        pre.className = "ib-debug-xml";
-        pre.textContent = raw;
-
-        debugWrap.appendChild(copyBtn);
-        debugWrap.appendChild(pre);
-        host.appendChild(debugWrap);
-
-        btn.classList.add("ib-active");
     });
-});
 
-boardEl.querySelectorAll(".ib-pin-btn").forEach(btn => {
-    btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const name = btn.dataset.ibPin || "";
-        if (!name) return;
-
-        TogglePinnedNpc(name);
-        ReprocessChat();
-    });
-});
-    
     WireAccordionControls(boardEl);
 }
 
@@ -2448,16 +2616,137 @@ $("#ib_display_mode option[value='both']").text(T("displayBoth"));
     UpdateThemePreview();
 }
 
+// Функция принимает распарсенные данные и предыдущее состояние, возвращает "пропатченные" данные
+function PatchPinnedData(parsed, prevState) {
+    const prevChars = prevState?.chars || [];
+    const prevRels = prevState?.rels || [];
+    const prevThoughts = prevState?.thoughts || [];
+
+    // Определяем правильный тег для текущего языка
+    const offscreenTag = gLang === 'ru' ? 'за кадром' : 'offscreen'; 
+
+    // --- 1. Обработка персонажей (<chars>) ---
+    const newChars = parsed.chars || [];
+    const finalChars = [];
+    const processedNames = new Set();
+
+    // Обрабатываем тех, кого вернул ИИ
+    newChars.forEach(c => {
+        let charData = { ...c };
+        
+        // Если закреплен и помечен как "вышел" -> отменяем уход
+        if (IsPinnedNpc(c.name)) {
+            const hasLeftTag = (charData.tags || []).some(t => NormalizeName(t) === "left" || NormalizeName(t) === "вышел");
+            if (charData.presence?.key === "leftScene" || hasLeftTag) {
+                // Убираем теги выхода
+                charData.tags = (charData.tags || []).filter(t => NormalizeName(t) !== "left" && NormalizeName(t) !== "вышел");
+                // Добавляем тег "за кадром", если его нет
+                if (!charData.tags.includes(offscreenTag)) {
+                    charData.tags.push(offscreenTag);
+                }
+                charData.presence = { key: "offscreen", cls: "ib-presence-offscreen" };
+            }
+        }
+        
+        finalChars.push(charData);
+        processedNames.add(NormalizeName(c.name));
+    });
+
+    // Проверяем закрепленных, кого ИИ НЕ вернул
+    gPinnedNpcs.forEach(pinName => {
+        const normPin = NormalizeName(pinName);
+        if (!processedNames.has(normPin)) {
+            const oldChar = prevChars.find(ch => NormalizeName(ch.name) === normPin);
+            if (oldChar) {
+                // Восстанавливаем из прошлого состояния
+                // ВАЖНО: Добавляем тег "на периферии" в список тегов для промпта
+                const restoredTags = [...(oldChar.tags || [])];
+                if (!restoredTags.includes(offscreenTag)) {
+                    restoredTags.push(offscreenTag);
+                }
+
+                finalChars.push({ 
+                    ...oldChar, 
+                    tags: restoredTags,
+                    presence: { key: "offscreen", cls: "ib-presence-offscreen" } 
+                });
+            } else {
+                // Создаем новую запись
+                finalChars.push({
+                    name: pinName,
+                    icon: "📌",
+                    age: "",
+                    tags: ["pinned", offscreenTag], // Используем offscreenTag
+                    mood: "",
+                    presence: { key: "offscreen", cls: "ib-presence-offscreen" }
+                });
+            }
+        }
+    });
+
+    // --- 2. Обработка отношений (<rels>) ---
+    const newRels = parsed.rels || [];
+    const finalRels = [];
+    const processedRels = new Set();
+
+    newRels.forEach(r => {
+        finalRels.push(r);
+        processedRels.add(NormalizeName(r.source));
+    });
+
+    gPinnedNpcs.forEach(pinName => {
+        const normPin = NormalizeName(pinName);
+        if (!processedRels.has(normPin)) {
+            const oldRel = prevRels.find(rel => NormalizeName(rel.source) === normPin);
+            if (oldRel) {
+                finalRels.push(oldRel);
+            } else {
+                finalRels.push({
+                    source: pinName,
+                    target: GetUserName(),
+                    a: 0, ac: 0, tr: 0, tc: 0, l: 0, lc: 0,
+                    status: T("noStatus")
+                });
+            }
+        }
+    });
+
+    // --- 3. Обработка мыслей (<thoughts>) ---
+    const finalThoughts = parsed.thoughts ? [...parsed.thoughts] : [];
+    const thoughtNames = new Set(finalThoughts.map(t => NormalizeName(t.name)));
+    
+    gPinnedNpcs.forEach(pinName => {
+        const normPin = NormalizeName(pinName);
+        if (!thoughtNames.has(normPin)) {
+            const oldThought = prevThoughts.find(t => NormalizeName(t.name) === normPin);
+            if (oldThought) finalThoughts.push(oldThought);
+        }
+    });
+
+    // Возвращаем новый объект с обновленными данными
+    return {
+        ...parsed,
+        chars: finalChars,
+        rels: finalRels,
+        thoughts: finalThoughts
+    };
+}
+
 function ApplyParsedToState(parsed) {
     gLastRawXml = parsed.rawXml || gLastRawXml;
-    gState.time = parsed.time || gState.time;
-    gState.date = parsed.date || gState.date;
-    gState.weather = parsed.weather || gState.weather;
-    gState.loc = parsed.loc || gState.loc;
-    gState.chars = parsed.chars || [];
-    gState.rels = parsed.rels || [];
-    gState.thoughts = parsed.thoughts || [];
-    gState.nsfw = parsed.nsfw || null;
+    
+    // Применяем патч закрепленных персонажей (используем gState как предыдущее состояние)
+    const patched = PatchPinnedData(parsed, gState);
+
+    // Обновляем глобальное состояние
+    gState.time = patched.time || gState.time;
+    gState.date = patched.date || gState.date;
+    gState.weather = patched.weather || gState.weather;
+    gState.loc = patched.loc || gState.loc;
+    gState.chars = patched.chars;
+    gState.rels = patched.rels;
+    gState.thoughts = patched.thoughts;
+    gState.nsfw = patched.nsfw || null;
 }
 
 function ForceRepaint(el) {
@@ -2544,37 +2833,45 @@ function ReprocessChat() {
         const stMsg = stContext.chat[msgId];
         if (!stMsg || stMsg.is_user) return;
 
-const parsed = ParseInfoboard(stMsg.mes || "");
-const mesTextEl = node.querySelector(".mes_text");
-if (!mesTextEl) return;
+        const parsed = ParseInfoboard(stMsg.mes || "");
+        const mesTextEl = node.querySelector(".mes_text");
+        if (!mesTextEl) return;
 
-CleanupRawInfoboardDom(mesTextEl);
-RemoveRawXmlFromText(mesTextEl);
-CleanupRawInfoboardDom(mesTextEl);
+        CleanupRawInfoboardDom(mesTextEl);
+        RemoveRawXmlFromText(mesTextEl);
+        CleanupRawInfoboardDom(mesTextEl);
 
-if (!parsed) {
-    const host = mesTextEl.querySelector(".ib-board-host");
-    if (host) host.remove();
-    CleanupEmptyMessageNodes(mesTextEl);
-    return;
-}
+        if (!parsed) {
+            const host = mesTextEl.querySelector(".ib-board-host");
+            if (host) host.remove();
+            CleanupEmptyMessageNodes(mesTextEl);
+            return;
+        }
 
         if (parsed.rawXml) {
             gLastRawXml = parsed.rawXml;
         }
 
+        // --- ИСПОЛЬЗУЕМ PREVSTATE И ПАТЧИНГ ---
+        // Сохраняем состояние ДО этого сообщения
         const prevState = JSON.parse(JSON.stringify(rollingState));
 
-        rollingState.time = parsed.time || rollingState.time;
-        rollingState.date = parsed.date || rollingState.date;
-        rollingState.weather = parsed.weather || rollingState.weather;
-        rollingState.loc = parsed.loc || rollingState.loc;
-        rollingState.chars = parsed.chars || [];
-        rollingState.rels = parsed.rels || [];
-        rollingState.thoughts = parsed.thoughts || [];
-        rollingState.nsfw = parsed.nsfw || null;
+        // Патчим данные текущего сообщения, чтобы показать закрепленных
+        // (передаем rollingState, так как это контекст предыдущих сообщений)
+        const patchedParsed = PatchPinnedData(parsed, rollingState);
 
-        RenderBoardIntoMessage(mesTextEl, parsed, false, prevState);
+        // Обновляем "катящееся" состояние для следующих сообщений
+        rollingState.time = patchedParsed.time || rollingState.time;
+        rollingState.date = patchedParsed.date || rollingState.date;
+        rollingState.weather = patchedParsed.weather || rollingState.weather;
+        rollingState.loc = patchedParsed.loc || rollingState.loc;
+        rollingState.chars = patchedParsed.chars;
+        rollingState.rels = patchedParsed.rels;
+        rollingState.thoughts = patchedParsed.thoughts;
+        rollingState.nsfw = patchedParsed.nsfw || null;
+
+        // Рендерим с ПРОПАТЧЕННЫМИ данными
+        RenderBoardIntoMessage(mesTextEl, patchedParsed, false, prevState);
     });
 
     gState = rollingState;
@@ -2663,18 +2960,15 @@ jQuery(async () => {
     const stContext = SillyTavern.getContext();
     const injectionId = "IB_PromptInjection";
 
+    // ИЗМЕНЕНО: Функция теперь пустая, так как мы не используем автоматический инжект через API.
+    // Можно оставить её для очистки мусора при обновлениях, но основную работу делает макрос.
     function InjectPrompt() {
         try {
-            if (!gEnabled) {
-                stContext.setExtensionPrompt(injectionId, "", 1, 0);
-                return;
-            }
-
-            const systemPrompt = gLang === "en" ? kSystemPromptEn : kSystemPromptRu;
-            const fullPrompt = `${systemPrompt}\n\n${BuildStateInjection()}`;
-            stContext.setExtensionPrompt(injectionId, fullPrompt, 1, 0);
+            // Просто очищаем старый инжект, если он был, чтобы не было дублей при переключении режимов.
+            // В режиме "только макрос" это не обязательно, но безопасно.
+            stContext.setExtensionPrompt(injectionId, "", 0);
         } catch (e) {
-            console.error("[IB] InjectPrompt failed:", e);
+            console.error("[IB] InjectPrompt cleanup failed:", e);
         }
     }
 
@@ -2700,7 +2994,7 @@ jQuery(async () => {
     gCustomCss = localStorage.getItem(kCustomCssKey) || "";
     gHoverFx = localStorage.getItem(kHoverFxKey) !== "false";
     gHideThoughtLeaks = localStorage.getItem(kHideThoughtLeaksKey) !== "false";
-gCompactMode = localStorage.getItem(kCompactModeKey) || "top3";
+    gCompactMode = localStorage.getItem(kCompactModeKey) || "top3";
     gDisplayMode = localStorage.getItem(kDisplayModeKey) || "inline";
 
     LoadState();
@@ -2711,21 +3005,24 @@ gCompactMode = localStorage.getItem(kCompactModeKey) || "top3";
     $("#ib_lang").val(gLang);
     $("#ib_theme").val(gTheme);
     $("#ib_bar_style").val(gBarStyle);
+    
     $("#ib_compact_mode").on("change", function () {
-    gCompactMode = $(this).val();
-    localStorage.setItem(kCompactModeKey, gCompactMode);
-    ReprocessChat();
-});
+        gCompactMode = $(this).val();
+        localStorage.setItem(kCompactModeKey, gCompactMode);
+        ReprocessChat();
+    });
+    
     $("#ib_hide_raw").prop("checked", gHideRaw);
     $("#ib_hide_thought_leaks").on("change", function () {
-    gHideThoughtLeaks = $(this).is(":checked");
-    localStorage.setItem(kHideThoughtLeaksKey, String(gHideThoughtLeaks));
-    ReprocessChat();
-});
+        gHideThoughtLeaks = $(this).is(":checked");
+        localStorage.setItem(kHideThoughtLeaksKey, String(gHideThoughtLeaks));
+        ReprocessChat();
+    });
+    
     $("#ib_show_nsfw").prop("checked", gShowNsfw);
     $("#ib_hover_fx").prop("checked", gHoverFx);
     $("#ib_hide_thought_leaks").prop("checked", gHideThoughtLeaks);
-$("#ib_compact_mode").val(gCompactMode);
+    $("#ib_compact_mode").val(gCompactMode);
     $("#ib_display_mode").val(gDisplayMode);
     $("#ib_custom_css").val(gCustomCss);
 
@@ -2735,18 +3032,18 @@ $("#ib_compact_mode").val(gCompactMode);
     UpdateThemePreview();
 
     $("#ib_enabled").on("change", function () {
-    gEnabled = $(this).is(":checked");
-    localStorage.setItem(kEnabledKey, String(gEnabled));
-    UpdateStatusDisplay();
-    InjectPrompt();
-
-    if (gEnabled) {
-        ReprocessChat();
-    } else {
-        document.querySelectorAll(".ib-board-host").forEach(el => el.remove());
-        RemoveFloatingBoard();
-    }
-});
+        gEnabled = $(this).is(":checked");
+        localStorage.setItem(kEnabledKey, String(gEnabled));
+        UpdateStatusDisplay();
+        // InjectPrompt(); // Не нужно вызывать здесь, макрос сам вернет пустоту если выключено
+        
+        if (gEnabled) {
+            ReprocessChat();
+        } else {
+            document.querySelectorAll(".ib-board-host").forEach(el => el.remove());
+            RemoveFloatingBoard();
+        }
+    });
 
     $("#ib_lang").on("change", function () {
         gLang = $(this).val();
@@ -2755,10 +3052,11 @@ $("#ib_compact_mode").val(gCompactMode);
         UpdateStatusDisplay();
         UpdateLastUpdateDisplay();
         UpdateThemePreview();
-        InjectPrompt();
+        // InjectPrompt(); // Не нужно, макрос подхватит новый язык при генерации
         ReprocessChat();
     });
 
+    // ... (остальные обработчики событий без изменений) ...
     $("#ib_theme").on("change", function () {
         gTheme = $(this).val();
         localStorage.setItem(kThemeKey, gTheme);
@@ -2816,18 +3114,18 @@ $("#ib_compact_mode").val(gCompactMode);
         }
     });
 
-$("#ib_display_mode").on("change", function () {
-    gDisplayMode = $(this).val();
-    localStorage.setItem(kDisplayModeKey, gDisplayMode);
+    $("#ib_display_mode").on("change", function () {
+        gDisplayMode = $(this).val();
+        localStorage.setItem(kDisplayModeKey, gDisplayMode);
 
-    if (gDisplayMode === "inline") {
-        RemoveFloatingBoard();
-    } else {
-        RenderFloatingBoard();
-    }
+        if (gDisplayMode === "inline") {
+            RemoveFloatingBoard();
+        } else {
+            RenderFloatingBoard();
+        }
 
-    ReprocessChat();
-});
+        ReprocessChat();
+    });
     
     $("#ib_reprocess_chat").on("click", function () {
         ReprocessChat();
@@ -2849,9 +3147,10 @@ $("#ib_display_mode").on("change", function () {
         e.target.value = "";
     });
 
-    if (stContext.eventTypes.GENERATION_STARTED) {
-        stContext.eventSource.on(stContext.eventTypes.GENERATION_STARTED, InjectPrompt);
-    }
+    // УБРАНО: событие GENERATION_STARTED больше не нужно для инжекта
+    // if (stContext.eventTypes.GENERATION_STARTED) {
+    //     stContext.eventSource.on(stContext.eventTypes.GENERATION_STARTED, InjectPrompt);
+    // }
 
     if (stContext.eventTypes.CHAT_CHANGED) {
         stContext.eventSource.on(stContext.eventTypes.CHAT_CHANGED, OnChatChanged);
@@ -2866,27 +3165,48 @@ $("#ib_display_mode").on("change", function () {
     }
 
     if (stContext.eventTypes.MESSAGE_EDITED) {
-    stContext.eventSource.on(stContext.eventTypes.MESSAGE_EDITED, () => {
-        setTimeout(() => ReprocessChat(), 320);
-        setTimeout(() => ReprocessChat(), 900);
-    });
-}
+        stContext.eventSource.on(stContext.eventTypes.MESSAGE_EDITED, () => {
+            setTimeout(() => ReprocessChat(), 320);
+            setTimeout(() => ReprocessChat(), 900);
+        });
+    }
 
     if (stContext.eventTypes.MESSAGE_SWIPED) {
-    stContext.eventSource.on(stContext.eventTypes.MESSAGE_SWIPED, () => {
-        document.querySelectorAll(".ib-board-host").forEach(el => el.remove());
+        stContext.eventSource.on(stContext.eventTypes.MESSAGE_SWIPED, () => {
+            document.querySelectorAll(".ib-board-host").forEach(el => el.remove());
 
-        setTimeout(() => ReprocessChat(), 250);
-        setTimeout(() => ReprocessChat(), 700);
-        setTimeout(() => ReprocessChat(), 1300);
-        setTimeout(() => ReprocessChat(), 2000);
-    });
-}
+            setTimeout(() => ReprocessChat(), 250);
+            setTimeout(() => ReprocessChat(), 700);
+            setTimeout(() => ReprocessChat(), 1300);
+            setTimeout(() => ReprocessChat(), 2000);
+        });
+    }
 
     setTimeout(() => ReprocessChat(), 120);
     setTimeout(() => ReprocessChat(), 500);
     setTimeout(() => UpdateThemePreview(), 150);
 
-    InjectPrompt();
-    console.log("[IB] Infoboard extension ready");
+    // --- НАЧАЛО: Регистрация макроса {{InfoBoard}} ---
+    power_user.experimental_macro_engine = true;
+
+    macros.registry.registerMacro('InfoBoard', {
+        category: 'Infoboard',
+        aliases: [{ alias: 'IB' }],
+        description: 'Injects the Infoboard system prompt and current state. Place this in your System Prompt or Author\'s Note.',
+        handler: () => {
+            // Если расширение выключено, макрос вернет пустую строку
+            if (!gEnabled) return '';
+
+            // Генерируем промпт
+            const systemPrompt = gLang === "en" ? kSystemPromptEn : kSystemPromptRu;
+            const fullPrompt = `${systemPrompt}\n\n${BuildStateInjection()}`;
+            
+            return fullPrompt;
+        }
+    });
+    // --- КОНЕЦ: Регистрация макроса ---
+
+    // Вызов InjectPrompt здесь просто для очистки старого инжекта при загрузке
+    InjectPrompt(); 
+    console.log("[IB] Infoboard extension ready (Macro Mode)");
 });

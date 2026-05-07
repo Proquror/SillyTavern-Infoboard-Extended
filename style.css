@@ -11400,3 +11400,65 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     flex-wrap: wrap;
     align-items: center;
 }
+
+.ib-presence-offscreen {
+    background: rgba(128, 128, 128, 0.15);
+    color: #888;
+    border: 1px dashed rgba(128, 128, 128, 0.4);
+    opacity: 0.8;
+}
+
+.ib-pins-popup {
+    /* Убираем привязку к краям, так как позиционируем скриптом */
+    /* top: 100%;  <- УБРАТЬ */
+    /* right: 0;   <- УБРАТЬ */
+    
+    position: absolute; /* Оставляем absolute, но координаты задаются в JS */
+    z-index: 10000;     /* Поднимаем повыше над всеми элементами */
+    min-width: 200px;
+    background: var(--SmartThemeBotFace, #1a1a1a);
+    border: 1px solid var(--SmartThemeBorderColor, #333);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    padding: 8px;
+    margin-top: 2px; /* Небольшой отступ от кнопки */
+    color: var(--SmartThemeBodyColor, #ccc);
+}
+}
+
+.ib-pins-header {
+    font-weight: bold;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.ib-pins-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 0.9em;
+}
+
+.ib-pins-name {
+    margin-right: 10px;
+}
+
+.ib-pins-unpin-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #ff8f9f;
+    border-radius: 4px;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-size: 0.85em;
+}
+.ib-pins-unpin-btn:hover {
+    background: rgba(255, 143, 159, 0.2);
+}
+
+.ib-pins-empty {
+    opacity: 0.7;
+    font-size: 0.9em;
+}
