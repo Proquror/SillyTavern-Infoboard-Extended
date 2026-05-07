@@ -52,6 +52,7 @@ Built for roleplay, long scenes, and NPC-heavy chats.
 
 ### TODO
 - rewrite pin logic, make them stored for each chat separately
+- fix thoughts being displayed partially due to `«»` in the output line
 
 ---
 
