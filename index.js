@@ -308,6 +308,7 @@ const kLang = {
         nearby: "рядом",
         watching: "наблюдает",
         background: "на периферии",
+		offscreen: "за кадром",
         leftScene: "вышел",
         openNpc: "Открыть NPC",
         closeNpc: "Скрыть NPC",
@@ -377,6 +378,7 @@ unpinNpc: "Открепить NPC",
         nearby: "nearby",
         watching: "watching",
         background: "background",
+		offscreen: "offscreen",
         leftScene: "left",
         openNpc: "Open NPC",
         closeNpc: "Hide NPC",
@@ -420,14 +422,16 @@ Format:
 Optional only for explicitly intimate scenes:
 <nsfw f="" p="" />
 
-Rules:
+Rules of infoboard:
 - Output exactly one <infoboard> block in every message
 - Fill all values in Russian
+- CRITICAL: You MUST include ALL NPCs listed in the input [INFOBOARD STATE] in the output.
 - Add one <c /> for each NPC currently present
 - Use the exact same full NPC name in <chars name="">, <rel source="">, and <thk>
 - Never shorten NPC names in <rel>
 - tags: 1-4 short tags separated by |
-- Use tags to indicate scene presence when relevant, for example: focus | рядом | наблюдает | на периферии | вышел
+- Use exact tags to indicate scene presence when relevant, for example: focus | active | near | watching | background | left | offscreen | not present
+- If character leaves the scene use "left" ("ушёл")
 - Add one <rel /> per present NPC describing feelings toward {{user}} only
 - a, tr, l: from -100 to 100
 - ac, tc, lc: per-message change, usually within -5..+5 unless major event
@@ -440,12 +444,17 @@ Rules:
 - One NPC per line in <thk>
 - Never include {{user}}'s thoughts in <thk>
 - Never decide for {{user}} in character's thoughts; only character's opinions on {{user}}, on {{user}}'s previous actions and appearance
+- "offscreen" or "not present" characters must focus on THEIR OWN tasks and plans; they CAN NOT know what {{user}} says or does and their thoughts MUST NOT react to what {{user}} is doing right now in the scene
+- "background" characters are thouse who don't interact with {{user}}
+- "offscreen" characters are characters that left the scene and is pinned in the state
 - Omit <nsfw /> if the scene is not intimate
 - No extra XML tags or commentary
 - Never output private NPC thoughts in the visible narrative text; private thoughts must appear only inside <thk>
 - Never write <thk> thoughts as visible lines before the infoboard; no "Имя: мысль" thought list in narrative
 - mood: 1-3 words, visible current emotional state only; leave empty if unclear
 - Do not duplicate mood inside tags
+- Always generate <thk> thoughts for ALL pinned characters listed in the state, even if they are silent or in the offscreen
+- Maintain logical progression of relationship values (a, tr, l) for all present characters based on the conversation context
 
 <thk> strict format:
 - Use the exact full NPC name exactly as in <chars>
@@ -471,14 +480,16 @@ Format:
 Optional only for explicitly intimate scenes:
 <nsfw f="" p="" />
 
-Rules:
+Rules of infoboard:
 - Output exactly one <infoboard> block in every message
 - Fill all values in English
+- CRITICAL: You MUST include ALL NPCs listed in the input [INFOBOARD STATE] in the output.
 - Add one <c /> for each NPC currently present
 - Use the exact same full NPC name in <chars name="">, <rel source="">, and <thk>
 - Never shorten NPC names in <rel>
 - tags: 1-4 short tags separated by |
-- Use tags to indicate scene presence when relevant, for example: focus | near | watching | background | left
+- Use exact tags to indicate scene presence when relevant, for example: focus | active | near | watching | background | left | offscreen | not present
+- If character leaves the scene use "left"
 - Add one <rel /> per present NPC describing feelings toward {{user}} only
 - a, tr, l: from -100 to 100
 - ac, tc, lc: per-message change, usually within -5..+5 unless major event
@@ -491,12 +502,18 @@ Rules:
 - One NPC per line in <thk>
 - Never include {{user}}'s thoughts in <thk>
 - Never decide for {{user}} in character's thoughts; only character's opinions on {{user}}, on {{user}}'s previous actions and appearance
+- "offscreen" or "not present" characters must focus on THEIR OWN tasks and plans; they CAN NOT know what {{user}} says or does and their thoughts MUST NOT react to what {{user}} is doing right now in the scene
+- "background" characters are thouse who don't interact with {{user}}
+- "offscreen" or "not present" characters are characters that left the scene and is pinned in the state
+
 - Omit <nsfw /> if the scene is not intimate
 - No extra XML tags or commentary
 - Never output private NPC thoughts in the visible narrative text; private thoughts must appear only inside <thk>
 - Never write <thk> thoughts as visible lines before the infoboard; no "Имя: мысль" thought list in narrative
 - mood: 1-3 words, visible current emotional state only; leave empty if unclear
 - Do not duplicate mood inside tags
+- Always generate <thk> thoughts for ALL pinned characters listed in the state, even if they are silent or in the offscreen
+- Maintain logical progression of relationship values (a, tr, l) for all present characters based on the conversation context
 
 <thk> strict format:
 - Use the exact full NPC name exactly as in <chars>
@@ -956,6 +973,10 @@ function ParseFocusState(tags = []) {
         return { key: "watching", cls: "ib-presence-watch" };
     }
 
+    if (t.some(x => ["offscreen", "за кадром", "вне сцены", "not present"].includes(x))) {
+        return { key: "offscreen", cls: "ib-presence-offscreen" };
+    }
+
     if (t.some(x => ["background", "на периферии", "в фоне", "пассивен"].includes(x))) {
         return { key: "background", cls: "ib-presence-background" };
     }
@@ -995,6 +1016,11 @@ function IsPresenceTag(tag) {
         "на периферии",
         "в фоне",
         "пассивен",
+
+		"offscreen",
+        "за кадром",
+        "вне сцены",
+        "not present",
 
         "left",
         "вышел",
@@ -1113,7 +1139,7 @@ repairedXml: xmlForParsing !== xmlBlock ? xmlForParsing : ""
         .split("|")
         .map(t => t.trim())
         .filter(Boolean)
-        .slice(0, 4);
+        .slice(0, 6);
     
     // Добавляем парсинг возраста
     const age = c.getAttribute("age") || "";
@@ -1433,7 +1459,8 @@ function GetPresencePriority(c) {
         nearby: 2,
         watching: 3,
         background: 4,
-        leftScene: 5
+        offscreen: 5,
+        leftScene: 6
     };
 
     return map[key] ?? 10;
@@ -1462,11 +1489,11 @@ function RenderChars(chars) {
     <div class="ib-section ib-section-chars">
         <div class="ib-section-title">${GetThemeCharsIcon()} ${T("chars")}</div>
         <div class="ib-chars">
- ${SortCharsByPriority(chars).map(c => {
+${SortCharsByPriority(chars).map(c => {
                 const visibleTags = (c.tags || []).filter(tag => !IsPresenceTag(tag));
                 const mood = String(c.mood || "").trim();
                 // Рендерим возраст как красивую плашку рядом с именем
-                const ageHtml = c.age ? `<span class="ib-age-chip">${EscapeHtml(c.age)}</span>` : "";
+                const ageHtml = c.age ? `<span class="ib-age-chip">${EscapeHtml(c.age)} </span>` : "";
 
                 return `
                 <div class="ib-char">
@@ -1543,7 +1570,7 @@ function RenderRelCard(r, thoughts = [], prevState = null, rels = []) {
     const changed = GetChangedMetrics(prevState, r);
     
     // Возраст уже должен быть в r.age благодаря изменениям в ParseInfoboard
-    const ageHtml = r.age ? `<span class="ib-age-chip">${EscapeHtml(r.age)}</span>` : "";
+    const ageHtml = r.age ? `<span class="ib-age-chip">${EscapeHtml(r.age)} </span>` : "";
 
     return `
     <div class="ib-rel-card ib-rel-accordion ${changed.a || changed.tr || changed.l ? "ib-rel-updated" : ""}">
@@ -1680,7 +1707,7 @@ function RenderCompactRelations(state, prevState = null) {
         ${noChangedNote}
         ${rels.map(r => {
             const changed = GetChangedMetrics(prevState, r);
-            const ageHtml = r.age ? `<span class="ib-age-chip">${EscapeHtml(r.age)}</span>` : "";
+            const ageHtml = r.age ? `<span class="ib-age-chip">${EscapeHtml(r.age)} </span>` : "";
 
             return `
             <div class="ib-compact-rel-item">
@@ -2448,16 +2475,137 @@ $("#ib_display_mode option[value='both']").text(T("displayBoth"));
     UpdateThemePreview();
 }
 
+// Функция принимает распарсенные данные и предыдущее состояние, возвращает "пропатченные" данные
+function PatchPinnedData(parsed, prevState) {
+    const prevChars = prevState?.chars || [];
+    const prevRels = prevState?.rels || [];
+    const prevThoughts = prevState?.thoughts || [];
+
+    // Определяем правильный тег для текущего языка
+    const offscreenTag = gLang === 'ru' ? 'за кадром' : 'offscreen'; 
+
+    // --- 1. Обработка персонажей (<chars>) ---
+    const newChars = parsed.chars || [];
+    const finalChars = [];
+    const processedNames = new Set();
+
+    // Обрабатываем тех, кого вернул ИИ
+    newChars.forEach(c => {
+        let charData = { ...c };
+        
+        // Если закреплен и помечен как "вышел" -> отменяем уход
+        if (IsPinnedNpc(c.name)) {
+            const hasLeftTag = (charData.tags || []).some(t => NormalizeName(t) === "left" || NormalizeName(t) === "вышел");
+            if (charData.presence?.key === "leftScene" || hasLeftTag) {
+                // Убираем теги выхода
+                charData.tags = (charData.tags || []).filter(t => NormalizeName(t) !== "left" && NormalizeName(t) !== "вышел");
+                // Добавляем тег "за кадром", если его нет
+                if (!charData.tags.includes(offscreenTag)) {
+                    charData.tags.push(offscreenTag);
+                }
+                charData.presence = { key: "offscreen", cls: "ib-presence-offscreen" };
+            }
+        }
+        
+        finalChars.push(charData);
+        processedNames.add(NormalizeName(c.name));
+    });
+
+    // Проверяем закрепленных, кого ИИ НЕ вернул
+    gPinnedNpcs.forEach(pinName => {
+        const normPin = NormalizeName(pinName);
+        if (!processedNames.has(normPin)) {
+            const oldChar = prevChars.find(ch => NormalizeName(ch.name) === normPin);
+            if (oldChar) {
+                // Восстанавливаем из прошлого состояния
+                // ВАЖНО: Добавляем тег "на периферии" в список тегов для промпта
+                const restoredTags = [...(oldChar.tags || [])];
+                if (!restoredTags.includes(offscreenTag)) {
+                    restoredTags.push(offscreenTag);
+                }
+
+                finalChars.push({ 
+                    ...oldChar, 
+                    tags: restoredTags,
+                    presence: { key: "offscreen", cls: "ib-presence-offscreen" } 
+                });
+            } else {
+                // Создаем новую запись
+                finalChars.push({
+                    name: pinName,
+                    icon: "📌",
+                    age: "",
+                    tags: ["pinned", offscreenTag], // Используем offscreenTag
+                    mood: "",
+                    presence: { key: "offscreen", cls: "ib-presence-offscreen" }
+                });
+            }
+        }
+    });
+
+    // --- 2. Обработка отношений (<rels>) ---
+    const newRels = parsed.rels || [];
+    const finalRels = [];
+    const processedRels = new Set();
+
+    newRels.forEach(r => {
+        finalRels.push(r);
+        processedRels.add(NormalizeName(r.source));
+    });
+
+    gPinnedNpcs.forEach(pinName => {
+        const normPin = NormalizeName(pinName);
+        if (!processedRels.has(normPin)) {
+            const oldRel = prevRels.find(rel => NormalizeName(rel.source) === normPin);
+            if (oldRel) {
+                finalRels.push(oldRel);
+            } else {
+                finalRels.push({
+                    source: pinName,
+                    target: GetUserName(),
+                    a: 0, ac: 0, tr: 0, tc: 0, l: 0, lc: 0,
+                    status: T("noStatus")
+                });
+            }
+        }
+    });
+
+    // --- 3. Обработка мыслей (<thoughts>) ---
+    const finalThoughts = parsed.thoughts ? [...parsed.thoughts] : [];
+    const thoughtNames = new Set(finalThoughts.map(t => NormalizeName(t.name)));
+    
+    gPinnedNpcs.forEach(pinName => {
+        const normPin = NormalizeName(pinName);
+        if (!thoughtNames.has(normPin)) {
+            const oldThought = prevThoughts.find(t => NormalizeName(t.name) === normPin);
+            if (oldThought) finalThoughts.push(oldThought);
+        }
+    });
+
+    // Возвращаем новый объект с обновленными данными
+    return {
+        ...parsed,
+        chars: finalChars,
+        rels: finalRels,
+        thoughts: finalThoughts
+    };
+}
+
 function ApplyParsedToState(parsed) {
     gLastRawXml = parsed.rawXml || gLastRawXml;
-    gState.time = parsed.time || gState.time;
-    gState.date = parsed.date || gState.date;
-    gState.weather = parsed.weather || gState.weather;
-    gState.loc = parsed.loc || gState.loc;
-    gState.chars = parsed.chars || [];
-    gState.rels = parsed.rels || [];
-    gState.thoughts = parsed.thoughts || [];
-    gState.nsfw = parsed.nsfw || null;
+    
+    // Применяем патч закрепленных персонажей (используем gState как предыдущее состояние)
+    const patched = PatchPinnedData(parsed, gState);
+
+    // Обновляем глобальное состояние
+    gState.time = patched.time || gState.time;
+    gState.date = patched.date || gState.date;
+    gState.weather = patched.weather || gState.weather;
+    gState.loc = patched.loc || gState.loc;
+    gState.chars = patched.chars;
+    gState.rels = patched.rels;
+    gState.thoughts = patched.thoughts;
+    gState.nsfw = patched.nsfw || null;
 }
 
 function ForceRepaint(el) {
@@ -2544,37 +2692,45 @@ function ReprocessChat() {
         const stMsg = stContext.chat[msgId];
         if (!stMsg || stMsg.is_user) return;
 
-const parsed = ParseInfoboard(stMsg.mes || "");
-const mesTextEl = node.querySelector(".mes_text");
-if (!mesTextEl) return;
+        const parsed = ParseInfoboard(stMsg.mes || "");
+        const mesTextEl = node.querySelector(".mes_text");
+        if (!mesTextEl) return;
 
-CleanupRawInfoboardDom(mesTextEl);
-RemoveRawXmlFromText(mesTextEl);
-CleanupRawInfoboardDom(mesTextEl);
+        CleanupRawInfoboardDom(mesTextEl);
+        RemoveRawXmlFromText(mesTextEl);
+        CleanupRawInfoboardDom(mesTextEl);
 
-if (!parsed) {
-    const host = mesTextEl.querySelector(".ib-board-host");
-    if (host) host.remove();
-    CleanupEmptyMessageNodes(mesTextEl);
-    return;
-}
+        if (!parsed) {
+            const host = mesTextEl.querySelector(".ib-board-host");
+            if (host) host.remove();
+            CleanupEmptyMessageNodes(mesTextEl);
+            return;
+        }
 
         if (parsed.rawXml) {
             gLastRawXml = parsed.rawXml;
         }
 
+        // --- ИСПОЛЬЗУЕМ PREVSTATE И ПАТЧИНГ ---
+        // Сохраняем состояние ДО этого сообщения
         const prevState = JSON.parse(JSON.stringify(rollingState));
 
-        rollingState.time = parsed.time || rollingState.time;
-        rollingState.date = parsed.date || rollingState.date;
-        rollingState.weather = parsed.weather || rollingState.weather;
-        rollingState.loc = parsed.loc || rollingState.loc;
-        rollingState.chars = parsed.chars || [];
-        rollingState.rels = parsed.rels || [];
-        rollingState.thoughts = parsed.thoughts || [];
-        rollingState.nsfw = parsed.nsfw || null;
+        // Патчим данные текущего сообщения, чтобы показать закрепленных
+        // (передаем rollingState, так как это контекст предыдущих сообщений)
+        const patchedParsed = PatchPinnedData(parsed, rollingState);
 
-        RenderBoardIntoMessage(mesTextEl, parsed, false, prevState);
+        // Обновляем "катящееся" состояние для следующих сообщений
+        rollingState.time = patchedParsed.time || rollingState.time;
+        rollingState.date = patchedParsed.date || rollingState.date;
+        rollingState.weather = patchedParsed.weather || rollingState.weather;
+        rollingState.loc = patchedParsed.loc || rollingState.loc;
+        rollingState.chars = patchedParsed.chars;
+        rollingState.rels = patchedParsed.rels;
+        rollingState.thoughts = patchedParsed.thoughts;
+        rollingState.nsfw = patchedParsed.nsfw || null;
+
+        // Рендерим с ПРОПАТЧЕННЫМИ данными
+        RenderBoardIntoMessage(mesTextEl, patchedParsed, false, prevState);
     });
 
     gState = rollingState;

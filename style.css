@@ -11400,3 +11400,10 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     flex-wrap: wrap;
     align-items: center;
 }
+
+.ib-presence-offscreen {
+    background: rgba(128, 128, 128, 0.15);
+    color: #888;
+    border: 1px dashed rgba(128, 128, 128, 0.4);
+    opacity: 0.8;
+}
