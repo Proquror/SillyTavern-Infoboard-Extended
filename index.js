@@ -431,7 +431,7 @@ Format:
 Optional only for explicitly intimate scenes:
 <nsfw f="" p="" />
 
-Rules of infoboard:
+<infoboard_rules>
 - CRITICAL: Output exactly one <infoboard> block in every message
 - Fill all values in Russian except of presence
 - CRITICAL: You MUST include ALL NPCs listed in the [INFOBOARD STATE]
@@ -441,16 +441,24 @@ Rules of infoboard:
 - Never include User's character as an NPC in infoboard
 - age: age of the character (e.g., "24")
 - tags: 1-4 short tags separated by |
-- Never put presence info in "tags" attribute
-- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate present NPCs: focus | active | near | watching | background | offscreen | left
-- presence: "background" used for NPCs that don't interact with {{user}} but can be directly seen or clearly heard by {{user}}
-- presence: "left" is used ONLY for NPCs that are LEAVING the scene in your current output; NEVER use "left" for NPCs who left in previous turn
-- presence: "offscreen" or "not present" are STRICTLY for NPCs in [INFOBOARD STATE]
-- CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and has left the scene and/or is labeled as "offscreen" -> OMIT them completely from the output
+- time: per-message change, usually +5
 
-- "offscreen" or "not present" NPCs must focus on THEIR OWN tasks and plans independent from {{user}}'s
-- "offscreen" or "not present" NPCs CAN NOT know what {{user}} says or does; their thoughts MUST NOT reflect on what {{user}} is doing right now in the scene
-- "offscreen" or "not present" NPCs are NPCs that left the scene and is pinned in the state
+- Never put presence info in "tags" attribute
+- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate present NPCs:
+  1. "focus": means NPC is in the conversation AND physically touching {{user}}.
+  2. "active": means NPC is in the room, within {{user}}'s physical reach AND participating in {{user}}'s conversation or action REGARDLESS of distance.
+  3. "near": means NPC is in the room, within {{user}}'s physical reach, but passive and minding their own business (e.g., interacting with other NPCs, just being nearby).
+  4. "watching": means NPC is not actively participating, but intently paying attention and observing the scene.
+  5. "background": means NPC is not observing and not participating in {{user}}'s interactions; visible or audible (crowd, servants, patrons) but irrelevant to the current action (eg. on a balcony, far away in the room, around the corner or in another room).
+  6. "left": ALWAYS used ONLY for NPCs that are LEAVING the scene in your current output; NEVER use "left" for NPCs who left in previous turn.
+  7. "offscreen": means NPC's not physically present in the scene AND is STRICTLY RESERVED for NPCs in [INFOBOARD STATE].
+
+- "offscreen" NPCs must focus on THEIR OWN tasks and plans independent from {{user}}'s
+- "offscreen" NPCs CAN NOT know what {{user}} says or does; their thoughts MUST NOT reflect on what {{user}} is doing right now in the scene
+- "offscreen" NPCs are NPCs that left the scene and are pinned in [INFOBOARD STATE]
+
+- CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and is about to leave the scene -> mark them as "left" in the next output
+- CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and labeled as "left" and/or is labeled as "offscreen" -> OMIT them completely from the next output
 
 - Add one <rel /> per present NPC describing feelings toward {{user}} only
 - a, tr, l: from -100 to 100
@@ -481,7 +489,9 @@ Rules of infoboard:
 - Always write the name before the thought
 - Never shorten names
 - No markdown, quotes, asterisks, or brackets
-- Format only: Полное Имя: мысль`;
+- No thoughs of NPCs that are not listed in [INFOBOARD STATE]
+- Format only: Полное Имя: мысль
+</infoboard_rules>`;
 
 const kSystemPromptEn = `Infoboard:
 Append exactly one XML block at the end of every assistant response. Fill all values in English. Keep it concise, accurate, and updated every message.
@@ -500,7 +510,7 @@ Format:
 Optional only for explicitly intimate scenes:
 <nsfw f="" p="" />
 
-Rules of infoboard:
+<infoboard_rules>
 - CRITICAL: Output exactly one <infoboard> block in every message
 - Fill all values in English
 - CRITICAL: You MUST include ALL NPCs listed in the [INFOBOARD STATE]
@@ -510,17 +520,24 @@ Rules of infoboard:
 - Never include User's character as an NPC in infoboard
 - age: age of the character (e.g., "24")
 - tags: 1-4 short tags separated by |
+- time: per-message change, usually +5
+
 - Never put presence info in "tags" attribute
-- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate present NPCs: focus | active | near | watching | background | offscreen | left
-- presence: "background" used for NPCs that don't interact with {{user}} but can be directly seen or clearly heard by {{user}}
-- presence: "left" is used ONLY for NPCs that are LEAVING the scene in your current output; NEVER use "left" for NPCs who left in previous turn
-- presence: "offscreen" or "not present" are STRICTLY for NPCs in [INFOBOARD STATE]
+- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate present NPCs:
+  1. "focus": means NPC is in the conversation AND physically touching {{user}}.
+  2. "active": means NPC is in the room, within {{user}}'s physical reach AND participating in {{user}}'s conversation or action REGARDLESS of distance.
+  3. "near": means NPC is in the room, within {{user}}'s physical reach, but passive and minding their own business (e.g., interacting with other NPCs, just being nearby).
+  4. "watching": means NPC is not actively participating, but intently paying attention and observing the scene.
+  5. "background": means NPC is not observing and not participating in {{user}}'s interactions; visible or audible (crowd, servants, patrons) but irrelevant to the current action (eg. on a balcony, far away in the room, around the corner or in another room).
+  6. "left": ALWAYS used ONLY for NPCs that are LEAVING the scene in your current output; NEVER use "left" for NPCs who left in previous turn.
+  7. "offscreen": means NPC's not physically present in the scene AND is STRICTLY RESERVED for NPCs in [INFOBOARD STATE].
+
+- "offscreen" NPCs must focus on THEIR OWN tasks and plans independent from {{user}}'s
+- "offscreen" NPCs CAN NOT know what {{user}} says or does; their thoughts MUST NOT reflect on what {{user}} is doing right now in the scene
+- "offscreen" NPCs are NPCs that left the scene and are pinned in [INFOBOARD STATE]
+
 - CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and is about to leave the scene -> mark them as "left" in the next output
 - CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and labeled as "left" and/or is labeled as "offscreen" -> OMIT them completely from the next output
-
-- "offscreen" or "not present" NPCs must focus on THEIR OWN tasks and plans independent from {{user}}'s
-- "offscreen" or "not present" NPCs CAN NOT know what {{user}} says or does; their thoughts MUST NOT reflect on what {{user}} is doing right now in the scene
-- "offscreen" or "not present" NPCs are NPCs that left the scene and is pinned in the state
 
 - Add one <rel /> per present NPC describing feelings toward {{user}} only
 - a, tr, l: from -100 to 100
@@ -551,7 +568,9 @@ Rules of infoboard:
 - Always write the name before the thought
 - Never shorten names
 - No markdown, quotes, asterisks, or brackets
-- Format only: Full Name: thought`;
+- No thoughs of NPCs that are not listed in [INFOBOARD STATE]
+- Format only: Full Name: thought
+</infoboard_rules>`;
 
 const kDefaultState = {
     time: "???",
@@ -1298,10 +1317,10 @@ const pushRel = (rel) => {
 function BuildStateInjection() {
     const lines = [];
     lines.push("[INFOBOARD STATE]");
-    lines.push(`Time: ${gState.time}`);
-    lines.push(`Date: ${gState.date}`);
-    lines.push(`Weather: ${gState.weather}`);
-    lines.push(`Location: ${gState.loc}`);
+    //lines.push(`Time: ${gState.time}`);
+    //lines.push(`Date: ${gState.date}`);
+    //lines.push(`Weather: ${gState.weather}`);
+    //lines.push(`Location: ${gState.loc}`);
 
     if (gState.chars.length) {
         lines.push("NPCs:");
