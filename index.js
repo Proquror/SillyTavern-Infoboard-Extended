@@ -440,6 +440,7 @@ Rules:
 - No extra XML tags or commentary
 - Never output private NPC thoughts in the visible narrative text; private thoughts must appear only inside <thk>
 - Never write <thk> thoughts as visible lines before the infoboard; no "Имя: мысль" thought list in narrative
+- Private NPC thoughts no more than 30 words
 - mood: 1-3 words, visible current emotional state only; leave empty if unclear
 - Do not duplicate mood inside tags
 
@@ -489,6 +490,7 @@ Rules:
 - No extra XML tags or commentary
 - Never output private NPC thoughts in the visible narrative text; private thoughts must appear only inside <thk>
 - Never write <thk> thoughts as visible lines before the infoboard; no "Имя: мысль" thought list in narrative
+- Private NPC thoughts no more than 30 words
 - mood: 1-3 words, visible current emotional state only; leave empty if unclear
 - Do not duplicate mood inside tags
 
