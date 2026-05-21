@@ -427,6 +427,7 @@ Rules:
 - tags: 1-4 short tags separated by |
 - Use tags to indicate scene presence when relevant, for example: focus | рядом | наблюдает | на периферии | вышел
 - Add one <rel /> per present NPC describing feelings toward {{user}} only
+- Add no more then 1-2 <rel />
 - a, tr, l: from -100 to 100
 - ac, tc, lc: per-message change, usually within -5..+5 unless major event
 - Negative affection = aversion/dislike
@@ -493,6 +494,7 @@ Rules:
 - Private NPC thoughts no more than 30 words
 - mood: 1-3 words, visible current emotional state only; leave empty if unclear
 - Do not duplicate mood inside tags
+- Add no more then 1-2 <rel />
 
 <thk> strict format:
 - Use the exact full NPC name exactly as in <chars>
