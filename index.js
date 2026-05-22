@@ -2670,6 +2670,17 @@ if (!parsed) {
     RenderFloatingBoard();
 }
 
+function Debounce(fn, delay = 250) {
+    let timer = null;
+
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+    };
+}
+
+const ScheduleReprocessChat = Debounce(() => ReprocessChat(), 250);
+
 function RebuildStateFromCurrentChat() {
     const stContext = SillyTavern.getContext();
 
