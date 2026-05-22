@@ -259,7 +259,46 @@ obsidianregistry: {
         accent2: "#f3d889",
         text: "#f8eed5",
         danger: "#d69a62"
-    }
+    },
+
+    shockwave: {
+    label: {
+        ru: "Shockwave: фиолетовый техно-металл и неон",
+        en: "Shockwave: violet techno metal and neon"
+    },
+    bg: "#120b18",
+    bg2: "#261534",
+    accent: "#cc7cff",
+    accent2: "#ff71c8",
+    text: "#f3ebff",
+    danger: "#ff6a9d"
+},
+
+lockdown: {
+    label: {
+        ru: "Lockdown: серый металл, охотничий HUD и холодный зелёный неон",
+        en: "Lockdown: gray steel, hunter HUD and cold green neon"
+    },
+    bg: "#0d1114",
+    bg2: "#1c2327",
+    accent: "#86c98a",
+    accent2: "#a6b2b8",
+    text: "#e6ecef",
+    danger: "#d9876f"
+},
+
+hotrod: {
+    label: {
+        ru: "Hot Rod: чёрный, огонь и скорость",
+        en: "Hot Rod: black, fire and speed"
+    },
+    bg: "#120b08",
+    bg2: "#2a1208",
+    accent: "#ff8a2a",
+    accent2: "#ffcf63",
+    text: "#fff1d8",
+    danger: "#ff6f4f"
+}
 };
 
 const kLang = {
@@ -593,6 +632,21 @@ obsidianregistry: {
         neonquest: {
     main: "𝄃𝄃𝄂𝄂𝄀RP BOARD𝄁𝄃𝄂𝄂𝄃",
     sub: "█Err⃟⃤r⁴⁰⁴"
+},
+        
+        shockwave: {
+    main: "☣",
+    sub: "...𝚁𝚎𝚊𝚌𝚝𝚒𝚘𝚗 𝚝𝚛𝚊𝚌𝚔𝚒𝚗𝚐..."
+},
+        
+lockdown: {
+    main: "⯐",
+    sub: "🅣🅐🅡🅖🅔🅣 🅓🅔🅣🅔🅒🅣🅔🅓"
+},
+        
+hotrod: {
+    main: "▶Infoboard◀",
+    sub: "🏁...........🏎.."
 }
     };
 
@@ -612,6 +666,9 @@ function GetThemeLocationIcon(theme = gTheme) {
         if (theme === "casefile") return "🔍";
     if (theme === "obsidianregistry") return "⟡";
     if (theme === "neonquest") return "⚙️";
+    if (theme === "shockwave") return "⚛︎";
+if (theme === "lockdown") return "⌖";
+if (theme === "hotrod") return "▰";
      return facultyThemes.includes(theme) ? "📜" : "📍";
 }
 
@@ -625,6 +682,9 @@ function GetThemeCharsIcon(theme = gTheme) {
     if (theme === "casefile") return "ID";
     if (theme === "obsidianregistry") return "᯽";
     if (theme === "neonquest") return "👤";
+    if (theme === "shockwave") return "⚙";
+if (theme === "lockdown") return "◎";
+if (theme === "hotrod") return "▣";
         return facultyThemes.includes(theme) ? "🪶" : "💖";
 }
 
@@ -641,7 +701,10 @@ function GetThemeRelationsIcon(theme = gTheme) {
         bloodmoon: "🥀",
         casefile: "𖦏",
         obsidianregistry: "✶",
-        neonquest: "🤖"
+        neonquest: "🤖",
+        shockwave: "🧪",
+lockdown: "💥",
+hotrod: "➤",
     };
 
     return map[theme] || "🤍";
