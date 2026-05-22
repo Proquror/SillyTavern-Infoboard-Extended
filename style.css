@@ -11469,16 +11469,6 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
         0 2px 3px rgba(0,0,0,0.50) !important;
 }
 
-.ib-theme-shockwave .ib-title::before,
-.ib-theme-shockwave .ib-title::after {
-    content: "✦" !important;
-    display: inline-block !important;
-    margin: 0 10px !important;
-    color: #8c79a8 !important;
-    font-size: 10px !important;
-    opacity: 0.72 !important;
-    text-shadow: none !important;
-}
 
 .ib-theme-shockwave .ib-title-sub {
     display: none !important;
@@ -11549,33 +11539,6 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     overflow: hidden;
 }
 
-.ib-theme-lockdown .ib-title-wrap::before {
-    content: "⌖";
-    position: absolute;
-    right: 18px;
-    top: 3px;
-    width: 40px;
-    height: 40px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: #86c98a;
-    font-size: 22px;
-    line-height: 1;
-
-    border-radius: 50%;
-    border: 1px solid rgba(134, 201, 138, 0.24);
-    background:
-        radial-gradient(circle at center, rgba(134,201,138,0.12), transparent 62%),
-        rgba(6, 10, 11, 0.72);
-    box-shadow:
-        0 0 12px rgba(134,201,138,0.14),
-        inset 0 0 12px rgba(134,201,138,0.05);
-
-    pointer-events: none;
-}
 
 .ib-theme-lockdown .ib-title-wrap::after {
     content: "";
@@ -11742,30 +11705,53 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    opacity: 0.55;
+    opacity: 0.60;
     background:
+        /* верхний мягкий блик */
         linear-gradient(
             180deg,
-            rgba(255,255,255,0.12) 0%,
-            rgba(255,255,255,0.04) 34%,
+            rgba(255,255,255,0.10) 0%,
+            rgba(255,255,255,0.03) 30%,
             transparent 70%
         ),
 
-        /* тонкие энергетические линии */
+        /* тонкие энергетические прожилки */
+        linear-gradient(
+            180deg,
+            transparent 0%,
+            transparent 18%,
+            var(--ib-energon-line1) 20%,
+            transparent 24%,
+            transparent 46%,
+            var(--ib-energon-line2) 48%,
+            transparent 52%,
+            transparent 72%,
+            var(--ib-energon-line3) 74%,
+            transparent 78%,
+            transparent 100%
+        ),
+
+        /* лёгкое продольное свечение */
         linear-gradient(
             90deg,
             transparent 0%,
-            transparent 18%,
-            var(--ib-energon-line1) 18.5%,
-            transparent 19.2%,
-            transparent 42%,
-            var(--ib-energon-line2) 42.4%,
-            transparent 43.1%,
-            transparent 71%,
-            var(--ib-energon-line3) 71.4%,
-            transparent 72.0%,
+            rgba(255,255,255,0.03) 18%,
+            transparent 36%,
+            rgba(255,255,255,0.04) 54%,
+            transparent 72%,
+            rgba(255,255,255,0.025) 88%,
             transparent 100%
         ) !important;
+
+    background-size:
+        auto,
+        auto,
+        140px 100% !important;
+
+    background-repeat:
+        no-repeat,
+        no-repeat,
+        repeat-x !important;
 }
 
 .ib-bars-energon .ib-bar-fill::after {
