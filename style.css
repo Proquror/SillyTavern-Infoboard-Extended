@@ -11368,50 +11368,50 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 /* ---------- SHOCKWAVE ---------- */
 
 .ib-theme-shockwave {
-    --ib-bg-1: #120b18;
-    --ib-bg-2: #261534;
-    --ib-bg-3: #07050b;
+    --ib-bg-1: #09070d;
+    --ib-bg-2: #16111f;
+    --ib-bg-3: #030305;
 
-    --ib-border: rgba(203, 108, 255, 0.28);
-    --ib-border-neon: rgba(255, 113, 200, 0.22);
-    --ib-soft-border: rgba(203, 108, 255, 0.14);
+    --ib-border: rgba(152, 128, 180, 0.22);
+    --ib-border-neon: rgba(255, 113, 200, 0.16);
+    --ib-soft-border: rgba(152, 128, 180, 0.10);
 
-    --ib-text: #f3ebff;
-    --ib-muted: #c4a6dc;
-    --ib-dim: #7d5c95;
+    --ib-text: #f1ebf8;
+    --ib-muted: #b9a8c8;
+    --ib-dim: #746783;
 
-    --ib-accent: #cc7cff;
+    --ib-accent: #b88cff;
     --ib-accent-2: #ff71c8;
 
     --ib-green: #78ffd0;
     --ib-blue: #7cc8ff;
-    --ib-purple: #cc7cff;
-    --ib-warm: #ffca7a;
+    --ib-purple: #b88cff;
+    --ib-warm: #c7b0ff;
     --ib-danger: #ff6a9d;
 
-    --ib-chip-bg: rgba(203, 108, 255, 0.12);
-    --ib-chip-border: rgba(255, 113, 200, 0.24);
+    --ib-chip-bg: rgba(184, 140, 255, 0.10);
+    --ib-chip-border: rgba(255, 113, 200, 0.18);
 
-    --ib-shadow: 0 14px 34px rgba(5, 2, 12, 0.58);
+    --ib-shadow: 0 14px 34px rgba(0, 0, 0, 0.68);
     --ib-neon:
-        0 0 18px rgba(203, 108, 255, 0.12),
-        0 0 28px rgba(255, 113, 200, 0.06);
+        0 0 16px rgba(184, 140, 255, 0.08),
+        0 0 24px rgba(255, 113, 200, 0.04);
 
     --ib-header-glow:
-        radial-gradient(circle at top right, rgba(203, 108, 255, 0.10), transparent 42%),
-        radial-gradient(circle at bottom left, rgba(255, 113, 200, 0.06), transparent 40%);
+        radial-gradient(circle at top right, rgba(184, 140, 255, 0.07), transparent 42%),
+        radial-gradient(circle at bottom left, rgba(255, 113, 200, 0.04), transparent 40%);
 }
 
 .ib-theme-shockwave .ib-board {
     background:
-        radial-gradient(circle at 84% 10%, rgba(255, 113, 200, 0.12), transparent 22%),
-        radial-gradient(circle at 16% 88%, rgba(203, 108, 255, 0.08), transparent 28%),
-        linear-gradient(135deg, #120b18, #261534 52%, #07050b);
-    border-color: rgba(203, 108, 255, 0.28);
+        radial-gradient(circle at 84% 10%, rgba(255, 113, 200, 0.08), transparent 20%),
+        radial-gradient(circle at 16% 88%, rgba(184, 140, 255, 0.05), transparent 26%),
+        linear-gradient(135deg, #09070d, #16111f 52%, #030305);
+    border-color: rgba(152, 128, 180, 0.22);
     box-shadow:
-        0 14px 34px rgba(5, 2, 12, 0.58),
-        0 0 18px rgba(203, 108, 255, 0.10),
-        0 0 28px rgba(255, 113, 200, 0.06);
+        0 14px 34px rgba(0, 0, 0, 0.68),
+        0 0 14px rgba(184, 140, 255, 0.07),
+        0 0 20px rgba(255, 113, 200, 0.04);
 }
 
 .ib-theme-shockwave .ib-title-wrap {
@@ -11429,20 +11429,18 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     content: "";
     position: absolute;
     right: 16px;
-    top: 14px;
-    width: 112px;
-    height: 58px;
+    top: 16px;
+    width: 72px;
+    height: 42px;
     border-radius: 10px;
     background:
-        radial-gradient(circle at 50% 45%, rgba(255,113,200,0.20), transparent 20%),
-        radial-gradient(circle at 50% 55%, rgba(203,108,255,0.18), transparent 34%),
-        linear-gradient(180deg, rgba(255,255,255,0.06), transparent 40%),
-        linear-gradient(135deg, rgba(20, 10, 30, 0.88), rgba(50, 20, 70, 0.72));
-    border: 1px solid rgba(255,113,200,0.18);
+        radial-gradient(circle at 62% 50%, rgba(255,113,200,0.16), transparent 18%),
+        radial-gradient(circle at 50% 52%, rgba(184,140,255,0.14), transparent 30%),
+        linear-gradient(135deg, rgba(12,10,18,0.92), rgba(42,24,58,0.72));
+    border: 1px solid rgba(255,113,200,0.14);
     box-shadow:
-        0 0 14px rgba(203,108,255,0.16),
-        0 0 22px rgba(255,113,200,0.08),
-        inset 0 0 18px rgba(255,113,200,0.04);
+        0 0 12px rgba(184,140,255,0.10),
+        inset 0 0 14px rgba(255,113,200,0.03);
     pointer-events: none;
 }
 
@@ -11450,7 +11448,7 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     content: "";
     position: absolute;
     left: 18px;
-    right: 142px;
+    right: 96px;
     bottom: 12px;
     height: 2px;
     background:
@@ -11536,14 +11534,14 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     content: "⌖";
     position: absolute;
     right: 18px;
-    top: 10px;
-    width: 52px;
-    height: 52px;
+    top: 14px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #86c98a;
-    font-size: 28px;
+    font-size: 22px;
     line-height: 1;
     border-radius: 50%;
     border: 1px solid rgba(134, 201, 138, 0.24);
@@ -11561,7 +11559,7 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     content: "";
     position: absolute;
     left: 18px;
-    right: 86px;
+    right: 72px;
     bottom: 12px;
     height: 1px;
     background:
@@ -11589,17 +11587,17 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 /* ---------- HOT ROD ---------- */
 
 .ib-theme-hotrod {
-    --ib-bg-1: #120b08;
-    --ib-bg-2: #2a1208;
-    --ib-bg-3: #070403;
+    --ib-bg-1: #070403;
+    --ib-bg-2: #140905;
+    --ib-bg-3: #020101;
 
     --ib-border: rgba(255, 138, 42, 0.24);
-    --ib-border-neon: rgba(255, 207, 99, 0.18);
-    --ib-soft-border: rgba(255, 138, 42, 0.12);
+    --ib-border-neon: rgba(255, 207, 99, 0.14);
+    --ib-soft-border: rgba(255, 138, 42, 0.10);
 
     --ib-text: #fff1d8;
-    --ib-muted: #e0b58a;
-    --ib-dim: #9c6c4a;
+    --ib-muted: #d9aa7f;
+    --ib-dim: #8e5d3d;
 
     --ib-accent: #ff8a2a;
     --ib-accent-2: #ffcf63;
@@ -11610,29 +11608,29 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     --ib-warm: #ffb84d;
     --ib-danger: #ff6f4f;
 
-    --ib-chip-bg: rgba(255, 138, 42, 0.10);
-    --ib-chip-border: rgba(255, 207, 99, 0.22);
+    --ib-chip-bg: rgba(255, 138, 42, 0.08);
+    --ib-chip-border: rgba(255, 207, 99, 0.16);
 
-    --ib-shadow: 0 14px 34px rgba(4, 1, 0, 0.62);
+    --ib-shadow: 0 14px 34px rgba(0, 0, 0, 0.72);
     --ib-neon:
-        0 0 16px rgba(255, 138, 42, 0.10),
-        0 0 24px rgba(255, 207, 99, 0.05);
+        0 0 14px rgba(255, 138, 42, 0.08),
+        0 0 20px rgba(255, 207, 99, 0.04);
 
     --ib-header-glow:
-        radial-gradient(circle at top right, rgba(255, 138, 42, 0.12), transparent 40%),
-        radial-gradient(circle at bottom left, rgba(255, 207, 99, 0.06), transparent 42%);
+        radial-gradient(circle at top right, rgba(255, 138, 42, 0.10), transparent 40%),
+        radial-gradient(circle at bottom left, rgba(255, 207, 99, 0.04), transparent 42%);
 }
 
 .ib-theme-hotrod .ib-board {
     background:
-        radial-gradient(circle at 84% 10%, rgba(255, 138, 42, 0.12), transparent 22%),
-        radial-gradient(circle at 16% 88%, rgba(255, 207, 99, 0.08), transparent 28%),
-        linear-gradient(135deg, #120b08, #2a1208 52%, #070403);
-    border-color: rgba(255, 138, 42, 0.24);
+        radial-gradient(circle at 84% 10%, rgba(255, 138, 42, 0.10), transparent 20%),
+        radial-gradient(circle at 16% 88%, rgba(255, 207, 99, 0.05), transparent 26%),
+        linear-gradient(135deg, #070403, #140905 52%, #020101);
+    border-color: rgba(255, 138, 42, 0.22);
     box-shadow:
-        0 14px 34px rgba(4, 1, 0, 0.62),
-        0 0 16px rgba(255, 138, 42, 0.10),
-        0 0 24px rgba(255, 207, 99, 0.05);
+        0 14px 34px rgba(0, 0, 0, 0.72),
+        0 0 14px rgba(255, 138, 42, 0.08),
+        0 0 20px rgba(255, 207, 99, 0.04);
 }
 
 .ib-theme-hotrod .ib-title-wrap {
@@ -11691,26 +11689,27 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 /* ---------- ENERGON BAR STYLE ---------- */
 
 .ib-bars-energon .ib-bar {
-    height: 10px;
+    height: 11px;
     border-radius: 999px;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.05);
     background:
-        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.28)),
-        rgba(0,0,0,0.46) !important;
+        linear-gradient(180deg, rgba(255,255,255,0.025), rgba(0,0,0,0.34)),
+        rgba(0,0,0,0.58) !important;
     box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.04),
-        inset 0 -1px 2px rgba(0,0,0,0.34),
-        0 0 8px rgba(0,0,0,0.18);
+        inset 0 1px 1px rgba(255,255,255,0.03),
+        inset 0 -1px 2px rgba(0,0,0,0.42),
+        0 0 6px rgba(0,0,0,0.18);
 }
 
 .ib-bars-energon .ib-bar-fill {
     position: relative;
     border-radius: 999px;
-    filter: saturate(1.12) brightness(0.96);
+    filter: saturate(0.92) brightness(0.82);
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.22),
-        0 0 10px currentColor;
+        inset 0 1px 0 rgba(255,255,255,0.12),
+        0 0 6px currentColor,
+        0 0 12px color-mix(in srgb, currentColor 40%, transparent);
     background:
         linear-gradient(90deg, var(--ib-energon-a1), var(--ib-energon-a2)) !important;
 }
@@ -11722,13 +11721,13 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     background:
         repeating-linear-gradient(
             90deg,
-            rgba(255,255,255,0.16) 0,
-            rgba(255,255,255,0.16) 1px,
+            rgba(255,255,255,0.06) 0,
+            rgba(255,255,255,0.06) 1px,
             transparent 1px,
-            transparent 12px
+            transparent 14px
         ),
-        linear-gradient(180deg, rgba(255,255,255,0.22), transparent 40%, transparent 100%);
-    opacity: 0.48;
+        linear-gradient(180deg, rgba(255,255,255,0.14), transparent 38%, transparent 100%);
+    opacity: 0.34;
     pointer-events: none;
     border-radius: inherit;
 }
@@ -11738,68 +11737,67 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     position: absolute;
     right: 0;
     top: 50%;
-    transform: translate(40%, -50%);
-    width: 9px;
-    height: 9px;
+    transform: translate(35%, -50%);
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: currentColor;
     box-shadow:
-        0 0 8px currentColor,
-        0 0 16px currentColor;
+        0 0 6px currentColor,
+        0 0 10px color-mix(in srgb, currentColor 52%, transparent);
+    opacity: 0.72;
     pointer-events: none;
 }
 
 .ib-bars-energon .ib-mini-stat {
-    border-color: rgba(255,255,255,0.08);
-    background: rgba(0,0,0,0.26);
+    border-color: rgba(255,255,255,0.07);
+    background: rgba(0,0,0,0.30);
 }
 
 .ib-bars-energon .ib-mini-stat-progress {
     box-shadow:
-        0 0 6px currentColor,
-        0 0 12px currentColor;
+        0 0 4px currentColor,
+        0 0 8px color-mix(in srgb, currentColor 48%, transparent);
 }
 
-/* Energon colors by relationship type */
+/* affection positive — cold green energon */
 .ib-bars-energon .ib-bar-affection-pos {
-    --ib-energon-a1: #46f0c5;
-    --ib-energon-a2: #219d7b;
-    color: #7fffe0;
+    --ib-energon-a1: #42c7aa;
+    --ib-energon-a2: #216a5d;
+    color: #5edfc3;
 }
 
+/* affection negative — corrupted warm red */
 .ib-bars-energon .ib-bar-affection-neg {
-    --ib-energon-a1: #ff8b7d;
-    --ib-energon-a2: #b83b46;
-    color: #ffb0a8;
+    --ib-energon-a1: #c86f66;
+    --ib-energon-a2: #742e38;
+    color: #d98a83;
 }
 
+/* trust positive — blue energon */
 .ib-bars-energon .ib-bar-trust-pos {
-    --ib-energon-a1: #6bd6ff;
-    --ib-energon-a2: #2f7cff;
-    color: #9fe5ff;
+    --ib-energon-a1: #58b8e8;
+    --ib-energon-a2: #29598d;
+    color: #7cd0f5;
 }
 
+/* trust negative — amber unstable energon */
 .ib-bars-energon .ib-bar-trust-neg {
-    --ib-energon-a1: #d8b86a;
-    --ib-energon-a2: #9b6b2f;
-    color: #f4d18c;
+    --ib-energon-a1: #c89452;
+    --ib-energon-a2: #744c24;
+    color: #deb175;
 }
 
+/* love positive — violet/pink energon */
 .ib-bars-energon .ib-bar-love-pos {
-    --ib-energon-a1: #d77cff;
-    --ib-energon-a2: #8f3cff;
-    color: #e7bcff;
+    --ib-energon-a1: #b06ad8;
+    --ib-energon-a2: #5e2f8d;
+    color: #cf95ee;
 }
 
+/* love negative — deep magenta corruption */
 .ib-bars-energon .ib-bar-love-neg {
-    --ib-energon-a1: #ff5d8f;
-    --ib-energon-a2: #a82661;
-    color: #ff9fbd;
-}
-
-/* optional: Energon pairings */
-.ib-theme-shockwave.ib-bars-energon .ib-bar,
-.ib-theme-lockdown.ib-bars-energon .ib-bar,
-.ib-theme-hotrod.ib-bars-energon .ib-bar {
-    border-color: rgba(255,255,255,0.06);
+    --ib-energon-a1: #c04a7d;
+    --ib-energon-a2: #6b2345;
+    color: #dc6b99;
 }
