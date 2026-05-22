@@ -2656,8 +2656,7 @@ function OnChatChanged() {
 
     if (!gEnabled) return;
 
-    setTimeout(() => ReprocessChat(), 180);
-    setTimeout(() => ReprocessChat(), 600);
+ScheduleReprocessChat();
 }
 
 function UpdateStatusDisplay() {
@@ -2924,31 +2923,22 @@ $("#ib_display_mode").on("change", function () {
         stContext.eventSource.on(stContext.eventTypes.CHAT_CHANGED, OnChatChanged);
     }
 
-    if (stContext.eventTypes.MESSAGE_RECEIVED) {
-        stContext.eventSource.on(stContext.eventTypes.MESSAGE_RECEIVED, () => {
-            setTimeout(() => ReprocessChat(), 250);
-            setTimeout(() => ReprocessChat(), 700);
-            setTimeout(() => ReprocessChat(), 1400);
-        });
-    }
+if (stContext.eventTypes.MESSAGE_RECEIVED) {
+    stContext.eventSource.on(stContext.eventTypes.MESSAGE_RECEIVED, () => {
+        ScheduleReprocessChat();
+    });
+}
 
-    if (stContext.eventTypes.MESSAGE_EDITED) {
+if (stContext.eventTypes.MESSAGE_EDITED) {
     stContext.eventSource.on(stContext.eventTypes.MESSAGE_EDITED, () => {
-        setTimeout(() => ReprocessChat(), 320);
-        setTimeout(() => ReprocessChat(), 900);
+        ScheduleReprocessChat();
     });
 }
 
 if (stContext.eventTypes.MESSAGE_SWIPED) {
     stContext.eventSource.on(stContext.eventTypes.MESSAGE_SWIPED, () => {
-        RebuildStateFromCurrentChat();
-
         document.querySelectorAll(".ib-board-host").forEach(el => el.remove());
-
-        setTimeout(() => ReprocessChat(), 120);
-        setTimeout(() => ReprocessChat(), 350);
-        setTimeout(() => ReprocessChat(), 800);
-        setTimeout(() => RenderFloatingBoard(), 900);
+        ScheduleReprocessChat();
     });
 }
 
