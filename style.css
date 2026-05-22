@@ -11368,109 +11368,143 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 /* ---------- SHOCKWAVE ---------- */
 
 .ib-theme-shockwave {
-    --ib-bg-1: #09070d;
-    --ib-bg-2: #16111f;
-    --ib-bg-3: #030305;
+    --ib-bg-1: #050407;
+    --ib-bg-2: #120d18;
+    --ib-bg-3: #020203;
 
-    --ib-border: rgba(152, 128, 180, 0.22);
-    --ib-border-neon: rgba(255, 113, 200, 0.16);
-    --ib-soft-border: rgba(152, 128, 180, 0.10);
+    --ib-border: rgba(118, 98, 140, 0.24);
+    --ib-border-neon: rgba(214, 116, 255, 0.18);
+    --ib-soft-border: rgba(118, 98, 140, 0.10);
 
     --ib-text: #f1ebf8;
-    --ib-muted: #b9a8c8;
-    --ib-dim: #746783;
+    --ib-muted: #b7a8c4;
+    --ib-dim: #726382;
 
-    --ib-accent: #b88cff;
-    --ib-accent-2: #ff71c8;
+    --ib-accent: #b97cff;
+    --ib-accent-2: #f26dff;
 
     --ib-green: #78ffd0;
     --ib-blue: #7cc8ff;
-    --ib-purple: #b88cff;
-    --ib-warm: #c7b0ff;
-    --ib-danger: #ff6a9d;
+    --ib-purple: #b97cff;
+    --ib-warm: #d6b3ff;
+    --ib-danger: #ff6aa2;
 
-    --ib-chip-bg: rgba(184, 140, 255, 0.10);
-    --ib-chip-border: rgba(255, 113, 200, 0.18);
+    --ib-chip-bg: rgba(185,124,255,0.08);
+    --ib-chip-border: rgba(242,109,255,0.16);
 
-    --ib-shadow: 0 14px 34px rgba(0, 0, 0, 0.68);
+    --ib-shadow: 0 14px 34px rgba(0, 0, 0, 0.72);
     --ib-neon:
-        0 0 16px rgba(184, 140, 255, 0.08),
-        0 0 24px rgba(255, 113, 200, 0.04);
+        0 0 14px rgba(185,124,255,0.07),
+        0 0 20px rgba(242,109,255,0.03);
 
     --ib-header-glow:
-        radial-gradient(circle at top right, rgba(184, 140, 255, 0.07), transparent 42%),
-        radial-gradient(circle at bottom left, rgba(255, 113, 200, 0.04), transparent 40%);
+        radial-gradient(circle at top right, rgba(185,124,255,0.06), transparent 42%),
+        radial-gradient(circle at bottom left, rgba(242,109,255,0.03), transparent 40%);
 }
 
 .ib-theme-shockwave .ib-board {
     background:
-        radial-gradient(circle at 84% 10%, rgba(255, 113, 200, 0.08), transparent 20%),
-        radial-gradient(circle at 16% 88%, rgba(184, 140, 255, 0.05), transparent 26%),
-        linear-gradient(135deg, #09070d, #16111f 52%, #030305);
-    border-color: rgba(152, 128, 180, 0.22);
+        radial-gradient(circle at 86% 8%, rgba(242,109,255,0.06), transparent 20%),
+        radial-gradient(circle at 14% 90%, rgba(185,124,255,0.04), transparent 24%),
+        linear-gradient(135deg, #050407, #120d18 52%, #020203);
+    border-color: rgba(118, 98, 140, 0.22);
     box-shadow:
-        0 14px 34px rgba(0, 0, 0, 0.68),
-        0 0 14px rgba(184, 140, 255, 0.07),
-        0 0 20px rgba(255, 113, 200, 0.04);
+        0 14px 34px rgba(0, 0, 0, 0.72),
+        0 0 12px rgba(185,124,255,0.06),
+        0 0 18px rgba(242,109,255,0.03);
 }
 
 .ib-theme-shockwave .ib-title-wrap {
-    border-color: rgba(203, 108, 255, 0.22);
+    min-height: 74px !important;
+    padding: 14px 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+
+    border: 1px solid rgba(118, 98, 140, 0.20) !important;
+    border-radius: 8px !important;
+
     background:
-        linear-gradient(135deg, rgba(255,255,255,0.030), rgba(255,255,255,0.006)),
-        rgba(10, 6, 16, 0.56);
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            transparent 14%,
+            rgba(185,124,255,0.10) 24%,
+            rgba(242,109,255,0.14) 50%,
+            rgba(124,200,255,0.10) 76%,
+            transparent 86%,
+            transparent 100%
+        ) center calc(50% + 14px) / 420px 1px no-repeat,
+        linear-gradient(135deg, rgba(255,255,255,0.020), rgba(255,255,255,0.004)),
+        rgba(8, 6, 12, 0.72) !important;
+
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.04),
-        inset 0 0 18px rgba(203,108,255,0.03);
-    overflow: hidden;
+        inset 0 1px 0 rgba(255,255,255,0.03),
+        inset 0 0 14px rgba(185,124,255,0.02),
+        0 0 12px rgba(185,124,255,0.03) !important;
 }
 
 .ib-theme-shockwave .ib-title-wrap::before {
-    content: "";
+    content: "⚗";
     position: absolute;
-    right: 16px;
-    top: 16px;
-    width: 72px;
-    height: 42px;
-    border-radius: 10px;
-    background:
-        radial-gradient(circle at 62% 50%, rgba(255,113,200,0.16), transparent 18%),
-        radial-gradient(circle at 50% 52%, rgba(184,140,255,0.14), transparent 30%),
-        linear-gradient(135deg, rgba(12,10,18,0.92), rgba(42,24,58,0.72));
-    border: 1px solid rgba(255,113,200,0.14);
-    box-shadow:
-        0 0 12px rgba(184,140,255,0.10),
-        inset 0 0 14px rgba(255,113,200,0.03);
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #c996ff;
+    font-size: 12px;
+    line-height: 1;
+    opacity: 0.78;
+    text-shadow:
+        0 0 8px rgba(185,124,255,0.22),
+        0 0 14px rgba(242,109,255,0.08);
     pointer-events: none;
 }
 
 .ib-theme-shockwave .ib-title-wrap::after {
-    content: "";
-    position: absolute;
-    left: 18px;
-    right: 96px;
-    bottom: 12px;
-    height: 2px;
-    background:
-        linear-gradient(90deg, transparent, #cc7cff, #ff71c8, #7cc8ff, transparent);
-    box-shadow: 0 0 12px rgba(255,113,200,0.16);
-    opacity: 0.9;
-    pointer-events: none;
-}
-
-.ib-theme-shockwave .ib-header::before {
-    background: linear-gradient(90deg, transparent, #cc7cff, #ff71c8, transparent);
+    content: none !important;
+    display: none !important;
 }
 
 .ib-theme-shockwave .ib-title {
-    color: #f3ebff;
+    margin: 0 !important;
+    width: 100% !important;
+
+    color: #f1ebf8 !important;
+    font-size: 20px !important;
+    line-height: 1.1 !important;
+    letter-spacing: 2px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
+
     text-shadow:
-        0 0 8px rgba(203,108,255,0.20),
-        0 0 18px rgba(255,113,200,0.12);
+        0 0 8px rgba(185,124,255,0.16),
+        0 0 16px rgba(242,109,255,0.08),
+        0 2px 3px rgba(0,0,0,0.50) !important;
+}
+
+.ib-theme-shockwave .ib-title::before,
+.ib-theme-shockwave .ib-title::after {
+    content: "✦" !important;
+    display: inline-block !important;
+    margin: 0 10px !important;
+    color: #8c79a8 !important;
+    font-size: 10px !important;
+    opacity: 0.72 !important;
+    text-shadow: none !important;
+}
+
+.ib-theme-shockwave .ib-title-sub {
+    display: none !important;
+}
+
+.ib-theme-shockwave .ib-header::before {
+    background: linear-gradient(90deg, transparent, #b97cff, #f26dff, #7cc8ff, transparent);
 }
 
 .ib-theme-shockwave .ib-section-title {
-    color: #c9abff;
+    color: #c7a6ff;
 }
 
 /* ---------- LOCKDOWN ---------- */
@@ -11534,24 +11568,27 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     content: "⌖";
     position: absolute;
     right: 18px;
-    top: 14px;
+    top: 8px;
     width: 40px;
     height: 40px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     color: #86c98a;
     font-size: 22px;
     line-height: 1;
+
     border-radius: 50%;
     border: 1px solid rgba(134, 201, 138, 0.24);
     background:
-        radial-gradient(circle at center, rgba(134,201,138,0.14), transparent 62%),
+        radial-gradient(circle at center, rgba(134,201,138,0.12), transparent 62%),
         rgba(6, 10, 11, 0.72);
     box-shadow:
         0 0 12px rgba(134,201,138,0.14),
-        0 0 22px rgba(166,178,184,0.06),
         inset 0 0 12px rgba(134,201,138,0.05);
+
     pointer-events: none;
 }
 
@@ -11692,24 +11729,24 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     height: 11px;
     border-radius: 999px;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.045);
     background:
-        linear-gradient(180deg, rgba(255,255,255,0.025), rgba(0,0,0,0.34)),
-        rgba(0,0,0,0.58) !important;
+        linear-gradient(180deg, rgba(255,255,255,0.018), rgba(0,0,0,0.36)),
+        rgba(0,0,0,0.64) !important;
     box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.03),
-        inset 0 -1px 2px rgba(0,0,0,0.42),
-        0 0 6px rgba(0,0,0,0.18);
+        inset 0 1px 1px rgba(255,255,255,0.025),
+        inset 0 -1px 2px rgba(0,0,0,0.44),
+        0 0 4px rgba(0,0,0,0.20);
 }
 
 .ib-bars-energon .ib-bar-fill {
     position: relative;
     border-radius: 999px;
-    filter: saturate(0.92) brightness(0.82);
+    filter: saturate(0.92) brightness(0.80);
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.12),
-        0 0 6px currentColor,
-        0 0 12px color-mix(in srgb, currentColor 40%, transparent);
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        0 0 5px currentColor,
+        0 0 10px color-mix(in srgb, currentColor 32%, transparent);
     background:
         linear-gradient(90deg, var(--ib-energon-a1), var(--ib-energon-a2)) !important;
 }
@@ -11718,18 +11755,32 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     content: "";
     position: absolute;
     inset: 0;
-    background:
-        repeating-linear-gradient(
-            90deg,
-            rgba(255,255,255,0.06) 0,
-            rgba(255,255,255,0.06) 1px,
-            transparent 1px,
-            transparent 14px
-        ),
-        linear-gradient(180deg, rgba(255,255,255,0.14), transparent 38%, transparent 100%);
-    opacity: 0.34;
-    pointer-events: none;
     border-radius: inherit;
+    pointer-events: none;
+    opacity: 0.55;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,0.12) 0%,
+            rgba(255,255,255,0.04) 34%,
+            transparent 70%
+        ),
+
+        /* тонкие энергетические линии */
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            transparent 18%,
+            var(--ib-energon-line1) 18.5%,
+            transparent 19.2%,
+            transparent 42%,
+            var(--ib-energon-line2) 42.4%,
+            transparent 43.1%,
+            transparent 71%,
+            var(--ib-energon-line3) 71.4%,
+            transparent 72.0%,
+            transparent 100%
+        ) !important;
 }
 
 .ib-bars-energon .ib-bar-fill::after {
@@ -11738,66 +11789,84 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     right: 0;
     top: 50%;
     transform: translate(35%, -50%);
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: currentColor;
     box-shadow:
-        0 0 6px currentColor,
-        0 0 10px color-mix(in srgb, currentColor 52%, transparent);
-    opacity: 0.72;
+        0 0 5px currentColor,
+        0 0 9px color-mix(in srgb, currentColor 46%, transparent);
+    opacity: 0.62;
     pointer-events: none;
 }
 
 .ib-bars-energon .ib-mini-stat {
-    border-color: rgba(255,255,255,0.07);
-    background: rgba(0,0,0,0.30);
+    border-color: rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.32);
 }
 
 .ib-bars-energon .ib-mini-stat-progress {
     box-shadow:
         0 0 4px currentColor,
-        0 0 8px color-mix(in srgb, currentColor 48%, transparent);
+        0 0 8px color-mix(in srgb, currentColor 36%, transparent);
 }
 
-/* affection positive — cold green energon */
+/* affection positive */
 .ib-bars-energon .ib-bar-affection-pos {
-    --ib-energon-a1: #42c7aa;
-    --ib-energon-a2: #216a5d;
-    color: #5edfc3;
+    --ib-energon-a1: #3fb89d;
+    --ib-energon-a2: #1d5b52;
+    --ib-energon-line1: rgba(133, 255, 223, 0.44);
+    --ib-energon-line2: rgba(111, 245, 210, 0.22);
+    --ib-energon-line3: rgba(160, 255, 230, 0.34);
+    color: #62d8bf;
 }
 
-/* affection negative — corrupted warm red */
+/* affection negative */
 .ib-bars-energon .ib-bar-affection-neg {
-    --ib-energon-a1: #c86f66;
-    --ib-energon-a2: #742e38;
-    color: #d98a83;
+    --ib-energon-a1: #b8655d;
+    --ib-energon-a2: #5f2630;
+    --ib-energon-line1: rgba(255, 167, 158, 0.36);
+    --ib-energon-line2: rgba(255, 132, 122, 0.18);
+    --ib-energon-line3: rgba(255, 182, 172, 0.28);
+    color: #cf857d;
 }
 
-/* trust positive — blue energon */
+/* trust positive */
 .ib-bars-energon .ib-bar-trust-pos {
-    --ib-energon-a1: #58b8e8;
-    --ib-energon-a2: #29598d;
-    color: #7cd0f5;
+    --ib-energon-a1: #54a9d4;
+    --ib-energon-a2: #244675;
+    --ib-energon-line1: rgba(165, 224, 255, 0.42);
+    --ib-energon-line2: rgba(124, 205, 255, 0.20);
+    --ib-energon-line3: rgba(186, 235, 255, 0.30);
+    color: #76c4ea;
 }
 
-/* trust negative — amber unstable energon */
+/* trust negative */
 .ib-bars-energon .ib-bar-trust-neg {
-    --ib-energon-a1: #c89452;
-    --ib-energon-a2: #744c24;
-    color: #deb175;
+    --ib-energon-a1: #b8844a;
+    --ib-energon-a2: #5f3f1f;
+    --ib-energon-line1: rgba(255, 213, 148, 0.36);
+    --ib-energon-line2: rgba(255, 186, 104, 0.18);
+    --ib-energon-line3: rgba(255, 224, 168, 0.28);
+    color: #d5a56d;
 }
 
-/* love positive — violet/pink energon */
+/* love positive */
 .ib-bars-energon .ib-bar-love-pos {
-    --ib-energon-a1: #b06ad8;
-    --ib-energon-a2: #5e2f8d;
-    color: #cf95ee;
+    --ib-energon-a1: #a062c8;
+    --ib-energon-a2: #50266f;
+    --ib-energon-line1: rgba(230, 184, 255, 0.42);
+    --ib-energon-line2: rgba(208, 132, 255, 0.20);
+    --ib-energon-line3: rgba(238, 204, 255, 0.30);
+    color: #c58cea;
 }
 
-/* love negative — deep magenta corruption */
+/* love negative */
 .ib-bars-energon .ib-bar-love-neg {
-    --ib-energon-a1: #c04a7d;
-    --ib-energon-a2: #6b2345;
-    color: #dc6b99;
+    --ib-energon-a1: #b54876;
+    --ib-energon-a2: #5a1f3a;
+    --ib-energon-line1: rgba(255, 174, 208, 0.36);
+    --ib-energon-line2: rgba(255, 112, 164, 0.18);
+    --ib-energon-line3: rgba(255, 194, 220, 0.28);
+    color: #cf6f97;
 }
