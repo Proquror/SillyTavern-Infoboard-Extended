@@ -11445,21 +11445,6 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
         0 0 12px rgba(185,124,255,0.03) !important;
 }
 
-.ib-theme-shockwave .ib-title-wrap::before {
-    content: "⚗";
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #c996ff;
-    font-size: 12px;
-    line-height: 1;
-    opacity: 0.78;
-    text-shadow:
-        0 0 8px rgba(185,124,255,0.22),
-        0 0 14px rgba(242,109,255,0.08);
-    pointer-events: none;
-}
 
 .ib-theme-shockwave .ib-title-wrap::after {
     content: none !important;
@@ -11568,7 +11553,7 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     content: "⌖";
     position: absolute;
     right: 18px;
-    top: 8px;
+    top: 3px;
     width: 40px;
     height: 40px;
 
