@@ -2607,6 +2607,47 @@ if (!parsed) {
     RenderFloatingBoard();
 }
 
+function RebuildStateFromCurrentChat() {
+    const stContext = SillyTavern.getContext();
+
+    let rollingState = JSON.parse(JSON.stringify(kDefaultState));
+    let lastRawXml = "";
+
+    if (!Array.isArray(stContext.chat)) {
+        gState = rollingState;
+        SaveState();
+        return;
+    }
+
+    for (const msg of stContext.chat) {
+        if (!msg || msg.is_user) continue;
+
+        const parsed = ParseInfoboard(msg.mes || "");
+        if (!parsed) continue;
+
+        if (parsed.rawXml) {
+            lastRawXml = parsed.rawXml;
+        }
+
+        rollingState.time = parsed.time || rollingState.time;
+        rollingState.date = parsed.date || rollingState.date;
+        rollingState.weather = parsed.weather || rollingState.weather;
+        rollingState.loc = parsed.loc || rollingState.loc;
+        rollingState.chars = parsed.chars || [];
+        rollingState.rels = parsed.rels || [];
+        rollingState.thoughts = parsed.thoughts || [];
+        rollingState.nsfw = parsed.nsfw || null;
+    }
+
+    gState = rollingState;
+
+    if (lastRawXml) {
+        gLastRawXml = lastRawXml;
+    }
+
+    SaveState();
+}
+
 function OnChatChanged() {
     LoadState();
     UpdateSettingsText();
@@ -2686,20 +2727,23 @@ jQuery(async () => {
     const stContext = SillyTavern.getContext();
     const injectionId = "IB_PromptInjection";
 
-    function InjectPrompt() {
-        try {
-            if (!gEnabled) {
-                stContext.setExtensionPrompt(injectionId, "", 1, 0);
-                return;
-            }
-
-            const systemPrompt = gLang === "en" ? kSystemPromptEn : kSystemPromptRu;
-            const fullPrompt = `${systemPrompt}\n\n${BuildStateInjection()}`;
-            stContext.setExtensionPrompt(injectionId, fullPrompt, 1, 0);
-        } catch (e) {
-            console.error("[IB] InjectPrompt failed:", e);
+function InjectPrompt() {
+    try {
+        if (!gEnabled) {
+            stContext.setExtensionPrompt(injectionId, "", 1, 0);
+            return;
         }
+
+        RebuildStateFromCurrentChat();
+
+        const systemPrompt = gLang === "en" ? kSystemPromptEn : kSystemPromptRu;
+        const fullPrompt = `${systemPrompt}\n\n${BuildStateInjection()}`;
+
+        stContext.setExtensionPrompt(injectionId, fullPrompt, 1, 0);
+    } catch (e) {
+        console.error("[IB] InjectPrompt failed:", e);
     }
+}
 
     try {
         const settingsHtml = await $.get(kSettingsFile);
@@ -2895,17 +2939,31 @@ $("#ib_display_mode").on("change", function () {
     });
 }
 
-    if (stContext.eventTypes.MESSAGE_SWIPED) {
+if (stContext.eventTypes.MESSAGE_SWIPED) {
     stContext.eventSource.on(stContext.eventTypes.MESSAGE_SWIPED, () => {
+        RebuildStateFromCurrentChat();
+
         document.querySelectorAll(".ib-board-host").forEach(el => el.remove());
 
-        setTimeout(() => ReprocessChat(), 250);
-        setTimeout(() => ReprocessChat(), 700);
-        setTimeout(() => ReprocessChat(), 1300);
-        setTimeout(() => ReprocessChat(), 2000);
+        setTimeout(() => ReprocessChat(), 120);
+        setTimeout(() => ReprocessChat(), 350);
+        setTimeout(() => ReprocessChat(), 800);
+        setTimeout(() => RenderFloatingBoard(), 900);
     });
 }
 
+if (stContext.eventTypes.MESSAGE_DELETED) {
+    stContext.eventSource.on(stContext.eventTypes.MESSAGE_DELETED, () => {
+        RebuildStateFromCurrentChat();
+
+        document.querySelectorAll(".ib-board-host").forEach(el => el.remove());
+
+        setTimeout(() => ReprocessChat(), 120);
+        setTimeout(() => ReprocessChat(), 400);
+        setTimeout(() => RenderFloatingBoard(), 500);
+    });
+}
+    
     setTimeout(() => ReprocessChat(), 120);
     setTimeout(() => ReprocessChat(), 500);
     setTimeout(() => UpdateThemePreview(), 150);
