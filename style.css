@@ -11690,11 +11690,11 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 .ib-bars-energon .ib-bar-fill {
     position: relative;
     border-radius: 999px;
-    filter: saturate(0.92) brightness(0.80);
+    filter: saturate(0.88) brightness(0.68);
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.10),
-        0 0 5px currentColor,
-        0 0 10px color-mix(in srgb, currentColor 32%, transparent);
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 0 4px color-mix(in srgb, currentColor 26%, transparent),
+        0 0 8px color-mix(in srgb, currentColor 18%, transparent);
     background:
         linear-gradient(90deg, var(--ib-energon-a1), var(--ib-energon-a2)) !important;
 }
@@ -11705,53 +11705,44 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    opacity: 0.60;
+    opacity: 0.96;
+
     background:
         /* верхний мягкий блик */
         linear-gradient(
             180deg,
-            rgba(255,255,255,0.10) 0%,
-            rgba(255,255,255,0.03) 30%,
-            transparent 70%
+            rgba(255,255,255,0.08) 0%,
+            rgba(255,255,255,0.02) 30%,
+            transparent 72%
         ),
 
-        /* тонкие энергетические прожилки */
-        linear-gradient(
-            180deg,
-            transparent 0%,
-            transparent 18%,
-            var(--ib-energon-line1) 20%,
-            transparent 24%,
-            transparent 46%,
-            var(--ib-energon-line2) 48%,
-            transparent 52%,
-            transparent 72%,
-            var(--ib-energon-line3) 74%,
-            transparent 78%,
-            transparent 100%
-        ),
+        /* энергожила */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='12' viewBox='0 0 120 12'%3E%3Cpath d='M0 6 L10 6 L16 8 L22 3 L29 6 L40 6 L47 7 L54 4 L62 6 L73 6 L80 5 L88 7 L98 4 L108 6 L120 6' fill='none' stroke='white' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
 
-        /* лёгкое продольное свечение */
-        linear-gradient(
-            90deg,
-            transparent 0%,
-            rgba(255,255,255,0.03) 18%,
-            transparent 36%,
-            rgba(255,255,255,0.04) 54%,
-            transparent 72%,
-            rgba(255,255,255,0.025) 88%,
-            transparent 100%
-        ) !important;
+        /* мягкое свечение под жилой */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='12' viewBox='0 0 120 12'%3E%3Cpath d='M0 6 L10 6 L16 8 L22 3 L29 6 L40 6 L47 7 L54 4 L62 6 L73 6 L80 5 L88 7 L98 4 L108 6 L120 6' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' opacity='.35'/%3E%3C/svg%3E") !important;
 
     background-size:
         auto,
-        auto,
-        140px 100% !important;
+        120px 100%,
+        120px 100% !important;
 
     background-repeat:
         no-repeat,
-        no-repeat,
+        repeat-x,
         repeat-x !important;
+
+    background-position:
+        0 0,
+        left center,
+        left center !important;
+
+    mix-blend-mode: screen;
+
+    -webkit-mask-image:
+        linear-gradient(180deg, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, transparent 100%);
+    mask-image:
+        linear-gradient(180deg, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, transparent 100%);
 }
 
 .ib-bars-energon .ib-bar-fill::after {
@@ -11782,62 +11773,74 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
         0 0 8px color-mix(in srgb, currentColor 36%, transparent);
 }
 
-/* affection positive */
 .ib-bars-energon .ib-bar-affection-pos {
-    --ib-energon-a1: #3fb89d;
-    --ib-energon-a2: #1d5b52;
-    --ib-energon-line1: rgba(133, 255, 223, 0.44);
-    --ib-energon-line2: rgba(111, 245, 210, 0.22);
-    --ib-energon-line3: rgba(160, 255, 230, 0.34);
+    --ib-energon-a1: #2f8c78;
+    --ib-energon-a2: #143f39;
     color: #62d8bf;
 }
 
-/* affection negative */
 .ib-bars-energon .ib-bar-affection-neg {
-    --ib-energon-a1: #b8655d;
-    --ib-energon-a2: #5f2630;
-    --ib-energon-line1: rgba(255, 167, 158, 0.36);
-    --ib-energon-line2: rgba(255, 132, 122, 0.18);
-    --ib-energon-line3: rgba(255, 182, 172, 0.28);
+    --ib-energon-a1: #8f4a45;
+    --ib-energon-a2: #471d24;
     color: #cf857d;
 }
 
-/* trust positive */
 .ib-bars-energon .ib-bar-trust-pos {
-    --ib-energon-a1: #54a9d4;
-    --ib-energon-a2: #244675;
-    --ib-energon-line1: rgba(165, 224, 255, 0.42);
-    --ib-energon-line2: rgba(124, 205, 255, 0.20);
-    --ib-energon-line3: rgba(186, 235, 255, 0.30);
+    --ib-energon-a1: #3b82aa;
+    --ib-energon-a2: #1b355c;
     color: #76c4ea;
 }
 
-/* trust negative */
 .ib-bars-energon .ib-bar-trust-neg {
-    --ib-energon-a1: #b8844a;
-    --ib-energon-a2: #5f3f1f;
-    --ib-energon-line1: rgba(255, 213, 148, 0.36);
-    --ib-energon-line2: rgba(255, 186, 104, 0.18);
-    --ib-energon-line3: rgba(255, 224, 168, 0.28);
+    --ib-energon-a1: #8f693d;
+    --ib-energon-a2: #473015;
     color: #d5a56d;
 }
 
-/* love positive */
 .ib-bars-energon .ib-bar-love-pos {
-    --ib-energon-a1: #a062c8;
-    --ib-energon-a2: #50266f;
-    --ib-energon-line1: rgba(230, 184, 255, 0.42);
-    --ib-energon-line2: rgba(208, 132, 255, 0.20);
-    --ib-energon-line3: rgba(238, 204, 255, 0.30);
+    --ib-energon-a1: #7d4ca4;
+    --ib-energon-a2: #3d1f58;
     color: #c58cea;
 }
 
-/* love negative */
 .ib-bars-energon .ib-bar-love-neg {
-    --ib-energon-a1: #b54876;
-    --ib-energon-a2: #5a1f3a;
-    --ib-energon-line1: rgba(255, 174, 208, 0.36);
-    --ib-energon-line2: rgba(255, 112, 164, 0.18);
-    --ib-energon-line3: rgba(255, 194, 220, 0.28);
+    --ib-energon-a1: #8f365c;
+    --ib-energon-a2: #45172d;
     color: #cf6f97;
+}
+
+.ib-bars-energon .ib-bar-affection-pos::before {
+    filter:
+        drop-shadow(0 0 3px rgba(120,255,225,0.65))
+        brightness(1.25);
+}
+
+.ib-bars-energon .ib-bar-affection-neg::before {
+    filter:
+        drop-shadow(0 0 3px rgba(255,170,160,0.55))
+        brightness(1.18);
+}
+
+.ib-bars-energon .ib-bar-trust-pos::before {
+    filter:
+        drop-shadow(0 0 3px rgba(160,225,255,0.62))
+        brightness(1.22);
+}
+
+.ib-bars-energon .ib-bar-trust-neg::before {
+    filter:
+        drop-shadow(0 0 3px rgba(255,215,155,0.55))
+        brightness(1.18);
+}
+
+.ib-bars-energon .ib-bar-love-pos::before {
+    filter:
+        drop-shadow(0 0 3px rgba(230,185,255,0.62))
+        brightness(1.24);
+}
+
+.ib-bars-energon .ib-bar-love-neg::before {
+    filter:
+        drop-shadow(0 0 3px rgba(255,180,215,0.55))
+        brightness(1.18);
 }
