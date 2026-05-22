@@ -11812,13 +11812,13 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 .ib-bars-energon .ib-bar-affection-pos::before {
     filter:
         drop-shadow(0 0 3px rgba(120,255,225,0.65))
-        brightness(1.25);
+        brightness(1.05);
 }
 
 .ib-bars-energon .ib-bar-affection-neg::before {
     filter:
         drop-shadow(0 0 3px rgba(255,170,160,0.55))
-        brightness(1.18);
+        brightness(1.08);
 }
 
 .ib-bars-energon .ib-bar-trust-pos::before {
