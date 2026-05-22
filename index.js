@@ -635,8 +635,8 @@ obsidianregistry: {
 },
         
         shockwave: {
-    main: "☣",
-    sub: "...𝚁𝚎𝚊𝚌𝚝𝚒𝚘𝚗 𝚝𝚛𝚊𝚌𝚔𝚒𝚗𝚐..."
+    main: "☣..𝚁𝚎𝚊𝚌𝚝𝚒𝚘𝚗 𝚝𝚛𝚊𝚌𝚔𝚒𝚗𝚐..☣",
+    sub: ""
 },
         
 lockdown: {
