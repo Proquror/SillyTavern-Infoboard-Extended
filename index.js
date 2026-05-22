@@ -421,29 +421,38 @@ Optional only for explicitly intimate scenes:
 Rules:
 - Output exactly one <infoboard> block in every message
 - Fill all values in Russian
+- No extra XML tags or commentary
 - Add one <c /> for each NPC currently present
 - Use the exact same full NPC name in <chars name="">, <rel source="">, and <thk>
-- Never shorten NPC names in <rel>
+- Never shorten NPC names in <rel> or <thk>
+- Do not include {{user}} as NPC
 - tags: 1-4 short tags separated by |
-- Use tags to indicate scene presence when relevant, for example: focus | рядом | наблюдает | на периферии | вышел
+- Use tags for scene presence when relevant: focus | рядом | наблюдает | на периферии | вышел
+- mood: 1-3 words, visible current emotional state only; leave empty if unclear
+- Do not duplicate mood inside tags
 - Add one <rel /> per present NPC describing feelings toward {{user}} only
-- Add no more then 1-2 <rel />
+- Add <rel /> only for the 1-3 most relevant present NPCs
 - a, tr, l: from -100 to 100
 - ac, tc, lc: per-message change, usually within -5..+5 unless major event
 - Negative affection = aversion/dislike
 - Negative trust = distrust/suspicion/fear
 - Negative love = hatred/destructive obsession/anti-attachment
 - Relationship values must evolve logically
+- status: 1-3 words only, relationship phase/status only
+- status must not describe events, thoughts, explanations, or causes
+- Never write full sentences in status
+- Good status examples: заинтересована | доверяет | тянется | защитная привязанность | сложное влечение
+- Bad status examples: её слова о душе пробили защитные слои | впервые не знает что сказать | привязанность перешла в новую фазу
 - Put all NPC private thoughts into one <thk> block
 - One NPC per line in <thk>
 - Never include {{user}} thoughts in <thk>
+- Private NPC thoughts: max 1 sentence and max 30 words per NPC
+- Do not explain feelings in <thk>; write only the immediate private thought
+- Never output private NPC thoughts in the visible narrative text
+- Private thoughts must appear only inside <thk>
+- Never write <thk> thoughts as visible lines before the infoboard
+- No "Имя: мысль" thought list in narrative
 - Omit <nsfw /> if the scene is not intimate
-- No extra XML tags or commentary
-- Never output private NPC thoughts in the visible narrative text; private thoughts must appear only inside <thk>
-- Never write <thk> thoughts as visible lines before the infoboard; no "Имя: мысль" thought list in narrative
-- Private NPC thoughts no more than 30 words
-- mood: 1-3 words, visible current emotional state only; leave empty if unclear
-- Do not duplicate mood inside tags
 
 <thk> strict format:
 - Use the exact full NPC name exactly as in <chars>
@@ -472,29 +481,38 @@ Optional only for explicitly intimate scenes:
 Rules:
 - Output exactly one <infoboard> block in every message
 - Fill all values in English
+- No extra XML tags or commentary
 - Add one <c /> for each NPC currently present
 - Use the exact same full NPC name in <chars name="">, <rel source="">, and <thk>
-- Never shorten NPC names in <rel>
+- Never shorten NPC names in <rel> or <thk>
+- Do not include {{user}} as NPC
 - tags: 1-4 short tags separated by |
-- Use tags to indicate scene presence when relevant, for example: focus | near | watching | background | left
+- Use tags for scene presence when relevant: focus | near | watching | background | left
+- mood: 1-3 words, visible current emotional state only; leave empty if unclear
+- Do not duplicate mood inside tags
 - Add one <rel /> per present NPC describing feelings toward {{user}} only
+- Add <rel /> only for the 1-3 most relevant present NPCs
 - a, tr, l: from -100 to 100
 - ac, tc, lc: per-message change, usually within -5..+5 unless major event
 - Negative affection = aversion/dislike
 - Negative trust = distrust/suspicion/fear
 - Negative love = hatred/destructive obsession/anti-attachment
 - Relationship values must evolve logically
+- status: 1-3 words only, relationship phase/status only
+- status must not describe events, thoughts, explanations, or causes
+- Never write full sentences in status
+- Good status examples: interested | trusts you | drawn in | protective attachment | complicated attraction
+- Bad status examples: her words pierced his defenses | he does not know what to say | attachment moved into a new phase
 - Put all NPC private thoughts into one <thk> block
 - One NPC per line in <thk>
 - Never include {{user}} thoughts in <thk>
+- Private NPC thoughts: max 1 sentence and max 20 words per NPC
+- Do not explain feelings in <thk>; write only the immediate private thought
+- Never output private NPC thoughts in the visible narrative text
+- Private thoughts must appear only inside <thk>
+- Never write <thk> thoughts as visible lines before the infoboard
+- No "Name: thought" thought list in narrative
 - Omit <nsfw /> if the scene is not intimate
-- No extra XML tags or commentary
-- Never output private NPC thoughts in the visible narrative text; private thoughts must appear only inside <thk>
-- Never write <thk> thoughts as visible lines before the infoboard; no "Имя: мысль" thought list in narrative
-- Private NPC thoughts no more than 30 words
-- mood: 1-3 words, visible current emotional state only; leave empty if unclear
-- Do not duplicate mood inside tags
-- Add no more then 1-2 <rel />
 
 <thk> strict format:
 - Use the exact full NPC name exactly as in <chars>
@@ -725,6 +743,23 @@ function EscapeHtml(str) {
         .replaceAll("'", "&#039;");
 }
 
+function LimitWords(str, maxWords = 8, maxChars = 120) {
+    const clean = String(str ?? "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    if (!clean) return "";
+
+    const words = clean.split(" ");
+    let out = words.slice(0, maxWords).join(" ");
+
+    if (out.length > maxChars) {
+        out = out.slice(0, maxChars).replace(/\s+\S*$/, "").trim();
+    }
+
+    return out;
+}
+
 function NormalizeName(str) {
     return String(str ?? "").trim().toLowerCase();
 }
@@ -929,10 +964,10 @@ function ParseThoughtLine(line) {
 
     if (!text) return null;
 
-    return {
-        name: name || "__UNASSIGNED__",
-        text
-    };
+return {
+    name: name || "__UNASSIGNED__",
+    text: LimitWords(text, 30, 220)
+};
 }
 
 function ParseFocusState(tags = []) {
@@ -1113,7 +1148,7 @@ repairedXml: xmlForParsing !== xmlBlock ? xmlForParsing : ""
         .filter(Boolean)
         .slice(0, 4);
 
-    const mood = c.getAttribute("mood") || "";
+const mood = LimitWords(c.getAttribute("mood") || "", 3, 40);
 
     result.chars.push({
         icon: c.getAttribute("icon") || "•",
@@ -1137,7 +1172,7 @@ const pushRel = (rel) => {
             tc: Clamp(parseInt(rel.getAttribute("tc")) || 0, -100, 100),
             l: Clamp(parseInt(rel.getAttribute("l")) || 0, -100, 100),
             lc: Clamp(parseInt(rel.getAttribute("lc")) || 0, -100, 100),
-            status: rel.getAttribute("status") || T("noStatus")
+ status: LimitWords(rel.getAttribute("status") || T("noStatus"), 3, 48)
         });
     };
 
