@@ -470,7 +470,7 @@ Optional only for explicitly intimate scenes:
 - Add one <c /> for each NPC currently present
 - Use the exact same full NPC name in <chars name="">, <rel source="">, and <thk>
 - Never shorten NPC names in <rel> or <thk>
-- Never include {{user}}'s character as NPC in infoboard
+- Never include User's character as NPC in infoboard
 - age: age of the character (e.g., "24")
 - tags: 1-4 short tags separated by |
 - time: per-message change, usually +5
@@ -562,7 +562,7 @@ Optional only for explicitly intimate scenes:
 - Add one <c /> for each NPC currently present
 - Use the exact same full NPC name in <chars name="">, <rel source="">, and <thk>
 - Never shorten NPC names in <rel> or <thk>
-- Never include {{user}}'s character as NPC in infoboard
+- Never include User's character as NPC in infoboard
 - age: age of the character (e.g., "24")
 - tags: 1-4 short tags separated by |
 - time: per-message change, usually +5
@@ -1166,6 +1166,7 @@ function IsPresenceTag(tag) {
         "в фоне",
         "пассивен",
 
+                "offscreen",
         "за кадром",
         "вне сцены",
         "not present",
@@ -1970,6 +1971,7 @@ function RenderBoard(state, isFresh = false, prevState = null) {
                 </div>
 
                 <div class="ib-compact-controls">
+        <div class="ib-control-btn ib-btn-pins" title="${EscapeHtml(T("pinnedList"))}">📍</div>
     <div class="ib-control-btn ib-btn-debug" title="${EscapeHtml(T("debugXml"))}">&lt;/&gt;</div>
     <div class="ib-control-btn ib-btn-full" title="Full">▣</div>
     <div class="ib-control-btn ib-btn-collapse" title="Collapse">✕</div>
@@ -1987,6 +1989,7 @@ function RenderBoard(state, isFresh = false, prevState = null) {
                     </div>
 
                    <div class="ib-panel-controls">
+        <div class="ib-control-btn ib-btn-pins" title="${EscapeHtml(T("pinnedList"))}">📍</div>
     <div class="ib-control-btn ib-btn-debug" title="${EscapeHtml(T("debugXml"))}">&lt;/&gt;</div>
     <div class="ib-control-btn ib-btn-compact" title="Compact">▤</div>
     <div class="ib-control-btn ib-btn-collapse" title="Collapse">—</div>
