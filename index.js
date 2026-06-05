@@ -431,8 +431,8 @@ Format:
 Optional only for explicitly intimate scenes:
 <nsfw f="" p="" />
 
-Rules of infoboard:
-- Output exactly one <infoboard> block in every message
+<infoboard_rules>
+- CRITICAL: Output exactly one <infoboard> block in every message
 - Fill all values in Russian except of presence
 - CRITICAL: You MUST include ALL NPCs listed in the [INFOBOARD STATE]
 - Add one <c /> for each NPC currently present
@@ -441,16 +441,24 @@ Rules of infoboard:
 - Never include User's character as an NPC in infoboard
 - age: age of the character (e.g., "24")
 - tags: 1-4 short tags separated by |
-- Never put presence info in "tags" attribute
-- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate present NPCs: focus | active | near | watching | background | offscreen | left
-- presence: "background" used for NPCs that don't interact with {{user}} but can be directly seen or clearly heard by {{user}}
-- presence: "left" is used ONLY for NPCs that are LEAVING the scene in your current output; NEVER use "left" for NPCs who left in previous turn
-- presence: "offscreen" or "not present" are ONLY for pinned NPCs in [INFOBOARD STATE]
-- CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and has left the scene and/or is labeled as "offscreen" -> OMIT them completely from the output
+- time: per-message change, usually +5
 
-- "offscreen" or "not present" NPCs must focus on THEIR OWN tasks and plans independent from {{user}}'s
-- "offscreen" or "not present" NPCs CAN NOT know what {{user}} says or does; their thoughts MUST NOT reflect on what {{user}} is doing right now in the scene
-- "offscreen" or "not present" NPCs are NPCs that left the scene and is pinned in the state
+- Never put presence info in "tags" attribute
+- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate present NPCs:
+  1. "focus": means NPC is in the conversation AND physically touching {{user}}.
+  2. "active": means NPC is in the room, within {{user}}'s physical reach AND participating in {{user}}'s conversation or action REGARDLESS of distance.
+  3. "near": means NPC is in the room, within {{user}}'s physical reach, but passive and minding their own business (e.g., interacting with other NPCs, just being nearby).
+  4. "watching": means NPC is not actively participating, but intently paying attention and observing the scene.
+  5. "background": means NPC is not observing and not participating in {{user}}'s interactions; visible or audible (crowd, servants, patrons) but irrelevant to the current action (eg. on a balcony, far away in the room, around the corner or in another room).
+  6. "left": ALWAYS used ONLY for NPCs that are LEAVING the scene in your current output; NEVER use "left" for NPCs who left in previous turn.
+  7. "offscreen": means NPC's not physically present in the scene AND is STRICTLY RESERVED for NPCs in [INFOBOARD STATE].
+
+- "offscreen" NPCs must focus on THEIR OWN tasks and plans independent from {{user}}'s
+- "offscreen" NPCs CAN NOT know what {{user}} says or does; their thoughts MUST NOT reflect on what {{user}} is doing right now in the scene
+- "offscreen" NPCs are NPCs that left the scene and are pinned in [INFOBOARD STATE]
+
+- CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and is about to leave the scene -> mark them as "left" in the next output
+- CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and labeled as "left" and/or is labeled as "offscreen" -> OMIT them completely from the next output
 
 - Add one <rel /> per present NPC describing feelings toward {{user}} only
 - a, tr, l: from -100 to 100
@@ -481,7 +489,10 @@ Rules of infoboard:
 - Always write the name before the thought
 - Never shorten names
 - No markdown, quotes, asterisks, or brackets
-- Format only: Полное Имя: мысль`;
+- No thoughs of NPCs that are not listed in [INFOBOARD STATE]
+- No echo of what's happened
+- Format only: Полное Имя: мысль
+</infoboard_rules>`;
 
 const kSystemPromptEn = `Infoboard:
 Append exactly one XML block at the end of every assistant response. Fill all values in English. Keep it concise, accurate, and updated every message.
@@ -500,8 +511,8 @@ Format:
 Optional only for explicitly intimate scenes:
 <nsfw f="" p="" />
 
-Rules of infoboard:
-- Output exactly one <infoboard> block in every message
+<infoboard_rules>
+- CRITICAL: Output exactly one <infoboard> block in every message
 - Fill all values in English
 - CRITICAL: You MUST include ALL NPCs listed in the [INFOBOARD STATE]
 - Add one <c /> for each NPC currently present
@@ -510,17 +521,24 @@ Rules of infoboard:
 - Never include User's character as an NPC in infoboard
 - age: age of the character (e.g., "24")
 - tags: 1-4 short tags separated by |
+- time: per-message change, usually +5
+
 - Never put presence info in "tags" attribute
-- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate present NPCs: focus | active | near | watching | background | offscreen | left
-- presence: "background" used for NPCs that don't interact with {{user}} but can be directly seen or clearly heard by {{user}}
-- presence: "left" is used ONLY for NPCs that are LEAVING the scene in your current output; NEVER use "left" for NPCs who left in previous turn
-- presence: "offscreen" or "not present" are ONLY for pinned NPCs in [INFOBOARD STATE]
+- presence: Use one of these EXACT ENGLISH KEYWORDS to indicate present NPCs:
+  1. "focus": means NPC is in the conversation AND physically touching {{user}}.
+  2. "active": means NPC is in the room, within {{user}}'s physical reach AND participating in {{user}}'s conversation or action REGARDLESS of distance.
+  3. "near": means NPC is in the room, within {{user}}'s physical reach, but passive and minding their own business (e.g., interacting with other NPCs, just being nearby).
+  4. "watching": means NPC is not actively participating, but intently paying attention and observing the scene.
+  5. "background": means NPC is not observing and not participating in {{user}}'s interactions; visible or audible (crowd, servants, patrons) but irrelevant to the current action (eg. on a balcony, far away in the room, around the corner or in another room).
+  6. "left": ALWAYS used ONLY for NPCs that are LEAVING the scene in your current output; NEVER use "left" for NPCs who left in previous turn.
+  7. "offscreen": means NPC's not physically present in the scene AND is STRICTLY RESERVED for NPCs in [INFOBOARD STATE].
+
+- "offscreen" NPCs must focus on THEIR OWN tasks and plans independent from {{user}}'s
+- "offscreen" NPCs CAN NOT know what {{user}} says or does; their thoughts MUST NOT reflect on what {{user}} is doing right now in the scene
+- "offscreen" NPCs are NPCs that left the scene and are pinned in [INFOBOARD STATE]
+
 - CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and is about to leave the scene -> mark them as "left" in the next output
 - CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and labeled as "left" and/or is labeled as "offscreen" -> OMIT them completely from the next output
-
-- "offscreen" or "not present" NPCs must focus on THEIR OWN tasks and plans independent from {{user}}'s
-- "offscreen" or "not present" NPCs CAN NOT know what {{user}} says or does; their thoughts MUST NOT reflect on what {{user}} is doing right now in the scene
-- "offscreen" or "not present" NPCs are NPCs that left the scene and is pinned in the state
 
 - Add one <rel /> per present NPC describing feelings toward {{user}} only
 - a, tr, l: from -100 to 100
@@ -551,7 +569,10 @@ Rules of infoboard:
 - Always write the name before the thought
 - Never shorten names
 - No markdown, quotes, asterisks, or brackets
-- Format only: Full Name: thought`;
+- No thoughs of NPCs that are not listed in [INFOBOARD STATE]
+- No echo of what's happened
+- Format only: Full Name: thought
+</infoboard_rules>`;
 
 const kDefaultState = {
     time: "???",
@@ -1298,10 +1319,10 @@ const pushRel = (rel) => {
 function BuildStateInjection() {
     const lines = [];
     lines.push("[INFOBOARD STATE]");
-    lines.push(`Time: ${gState.time}`);
-    lines.push(`Date: ${gState.date}`);
-    lines.push(`Weather: ${gState.weather}`);
-    lines.push(`Location: ${gState.loc}`);
+    //lines.push(`Time: ${gState.time}`);
+    //lines.push(`Date: ${gState.date}`);
+    //lines.push(`Weather: ${gState.weather}`);
+    //lines.push(`Location: ${gState.loc}`);
 
     if (gState.chars.length) {
         lines.push("NPCs:");
@@ -2668,24 +2689,25 @@ function PatchPinnedData(parsed, prevState) {
 
     // Обрабатываем тех, кого вернул ИИ
     newChars.forEach(c => {
-        const isPinned = IsPinnedNpc(c.name);
-        const isGone = ["offscreen", "leftScene"].includes(c.presence?.key);
-
-        // ИСПРАВЛЕНИЕ: Если персонаж НЕ закреплен и ушел/за кадром -> ПОЛНОСТЬЮ ИГНОРИРУЕМ.
-        // Мы не сохраняем его в состояние, тем самым "забывая" его.
-        if (!isPinned && isGone) {
-            return; 
-        }
-
         let charData = { ...c };
         
-        // Если закреплен и помечен как "вышел" -> отменяем уход, делаем "за кадром"
-        if (isPinned && isGone) {
-            charData.tags = (charData.tags || []).filter(t => NormalizeName(t) !== "left" && NormalizeName(t) !== "вышел");
-            if (!charData.tags.includes(offscreenTag)) {
-                charData.tags.push(offscreenTag);
+        // Логика для ЗАКРЕПЛЕННЫХ (Pinned)
+        if (IsPinnedNpc(c.name)) {
+            const hasLeftTag = (charData.tags || []).some(t => NormalizeName(t) === "left" || NormalizeName(t) === "вышел");
+            // Если закрепленный ушел -> меняем на offscreen
+            if (charData.presence?.key === "leftScene" || hasLeftTag) {
+                charData.tags = (charData.tags || []).filter(t => NormalizeName(t) !== "left" && NormalizeName(t) !== "вышел");
+                if (!charData.tags.includes(offscreenTag)) {
+                    charData.tags.push(offscreenTag);
+                }
+                charData.presence = { key: "offscreen", cls: "ib-presence-offscreen" };
             }
-            charData.presence = { key: "offscreen", cls: "ib-presence-offscreen" };
+        }
+        // Логика для НЕЗАКРЕПЛЕННЫХ
+        else {
+            // ВАЖНО: Мы НЕ удаляем их здесь!
+            // Мы позволяем им быть 'left', чтобы UI показал "вышел".
+            // Удаление произойдет само, когда ИИ перестанет их генерировать (так как мы скрыли их из BuildStateInjection).
         }
         
         finalChars.push(charData);
@@ -2698,8 +2720,6 @@ function PatchPinnedData(parsed, prevState) {
         if (!processedNames.has(normPin)) {
             const oldChar = prevChars.find(ch => NormalizeName(ch.name) === normPin);
             if (oldChar) {
-				// Восстанавливаем из прошлого состояния
-                // ВАЖНО: Добавляем тег "на периферии" в список тегов для промпта
                 const restoredTags = [...(oldChar.tags || [])];
                 if (!restoredTags.includes(offscreenTag)) {
                     restoredTags.push(offscreenTag);
@@ -2710,7 +2730,6 @@ function PatchPinnedData(parsed, prevState) {
                     presence: { key: "offscreen", cls: "ib-presence-offscreen" } 
                 });
             } else {
-				// Создаем новую запись
                 finalChars.push({
                     name: pinName,
                     icon: "📌",
@@ -2728,22 +2747,17 @@ function PatchPinnedData(parsed, prevState) {
     const finalRels = [];
     const processedRels = new Set();
 
+    // Просто копируем связи для всех, кто есть в finalChars (включая 'left')
     newRels.forEach(r => {
-        // ИСПРАВЛЕНИЕ: Проверяем, есть ли персонаж в списке живых (finalChars).
-        // Если мы удалили его из chars выше (потому что он ушел и не закреплен), удаляем и связь.
-        const charStillPresent = finalChars.some(fc => NamesLikelyMatch(fc.name, r.source));
-        
-        if (charStillPresent) {
-            finalRels.push(r);
-            processedRels.add(NormalizeName(r.source));
-        }
+        finalRels.push(r);
+        processedRels.add(NormalizeName(r.source));
     });
 
     // Восстановление связей для закрепленных
     gPinnedNpcs.forEach(pinName => {
         const normPin = NormalizeName(pinName);
-        // Только если закрепленный есть в finalChars, но нет в связях
-        const charExists = finalChars.some(fc => NamesLikelyMatch(fc.name, pinName));
+        const charExists = finalChars.some(c => NormalizeName(c.name) === normPin);
+        
         if (charExists && !processedRels.has(normPin)) {
             const oldRel = prevRels.find(rel => NormalizeName(rel.source) === normPin);
             if (oldRel) {
@@ -2760,26 +2774,17 @@ function PatchPinnedData(parsed, prevState) {
     });
 
     // --- 3. Обработка мыслей (<thoughts>) ---
-    const finalThoughts = [];
-    // Берем мысли только для тех, кто остался в finalChars
-    const validNames = finalChars.map(c => NormalizeName(c.name));
-
-    (parsed.thoughts || []).forEach(t => {
-        if (validNames.includes(NormalizeName(t.name))) {
-            finalThoughts.push(t);
-        }
-    });
-
-    // Восстановление старых мыслей для закрепленных, если ИИ не вернул новые
+    const finalThoughts = parsed.thoughts ? [...parsed.thoughts] : [];
+    const thoughtNames = new Set(finalThoughts.map(t => NormalizeName(t.name)));
+    
     gPinnedNpcs.forEach(pinName => {
-         const normPin = NormalizeName(pinName);
-         const hasThought = finalThoughts.some(t => NormalizeName(t.name) === normPin);
-         const charExists = finalChars.some(fc => NamesLikelyMatch(fc.name, pinName));
-
-         if (charExists && !hasThought) {
-             const oldThought = prevThoughts.find(t => NormalizeName(t.name) === normPin);
-             if (oldThought) finalThoughts.push(oldThought);
-         }
+        const normPin = NormalizeName(pinName);
+        const charExists = finalChars.some(c => NormalizeName(c.name) === normPin);
+        
+        if (charExists && !thoughtNames.has(normPin)) {
+            const oldThought = prevThoughts.find(t => NormalizeName(t.name) === normPin);
+            if (oldThought) finalThoughts.push(oldThought);
+        }
     });
 
     return {
