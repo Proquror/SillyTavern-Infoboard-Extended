@@ -323,7 +323,7 @@ const kLang = {
         nsfw: "Интимный контекст",
         affection: "💚 Симпатия",
         trust: "💙 Доверие",
-		age: "♦ Возраст",
+                age: "♦ Возраст",
         love: "💜 Любовь",
         aversion: "❤️‍🩹 Неприязнь",
         distrust: "🧡 Недоверие",
@@ -350,16 +350,12 @@ const kLang = {
         nearby: "рядом",
         watching: "наблюдает",
         background: "на периферии",
-		offscreen: "за кадром",
         leftScene: "вышел",
         openNpc: "Открыть NPC",
         closeNpc: "Скрыть NPC",
         palettePreview: "Палитра темы",
         paletteMissing: "Превью палитры недоступно",
         hideThoughtLeaks: "Скрывать утёкшие мысли NPC из текста",
-		pinnedList: "Список закреплённых",
-		noPinned: "Нет закреплённых персонажей",
-		unpinFromList: "Открепить",
 compactMode: "Фильтр отношений",
 compactTop3: "Топ 3",
 compactTop1: "Топ 1",
@@ -395,7 +391,7 @@ unpinNpc: "Открепить NPC",
         rels: "Feelings Toward You",
         nsfw: "Intimate Context",
         affection: "💚 Affection",
-		age: "♦ Age",
+                age: "♦ Age",
         trust: "💙 Trust",
         love: "💜 Love",
         aversion: "❤️‍🩹 Aversion",
@@ -423,16 +419,13 @@ unpinNpc: "Открепить NPC",
         nearby: "nearby",
         watching: "watching",
         background: "background",
-		offscreen: "offscreen",
+                offscreen: "offscreen",
         leftScene: "left",
         openNpc: "Open NPC",
         closeNpc: "Hide NPC",
         palettePreview: "Theme palette",
         paletteMissing: "Palette preview unavailable",
         hideThoughtLeaks: "Hide leaked NPC thoughts from visible text",
-		pinnedList: "Pinned List",
-		noPinned: "No pinned characters",
-		unpinFromList: "Unpin",
 compactMode: "Relationship Filter",
 compactTop3: "Top 3",
 compactTop1: "Top 1",
@@ -952,8 +945,8 @@ function LooksLikeStandaloneThoughtFragment(rawText, thoughtEntries = []) {
             soft.length >= 18 &&
             (
                 t.softText.includes(soft) ||
-                t.normalizedText.includes(normalized) ||
-                t.normalizedFull.includes(normalized)
+                t.softText.includes(normalized) ||
+                t.fullSoft.includes(normalized)
             )
         );
     });
@@ -1173,7 +1166,6 @@ function IsPresenceTag(tag) {
         "в фоне",
         "пассивен",
 
-		"offscreen",
         "за кадром",
         "вне сцены",
         "not present",
@@ -1978,7 +1970,6 @@ function RenderBoard(state, isFresh = false, prevState = null) {
                 </div>
 
                 <div class="ib-compact-controls">
-	<div class="ib-control-btn ib-btn-pins" title="${EscapeHtml(T("pinnedList"))}">📍</div>
     <div class="ib-control-btn ib-btn-debug" title="${EscapeHtml(T("debugXml"))}">&lt;/&gt;</div>
     <div class="ib-control-btn ib-btn-full" title="Full">▣</div>
     <div class="ib-control-btn ib-btn-collapse" title="Collapse">✕</div>
@@ -1996,7 +1987,6 @@ function RenderBoard(state, isFresh = false, prevState = null) {
                     </div>
 
                    <div class="ib-panel-controls">
-	<div class="ib-control-btn ib-btn-pins" title="${EscapeHtml(T("pinnedList"))}">📍</div>
     <div class="ib-control-btn ib-btn-debug" title="${EscapeHtml(T("debugXml"))}">&lt;/&gt;</div>
     <div class="ib-control-btn ib-btn-compact" title="Compact">▤</div>
     <div class="ib-control-btn ib-btn-collapse" title="Collapse">—</div>
@@ -2797,10 +2787,16 @@ function PatchPinnedData(parsed, prevState) {
         
         // Логика для ЗАКРЕПЛЕННЫХ (Pinned)
         if (IsPinnedNpc(c.name)) {
-            const hasLeftTag = (charData.tags || []).some(t => NormalizeName(t) === "left" || NormalizeName(t) === "вышел");
+            const hasLeftTag = (charData.tags || []).some(t => {
+                    const n = NormalizeName(t);
+                    return n === "left" || n === "out";
+                });
             // Если закрепленный ушел -> меняем на offscreen
             if (charData.presence?.key === "leftScene" || hasLeftTag) {
-                charData.tags = (charData.tags || []).filter(t => NormalizeName(t) !== "left" && NormalizeName(t) !== "вышел");
+                charData.tags = (charData.tags || []).filter(t => {
+                    const n = NormalizeName(t);
+                    return n !== "left" && n !== "out";
+                });
                 if (!charData.tags.includes(offscreenTag)) {
                     charData.tags.push(offscreenTag);
                 }
@@ -3037,8 +3033,6 @@ function ReprocessChat() {
         rollingState.thoughts = patchedParsed.thoughts;
         rollingState.nsfw = patchedParsed.nsfw || null;
 
-        // Рендерим с ПРОПАТЧЕННЫМИ данными
-        RenderBoardIntoMessage(mesTextEl, patchedParsed, false, prevState);
     });
 
     gState = rollingState;
@@ -3090,66 +3084,12 @@ function RebuildStateFromCurrentChat() {
         rollingState.date = patchedParsed.date || rollingState.date;
         rollingState.weather = patchedParsed.weather || rollingState.weather;
         rollingState.loc = patchedParsed.loc || rollingState.loc;
-        rollingState.chars = patchedParsed.chars;
-        rollingState.rels = patchedParsed.rels;
-        rollingState.thoughts = patchedParsed.thoughts;
+        rollingState.chars = patchedParsed.chars || [];
+        rollingState.rels = patchedParsed.rels || [];
+        rollingState.thoughts = patchedParsed.thoughts || [];
         rollingState.nsfw = patchedParsed.nsfw || null;
 
-        // Рендерим с ПРОПАТЧЕННЫМИ данными
-        RenderBoardIntoMessage(mesTextEl, patchedParsed, false, prevState);
-    });
-
-    gState = rollingState;
-
-    if (lastRawXml) {
-        gLastRawXml = lastRawXml;
-    }
-
-    SaveState();
-}
-
-function Debounce(fn, delay = 250) {
-    let timer = null;
-
-    return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn(...args), delay);
     };
-}
-
-const ScheduleReprocessChat = Debounce(() => ReprocessChat(), 250);
-
-function RebuildStateFromCurrentChat() {
-    const stContext = SillyTavern.getContext();
-
-    let rollingState = JSON.parse(JSON.stringify(kDefaultState));
-    let lastRawXml = "";
-
-    if (!Array.isArray(stContext.chat)) {
-        gState = rollingState;
-        SaveState();
-        return;
-    }
-
-    for (const msg of stContext.chat) {
-        if (!msg || msg.is_user) continue;
-
-        const parsed = ParseInfoboard(msg.mes || "");
-        if (!parsed) continue;
-
-        if (parsed.rawXml) {
-            lastRawXml = parsed.rawXml;
-        }
-
-        rollingState.time = parsed.time || rollingState.time;
-        rollingState.date = parsed.date || rollingState.date;
-        rollingState.weather = parsed.weather || rollingState.weather;
-        rollingState.loc = parsed.loc || rollingState.loc;
-        rollingState.chars = parsed.chars || [];
-        rollingState.rels = parsed.rels || [];
-        rollingState.thoughts = parsed.thoughts || [];
-        rollingState.nsfw = parsed.nsfw || null;
-    }
 
     gState = rollingState;
 
