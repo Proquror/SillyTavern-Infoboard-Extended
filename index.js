@@ -490,6 +490,7 @@ Optional only for explicitly intimate scenes:
 - Never shorten names
 - No markdown, quotes, asterisks, or brackets
 - No thoughs of NPCs that are not listed in [INFOBOARD STATE]
+- No echo of what's happened
 - Format only: Полное Имя: мысль
 </infoboard_rules>`;
 
@@ -569,6 +570,7 @@ Optional only for explicitly intimate scenes:
 - Never shorten names
 - No markdown, quotes, asterisks, or brackets
 - No thoughs of NPCs that are not listed in [INFOBOARD STATE]
+- No echo of what's happened
 - Format only: Full Name: thought
 </infoboard_rules>`;
 
