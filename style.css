@@ -11359,9 +11359,493 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
         auto,
         auto !important;
 }
+/* =========================================================
+   TRANSFORMERS THEMES + ENERGON BAR STYLE
+   add at the very end of style.css
+   ========================================================= */
+
+/* ---------- SHOCKWAVE ---------- */
+
+.ib-theme-shockwave {
+    --ib-bg-1: #050407;
+    --ib-bg-2: #120d18;
+    --ib-bg-3: #020203;
+
+    --ib-border: rgba(118, 98, 140, 0.24);
+    --ib-border-neon: rgba(214, 116, 255, 0.18);
+    --ib-soft-border: rgba(118, 98, 140, 0.10);
+
+    --ib-text: #f1ebf8;
+    --ib-muted: #b7a8c4;
+    --ib-dim: #726382;
+
+    --ib-accent: #b97cff;
+    --ib-accent-2: #f26dff;
+
+    --ib-green: #78ffd0;
+    --ib-blue: #7cc8ff;
+    --ib-purple: #b97cff;
+    --ib-warm: #d6b3ff;
+    --ib-danger: #ff6aa2;
+
+    --ib-chip-bg: rgba(185,124,255,0.08);
+    --ib-chip-border: rgba(242,109,255,0.16);
+
+    --ib-shadow: 0 14px 34px rgba(0, 0, 0, 0.72);
+    --ib-neon:
+        0 0 14px rgba(185,124,255,0.07),
+        0 0 20px rgba(242,109,255,0.03);
+
+    --ib-header-glow:
+        radial-gradient(circle at top right, rgba(185,124,255,0.06), transparent 42%),
+        radial-gradient(circle at bottom left, rgba(242,109,255,0.03), transparent 40%);
+}
+
+.ib-theme-shockwave .ib-board {
+    background:
+        radial-gradient(circle at 86% 8%, rgba(242,109,255,0.06), transparent 20%),
+        radial-gradient(circle at 14% 90%, rgba(185,124,255,0.04), transparent 24%),
+        linear-gradient(135deg, #050407, #120d18 52%, #020203);
+    border-color: rgba(118, 98, 140, 0.22);
+    box-shadow:
+        0 14px 34px rgba(0, 0, 0, 0.72),
+        0 0 12px rgba(185,124,255,0.06),
+        0 0 18px rgba(242,109,255,0.03);
+}
+
+.ib-theme-shockwave .ib-title-wrap {
+    min-height: 74px !important;
+    padding: 14px 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+
+    border: 1px solid rgba(118, 98, 140, 0.20) !important;
+    border-radius: 8px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            transparent 14%,
+            rgba(185,124,255,0.10) 24%,
+            rgba(242,109,255,0.14) 50%,
+            rgba(124,200,255,0.10) 76%,
+            transparent 86%,
+            transparent 100%
+        ) center calc(50% + 14px) / 420px 1px no-repeat,
+        linear-gradient(135deg, rgba(255,255,255,0.020), rgba(255,255,255,0.004)),
+        rgba(8, 6, 12, 0.72) !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.03),
+        inset 0 0 14px rgba(185,124,255,0.02),
+        0 0 12px rgba(185,124,255,0.03) !important;
+}
+
+
+.ib-theme-shockwave .ib-title-wrap::after {
+    content: none !important;
+    display: none !important;
+}
+
+.ib-theme-shockwave .ib-title {
+    margin: 0 !important;
+    width: 100% !important;
+
+    color: #f1ebf8 !important;
+    font-size: 20px !important;
+    line-height: 1.1 !important;
+    letter-spacing: 2px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
+
+    text-shadow:
+        0 0 8px rgba(185,124,255,0.16),
+        0 0 16px rgba(242,109,255,0.08),
+        0 2px 3px rgba(0,0,0,0.50) !important;
+}
+
+
+.ib-theme-shockwave .ib-title-sub {
+    display: none !important;
+}
+
+.ib-theme-shockwave .ib-header::before {
+    background: linear-gradient(90deg, transparent, #b97cff, #f26dff, #7cc8ff, transparent);
+}
+
+.ib-theme-shockwave .ib-section-title {
+    color: #c7a6ff;
+}
+
+/* ---------- LOCKDOWN ---------- */
+
+.ib-theme-lockdown {
+    --ib-bg-1: #0d1114;
+    --ib-bg-2: #1c2327;
+    --ib-bg-3: #080c0d;
+
+    --ib-border: rgba(134, 201, 138, 0.22);
+    --ib-border-neon: rgba(166, 178, 184, 0.20);
+    --ib-soft-border: rgba(134, 201, 138, 0.12);
+
+    --ib-text: #e6ecef;
+    --ib-muted: #aeb9bc;
+    --ib-dim: #718186;
+
+    --ib-accent: #86c98a;
+    --ib-accent-2: #a6b2b8;
+
+    --ib-green: #86c98a;
+    --ib-blue: #9cbfd4;
+    --ib-purple: #a6b2b8;
+    --ib-warm: #d1b86a;
+    --ib-danger: #d9876f;
+
+    --ib-chip-bg: rgba(134, 201, 138, 0.10);
+    --ib-chip-border: rgba(166, 178, 184, 0.22);
+
+    --ib-shadow: 0 14px 34px rgba(2, 5, 6, 0.62);
+    --ib-neon:
+        0 0 16px rgba(134, 201, 138, 0.09),
+        0 0 24px rgba(166, 178, 184, 0.06);
+
+    --ib-header-glow:
+        radial-gradient(circle at top right, rgba(134, 201, 138, 0.10), transparent 42%),
+        radial-gradient(circle at bottom left, rgba(166, 178, 184, 0.06), transparent 40%);
+}
+
+.ib-theme-lockdown .ib-board {
+    background:
+        radial-gradient(circle at 84% 10%, rgba(134, 201, 138, 0.10), transparent 22%),
+        radial-gradient(circle at 16% 88%, rgba(166, 178, 184, 0.08), transparent 28%),
+        linear-gradient(135deg, #0d1114, #1c2327 52%, #080c0d);
+    border-color: rgba(134, 201, 138, 0.22);
+    box-shadow:
+        0 14px 34px rgba(2, 5, 6, 0.62),
+        0 0 16px rgba(134, 201, 138, 0.08),
+        0 0 24px rgba(166, 178, 184, 0.05);
+}
+
+.ib-theme-lockdown .ib-title-wrap {
+    border-color: rgba(134, 201, 138, 0.18);
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.006)),
+        rgba(8, 12, 13, 0.64);
+    overflow: hidden;
+}
+
+
+.ib-theme-lockdown .ib-title-wrap::after {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: 72px;
+    bottom: 12px;
+    height: 1px;
+    background:
+        linear-gradient(90deg, transparent, #86c98a, #a6b2b8, transparent);
+    box-shadow: 0 0 10px rgba(134,201,138,0.12);
+    opacity: 0.88;
+    pointer-events: none;
+}
+
+.ib-theme-lockdown .ib-header::before {
+    background: linear-gradient(90deg, transparent, #86c98a, #a6b2b8, transparent);
+}
+
+.ib-theme-lockdown .ib-title {
+    color: #e6ecef;
+    text-shadow:
+        0 0 8px rgba(134,201,138,0.16),
+        0 0 16px rgba(166,178,184,0.08);
+}
+
+.ib-theme-lockdown .ib-section-title {
+    color: #9bd09f;
+}
+
+/* ---------- HOT ROD ---------- */
+
+.ib-theme-hotrod {
+    --ib-bg-1: #070403;
+    --ib-bg-2: #140905;
+    --ib-bg-3: #020101;
+
+    --ib-border: rgba(255, 138, 42, 0.24);
+    --ib-border-neon: rgba(255, 207, 99, 0.14);
+    --ib-soft-border: rgba(255, 138, 42, 0.10);
+
+    --ib-text: #fff1d8;
+    --ib-muted: #d9aa7f;
+    --ib-dim: #8e5d3d;
+
+    --ib-accent: #ff8a2a;
+    --ib-accent-2: #ffcf63;
+
+    --ib-green: #a6d39a;
+    --ib-blue: #92b6d8;
+    --ib-purple: #c48cff;
+    --ib-warm: #ffb84d;
+    --ib-danger: #ff6f4f;
+
+    --ib-chip-bg: rgba(255, 138, 42, 0.08);
+    --ib-chip-border: rgba(255, 207, 99, 0.16);
+
+    --ib-shadow: 0 14px 34px rgba(0, 0, 0, 0.72);
+    --ib-neon:
+        0 0 14px rgba(255, 138, 42, 0.08),
+        0 0 20px rgba(255, 207, 99, 0.04);
+
+    --ib-header-glow:
+        radial-gradient(circle at top right, rgba(255, 138, 42, 0.10), transparent 40%),
+        radial-gradient(circle at bottom left, rgba(255, 207, 99, 0.04), transparent 42%);
+}
+
+.ib-theme-hotrod .ib-board {
+    background:
+        radial-gradient(circle at 84% 10%, rgba(255, 138, 42, 0.10), transparent 20%),
+        radial-gradient(circle at 16% 88%, rgba(255, 207, 99, 0.05), transparent 26%),
+        linear-gradient(135deg, #070403, #140905 52%, #020101);
+    border-color: rgba(255, 138, 42, 0.22);
+    box-shadow:
+        0 14px 34px rgba(0, 0, 0, 0.72),
+        0 0 14px rgba(255, 138, 42, 0.08),
+        0 0 20px rgba(255, 207, 99, 0.04);
+}
+
+.ib-theme-hotrod .ib-title-wrap {
+    border-color: rgba(255, 138, 42, 0.20);
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.006)),
+        rgba(11, 6, 4, 0.62);
+    overflow: hidden;
+}
+
+.ib-theme-hotrod .ib-title-wrap::before {
+    content: "▀▄▀▄▀▄";
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    color: #ff8a2a;
+    font-size: 18px;
+    line-height: 1;
+    letter-spacing: 1px;
+    text-shadow:
+        0 0 8px rgba(255,138,42,0.24),
+        0 0 16px rgba(255,207,99,0.10);
+    opacity: 0.95;
+    pointer-events: none;
+}
+
+.ib-theme-hotrod .ib-title-wrap::after {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: 90px;
+    bottom: 12px;
+    height: 2px;
+    background:
+        linear-gradient(90deg, transparent, #ff8a2a, #ffcf63, transparent);
+    box-shadow: 0 0 12px rgba(255,138,42,0.15);
+    opacity: 0.92;
+    pointer-events: none;
+}
+
+.ib-theme-hotrod .ib-header::before {
+    background: linear-gradient(90deg, transparent, #ff8a2a, #ffcf63, transparent);
+}
+
+.ib-theme-hotrod .ib-title {
+    color: #fff1d8;
+    text-shadow:
+        0 0 8px rgba(255,138,42,0.18),
+        0 0 16px rgba(255,207,99,0.08);
+}
+
+.ib-theme-hotrod .ib-section-title {
+    color: #ffb84d;
+}
+
+/* ---------- ENERGON BAR STYLE ---------- */
+
+.ib-bars-energon .ib-bar {
+    height: 11px;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.045);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.018), rgba(0,0,0,0.36)),
+        rgba(0,0,0,0.64) !important;
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,0.025),
+        inset 0 -1px 2px rgba(0,0,0,0.44),
+        0 0 4px rgba(0,0,0,0.20);
+}
+
+.ib-bars-energon .ib-bar-fill {
+    position: relative;
+    border-radius: 999px;
+    filter: saturate(0.88) brightness(0.68);
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 0 4px color-mix(in srgb, currentColor 26%, transparent),
+        0 0 8px color-mix(in srgb, currentColor 18%, transparent);
+    background:
+        linear-gradient(90deg, var(--ib-energon-a1), var(--ib-energon-a2)) !important;
+}
+
+.ib-bars-energon .ib-bar-fill::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0.96;
+
+    background:
+        /* верхний мягкий блик */
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,0.08) 0%,
+            rgba(255,255,255,0.02) 30%,
+            transparent 72%
+        ),
+
+        /* энергожила */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='12' viewBox='0 0 120 12'%3E%3Cpath d='M0 6 L10 6 L16 8 L22 3 L29 6 L40 6 L47 7 L54 4 L62 6 L73 6 L80 5 L88 7 L98 4 L108 6 L120 6' fill='none' stroke='white' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+
+        /* мягкое свечение под жилой */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='12' viewBox='0 0 120 12'%3E%3Cpath d='M0 6 L10 6 L16 8 L22 3 L29 6 L40 6 L47 7 L54 4 L62 6 L73 6 L80 5 L88 7 L98 4 L108 6 L120 6' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' opacity='.35'/%3E%3C/svg%3E") !important;
+
+    background-size:
+        auto,
+        120px 100%,
+        120px 100% !important;
+
+    background-repeat:
+        no-repeat,
+        repeat-x,
+        repeat-x !important;
+
+    background-position:
+        0 0,
+        left center,
+        left center !important;
+
+    mix-blend-mode: screen;
+
+    -webkit-mask-image:
+        linear-gradient(180deg, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, transparent 100%);
+    mask-image:
+        linear-gradient(180deg, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 92%, transparent 100%);
+}
+
+.ib-bars-energon .ib-bar-fill::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(35%, -50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow:
+        0 0 5px currentColor,
+        0 0 9px color-mix(in srgb, currentColor 46%, transparent);
+    opacity: 0.62;
+    pointer-events: none;
+}
+
+.ib-bars-energon .ib-mini-stat {
+    border-color: rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.32);
+}
+
+.ib-bars-energon .ib-mini-stat-progress {
+    box-shadow:
+        0 0 4px currentColor,
+        0 0 8px color-mix(in srgb, currentColor 36%, transparent);
+}
+
+.ib-bars-energon .ib-bar-affection-pos {
+    --ib-energon-a1: #2f8c78;
+    --ib-energon-a2: #143f39;
+    color: #62d8bf;
+}
+
+.ib-bars-energon .ib-bar-affection-neg {
+    --ib-energon-a1: #8f4a45;
+    --ib-energon-a2: #471d24;
+    color: #cf857d;
+}
+
+.ib-bars-energon .ib-bar-trust-pos {
+    --ib-energon-a1: #3b82aa;
+    --ib-energon-a2: #1b355c;
+    color: #76c4ea;
+}
+
+.ib-bars-energon .ib-bar-trust-neg {
+    --ib-energon-a1: #8f693d;
+    --ib-energon-a2: #473015;
+    color: #d5a56d;
+}
+
+.ib-bars-energon .ib-bar-love-pos {
+    --ib-energon-a1: #7d4ca4;
+    --ib-energon-a2: #3d1f58;
+    color: #c58cea;
+}
+
+.ib-bars-energon .ib-bar-love-neg {
+    --ib-energon-a1: #8f365c;
+    --ib-energon-a2: #45172d;
+    color: #cf6f97;
+}
+
+.ib-bars-energon .ib-bar-affection-pos::before {
+    filter:
+        drop-shadow(0 0 3px rgba(120,255,225,0.65))
+        brightness(1.05);
+}
+
+.ib-bars-energon .ib-bar-affection-neg::before {
+    filter:
+        drop-shadow(0 0 3px rgba(255,170,160,0.55))
+        brightness(1.08);
+}
+
+.ib-bars-energon .ib-bar-trust-pos::before {
+    filter:
+        drop-shadow(0 0 3px rgba(160,225,255,0.62))
+        brightness(1.22);
+}
+
+.ib-bars-energon .ib-bar-trust-neg::before {
+    filter:
+        drop-shadow(0 0 3px rgba(255,215,155,0.55))
+        brightness(1.18);
+}
+
+.ib-bars-energon .ib-bar-love-pos::before {
+    filter:
+        drop-shadow(0 0 3px rgba(230,185,255,0.62))
+        brightness(1.24);
+}
+
+.ib-bars-energon .ib-bar-love-neg::before {
+    filter:
+        drop-shadow(0 0 3px rgba(255,180,215,0.55))
+        brightness(1.18);
+}
 
 /* =========================================================
-   AGE CHIP STYLE (Beautiful version)
+   AGE CHIP STYLE
    ========================================================= */
 
 /* Основной стиль плашки возраста */

@@ -262,7 +262,46 @@ obsidianregistry: {
         accent2: "#f3d889",
         text: "#f8eed5",
         danger: "#d69a62"
-    }
+    },
+
+    shockwave: {
+    label: {
+        ru: "Shockwave: фиолетовый техно-металл и неон",
+        en: "Shockwave: violet techno metal and neon"
+    },
+    bg: "#120b18",
+    bg2: "#261534",
+    accent: "#cc7cff",
+    accent2: "#ff71c8",
+    text: "#f3ebff",
+    danger: "#ff6a9d"
+},
+
+lockdown: {
+    label: {
+        ru: "Lockdown: серый металл, охотничий HUD и холодный зелёный неон",
+        en: "Lockdown: gray steel, hunter HUD and cold green neon"
+    },
+    bg: "#0d1114",
+    bg2: "#1c2327",
+    accent: "#86c98a",
+    accent2: "#a6b2b8",
+    text: "#e6ecef",
+    danger: "#d9876f"
+},
+
+hotrod: {
+    label: {
+        ru: "Hot Rod: чёрный, огонь и скорость",
+        en: "Hot Rod: black, fire and speed"
+    },
+    bg: "#120b08",
+    bg2: "#2a1208",
+    accent: "#ff8a2a",
+    accent2: "#ffcf63",
+    text: "#fff1d8",
+    danger: "#ff6f4f"
+}
 };
 
 const kLang = {
@@ -437,8 +476,8 @@ Optional only for explicitly intimate scenes:
 - CRITICAL: You MUST include ALL NPCs listed in the [INFOBOARD STATE]
 - Add one <c /> for each NPC currently present
 - Use the exact same full NPC name in <chars name="">, <rel source="">, and <thk>
-- Never shorten NPC names in <rel>
-- Never include User's character as an NPC in infoboard
+- Never shorten NPC names in <rel> or <thk>
+- Never include {{user}}'s character as NPC in infoboard
 - age: age of the character (e.g., "24")
 - tags: 1-4 short tags separated by |
 - time: per-message change, usually +5
@@ -461,17 +500,29 @@ Optional only for explicitly intimate scenes:
 - CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and labeled as "left" and/or is labeled as "offscreen" -> OMIT them completely from the next output
 
 - Add one <rel /> per present NPC describing feelings toward {{user}} only
+- Add <rel /> only for the 1-3 most relevant present NPCs
 - a, tr, l: from -100 to 100
 - ac, tc, lc: per-message change, usually within -2..+2 unless major event
 - Negative affection = aversion/dislike
 - Negative trust = distrust/suspicion/fear
 - Negative love = hatred/destructive obsession/anti-attachment
 - Relationship values must evolve logically
+- status: 1-3 words only, relationship phase/status only
+- status must not describe events, thoughts, explanations, or causes
+- Never write full sentences in status
+- Good status examples: заинтересована | доверяет | тянется | защитная привязанность | сложное влечение
+- Bad status examples: её слова о душе пробили защитные слои | впервые не знает что сказать | привязанность перешла в новую фазу
 - Put all NPC private thoughts (first person, present tense) into one <thk> block
 - One NPC per line in <thk>
 - Never include {{user}}'s thoughts in <thk>
 - Never decide for {{user}} in character's thoughts; only character's opinions on {{user}}, on {{user}}'s previous actions and appearance
 
+- Private NPC thoughts: max 1 sentence and max 30 words per NPC
+- Do not explain feelings in <thk>; write only the immediate private thought
+- Never output private NPC thoughts in the visible narrative text
+- Private thoughts must appear only inside <thk>
+- Never write <thk> thoughts as visible lines before the infoboard
+- No "Имя: мысль" thought list in narrative
 - Omit <nsfw /> if the scene is not intimate
 - No extra XML tags or commentary
 - Never output private NPC thoughts in the visible narrative text; private thoughts must appear only inside <thk>
@@ -517,8 +568,8 @@ Optional only for explicitly intimate scenes:
 - CRITICAL: You MUST include ALL NPCs listed in the [INFOBOARD STATE]
 - Add one <c /> for each NPC currently present
 - Use the exact same full NPC name in <chars name="">, <rel source="">, and <thk>
-- Never shorten NPC names in <rel>
-- Never include User's character as an NPC in infoboard
+- Never shorten NPC names in <rel> or <thk>
+- Never include {{user}}'s character as NPC in infoboard
 - age: age of the character (e.g., "24")
 - tags: 1-4 short tags separated by |
 - time: per-message change, usually +5
@@ -541,17 +592,29 @@ Optional only for explicitly intimate scenes:
 - CRITICAL: If an NPC is NOT in [INFOBOARD STATE] and labeled as "left" and/or is labeled as "offscreen" -> OMIT them completely from the next output
 
 - Add one <rel /> per present NPC describing feelings toward {{user}} only
+- Add <rel /> only for the 1-3 most relevant present NPCs
 - a, tr, l: from -100 to 100
 - ac, tc, lc: per-message change, usually within -2..+2 unless major event
 - Negative affection = aversion/dislike
 - Negative trust = distrust/suspicion/fear
 - Negative love = hatred/destructive obsession/anti-attachment
 - Relationship values must evolve logically
+- status: 1-3 words only, relationship phase/status only
+- status must not describe events, thoughts, explanations, or causes
+- Never write full sentences in status
+- Good status examples: interested | trusts you | drawn in | protective attachment | complicated attraction
+- Bad status examples: her words pierced his defenses | he does not know what to say | attachment moved into a new phase
 - Put all NPC private thoughts (first person, present tense) into one <thk> block
 - One NPC per line in <thk>
 - Never include {{user}}'s thoughts in <thk>
 - Never decide for {{user}} in character's thoughts; only character's opinions on {{user}}, on {{user}}'s previous actions and appearance
 
+- Private NPC thoughts: max 1 sentence and max 20 words per NPC
+- Do not explain feelings in <thk>; write only the immediate private thought
+- Never output private NPC thoughts in the visible narrative text
+- Private thoughts must appear only inside <thk>
+- Never write <thk> thoughts as visible lines before the infoboard
+- No "Name: thought" thought list in narrative
 - Omit <nsfw /> if the scene is not intimate
 - No extra XML tags or commentary
 - Never output private NPC thoughts in the visible narrative text; private thoughts must appear only inside <thk>
@@ -646,6 +709,21 @@ obsidianregistry: {
         neonquest: {
     main: "𝄃𝄃𝄂𝄂𝄀RP BOARD𝄁𝄃𝄂𝄂𝄃",
     sub: "█Err⃟⃤r⁴⁰⁴"
+},
+        
+        shockwave: {
+    main: "☣..𝚁𝚎𝚊𝚌𝚝𝚒𝚘𝚗 𝚝𝚛𝚊𝚌𝚔𝚒𝚗𝚐..☣",
+    sub: ""
+},
+        
+lockdown: {
+    main: "𝕋𝕒𝕣𝕘𝕖𝕥 𖦏 𝕕𝕖𝕥𝕖𝕔𝕥𝕖𝕕",
+    sub: ""
+},
+        
+hotrod: {
+    main: "▶Infoboard◀",
+    sub: "🏁...........🏎.."
 }
     };
 
@@ -665,6 +743,9 @@ function GetThemeLocationIcon(theme = gTheme) {
         if (theme === "casefile") return "🔍";
     if (theme === "obsidianregistry") return "⟡";
     if (theme === "neonquest") return "⚙️";
+    if (theme === "shockwave") return "⚛︎";
+if (theme === "lockdown") return "⌖";
+if (theme === "hotrod") return "▰";
      return facultyThemes.includes(theme) ? "📜" : "📍";
 }
 
@@ -678,6 +759,9 @@ function GetThemeCharsIcon(theme = gTheme) {
     if (theme === "casefile") return "ID";
     if (theme === "obsidianregistry") return "᯽";
     if (theme === "neonquest") return "👤";
+    if (theme === "shockwave") return "⚙";
+if (theme === "lockdown") return "◎";
+if (theme === "hotrod") return "▣";
         return facultyThemes.includes(theme) ? "🪶" : "💖";
 }
 
@@ -694,7 +778,10 @@ function GetThemeRelationsIcon(theme = gTheme) {
         bloodmoon: "🥀",
         casefile: "𖦏",
         obsidianregistry: "✶",
-        neonquest: "🤖"
+        neonquest: "🤖",
+        shockwave: "🧪",
+lockdown: "💥",
+hotrod: "➤",
     };
 
     return map[theme] || "🤍";
@@ -794,6 +881,23 @@ function EscapeHtml(str) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+}
+
+function LimitWords(str, maxWords = 8, maxChars = 120) {
+    const clean = String(str ?? "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    if (!clean) return "";
+
+    const words = clean.split(" ");
+    let out = words.slice(0, maxWords).join(" ");
+
+    if (out.length > maxChars) {
+        out = out.slice(0, maxChars).replace(/\s+\S*$/, "").trim();
+    }
+
+    return out;
 }
 
 function NormalizeName(str) {
@@ -1000,10 +1104,10 @@ function ParseThoughtLine(line) {
 
     if (!text) return null;
 
-    return {
-        name: name || "__UNASSIGNED__",
-        text
-    };
+return {
+    name: name || "__UNASSIGNED__",
+    text: LimitWords(text, 30, 220)
+};
 }
 
 function ParseFocusState(tags = []) {
@@ -1194,7 +1298,7 @@ repairedXml: xmlForParsing !== xmlBlock ? xmlForParsing : ""
         .slice(0, 6);
     
     const age = c.getAttribute("age") || "";
-    const mood = c.getAttribute("mood") || "";
+    const mood = LimitWords(c.getAttribute("mood") || "", 3, 40);
     
     // --- ОБРАБОТКА PRESENCE ---
     const rawPresence = c.getAttribute("presence") || "";
@@ -1250,7 +1354,7 @@ const pushRel = (rel) => {
             tc: Clamp(parseInt(rel.getAttribute("tc")) || 0, -100, 100),
             l: Clamp(parseInt(rel.getAttribute("l")) || 0, -100, 100),
             lc: Clamp(parseInt(rel.getAttribute("lc")) || 0, -100, 100),
-            status: rel.getAttribute("status") || T("noStatus")
+ status: LimitWords(rel.getAttribute("status") || T("noStatus"), 3, 48)
         });
     };
 
@@ -2944,6 +3048,118 @@ function ReprocessChat() {
     RenderFloatingBoard();
 }
 
+function Debounce(fn, delay = 250) {
+    let timer = null;
+
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+    };
+}
+
+const ScheduleReprocessChat = Debounce(() => ReprocessChat(), 250);
+
+function RebuildStateFromCurrentChat() {
+    const stContext = SillyTavern.getContext();
+
+    let rollingState = JSON.parse(JSON.stringify(kDefaultState));
+    let lastRawXml = "";
+
+    if (!Array.isArray(stContext.chat)) {
+        gState = rollingState;
+        SaveState();
+        return;
+    }
+
+    for (const msg of stContext.chat) {
+        if (!msg || msg.is_user) continue;
+
+        const parsed = ParseInfoboard(msg.mes || "");
+        if (!parsed) continue;
+
+        if (parsed.rawXml) {
+            lastRawXml = parsed.rawXml;
+        }
+
+        // Патчим данные текущего сообщения, чтобы показать закрепленных
+        // (передаем rollingState, так как это контекст предыдущих сообщений)
+        const patchedParsed = PatchPinnedData(parsed, rollingState);
+
+        // Обновляем "катящееся" состояние для следующих сообщений
+        rollingState.time = patchedParsed.time || rollingState.time;
+        rollingState.date = patchedParsed.date || rollingState.date;
+        rollingState.weather = patchedParsed.weather || rollingState.weather;
+        rollingState.loc = patchedParsed.loc || rollingState.loc;
+        rollingState.chars = patchedParsed.chars;
+        rollingState.rels = patchedParsed.rels;
+        rollingState.thoughts = patchedParsed.thoughts;
+        rollingState.nsfw = patchedParsed.nsfw || null;
+
+        // Рендерим с ПРОПАТЧЕННЫМИ данными
+        RenderBoardIntoMessage(mesTextEl, patchedParsed, false, prevState);
+    });
+
+    gState = rollingState;
+
+    if (lastRawXml) {
+        gLastRawXml = lastRawXml;
+    }
+
+    SaveState();
+}
+
+function Debounce(fn, delay = 250) {
+    let timer = null;
+
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+    };
+}
+
+const ScheduleReprocessChat = Debounce(() => ReprocessChat(), 250);
+
+function RebuildStateFromCurrentChat() {
+    const stContext = SillyTavern.getContext();
+
+    let rollingState = JSON.parse(JSON.stringify(kDefaultState));
+    let lastRawXml = "";
+
+    if (!Array.isArray(stContext.chat)) {
+        gState = rollingState;
+        SaveState();
+        return;
+    }
+
+    for (const msg of stContext.chat) {
+        if (!msg || msg.is_user) continue;
+
+        const parsed = ParseInfoboard(msg.mes || "");
+        if (!parsed) continue;
+
+        if (parsed.rawXml) {
+            lastRawXml = parsed.rawXml;
+        }
+
+        rollingState.time = parsed.time || rollingState.time;
+        rollingState.date = parsed.date || rollingState.date;
+        rollingState.weather = parsed.weather || rollingState.weather;
+        rollingState.loc = parsed.loc || rollingState.loc;
+        rollingState.chars = parsed.chars || [];
+        rollingState.rels = parsed.rels || [];
+        rollingState.thoughts = parsed.thoughts || [];
+        rollingState.nsfw = parsed.nsfw || null;
+    }
+
+    gState = rollingState;
+
+    if (lastRawXml) {
+        gLastRawXml = lastRawXml;
+    }
+
+    SaveState();
+}
+
 function OnChatChanged() {
     LoadState();
     UpdateSettingsText();
@@ -2952,8 +3168,7 @@ function OnChatChanged() {
 
     if (!gEnabled) return;
 
-    setTimeout(() => ReprocessChat(), 180);
-    setTimeout(() => ReprocessChat(), 600);
+ScheduleReprocessChat();
 }
 
 function UpdateStatusDisplay() {
@@ -3219,32 +3434,37 @@ jQuery(async () => {
         stContext.eventSource.on(stContext.eventTypes.CHAT_CHANGED, OnChatChanged);
     }
 
-    if (stContext.eventTypes.MESSAGE_RECEIVED) {
-        stContext.eventSource.on(stContext.eventTypes.MESSAGE_RECEIVED, () => {
-            setTimeout(() => ReprocessChat(), 250);
-            setTimeout(() => ReprocessChat(), 700);
-            setTimeout(() => ReprocessChat(), 1400);
-        });
-    }
+if (stContext.eventTypes.MESSAGE_RECEIVED) {
+    stContext.eventSource.on(stContext.eventTypes.MESSAGE_RECEIVED, () => {
+        ScheduleReprocessChat();
+    });
+}
 
-    if (stContext.eventTypes.MESSAGE_EDITED) {
-        stContext.eventSource.on(stContext.eventTypes.MESSAGE_EDITED, () => {
-            setTimeout(() => ReprocessChat(), 320);
-            setTimeout(() => ReprocessChat(), 900);
-        });
-    }
+if (stContext.eventTypes.MESSAGE_EDITED) {
+    stContext.eventSource.on(stContext.eventTypes.MESSAGE_EDITED, () => {
+        ScheduleReprocessChat();
+    });
+}
 
     if (stContext.eventTypes.MESSAGE_SWIPED) {
         stContext.eventSource.on(stContext.eventTypes.MESSAGE_SWIPED, () => {
             document.querySelectorAll(".ib-board-host").forEach(el => el.remove());
-
-            setTimeout(() => ReprocessChat(), 250);
-            setTimeout(() => ReprocessChat(), 700);
-            setTimeout(() => ReprocessChat(), 1300);
-            setTimeout(() => ReprocessChat(), 2000);
+            ScheduleReprocessChat();
         });
     }
 
+    if (stContext.eventTypes.MESSAGE_DELETED) {
+        stContext.eventSource.on(stContext.eventTypes.MESSAGE_DELETED, () => {
+            RebuildStateFromCurrentChat();
+
+            document.querySelectorAll(".ib-board-host").forEach(el => el.remove());
+
+            setTimeout(() => ReprocessChat(), 120);
+            setTimeout(() => ReprocessChat(), 400);
+            setTimeout(() => RenderFloatingBoard(), 500);
+        });
+    }
+        
     setTimeout(() => ReprocessChat(), 120);
     setTimeout(() => ReprocessChat(), 500);
     setTimeout(() => UpdateThemePreview(), 150);
