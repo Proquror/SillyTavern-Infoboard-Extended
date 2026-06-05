@@ -1971,7 +1971,7 @@ function RenderBoard(state, isFresh = false, prevState = null) {
                 </div>
 
                 <div class="ib-compact-controls">
-        <div class="ib-control-btn ib-btn-pins" title="${EscapeHtml(T("pinnedList"))}">📍</div>
+    <div class="ib-control-btn ib-btn-pins" title="${EscapeHtml(T("pinnedList"))}">📍</div>
     <div class="ib-control-btn ib-btn-debug" title="${EscapeHtml(T("debugXml"))}">&lt;/&gt;</div>
     <div class="ib-control-btn ib-btn-full" title="Full">▣</div>
     <div class="ib-control-btn ib-btn-collapse" title="Collapse">✕</div>
@@ -2792,13 +2792,13 @@ function PatchPinnedData(parsed, prevState) {
         if (IsPinnedNpc(c.name)) {
             const hasLeftTag = (charData.tags || []).some(t => {
                     const n = NormalizeName(t);
-                    return n === "left" || n === "out";
+                    return n === "left" || n === "вышел" || n === "ушёл" || n === "out";
                 });
             // Если закрепленный ушел -> меняем на offscreen
             if (charData.presence?.key === "leftScene" || hasLeftTag) {
                 charData.tags = (charData.tags || []).filter(t => {
                     const n = NormalizeName(t);
-                    return n !== "left" && n !== "out";
+                    return n !== "left" && n !== "вышел" && n !== "ушёл" && n !== "out";
                 });
                 if (!charData.tags.includes(offscreenTag)) {
                     charData.tags.push(offscreenTag);
