@@ -16,9 +16,18 @@ try {
     console.warn("[IB] power-user.js not available — experimental_macro_engine flag will be skipped", e?.message);
 }
 
-const kExtensionName = "SillyTavern-Infoboard";
-const kExtensionFolderPath = `scripts/extensions/third-party/${kExtensionName}`;
-const kSettingsFile = `${kExtensionFolderPath}/settings.html`;
+const kExtensionName = "SillyTavern-Infoboard-Extended";
+
+// Detect extension folder path dynamically from script URL
+// Works regardless of physical location (third-party, default-user, etc.)
+const gExtUrlPath = (() => {
+    try {
+        const src = document.currentScript?.src || '';
+        const url = new URL(src);
+        return url.pathname.replace(/\/[^/]+$/, '');
+    } catch { return `/scripts/extensions/third-party/${kExtensionName}`; }
+})();
+const kSettingsFile = `${gExtUrlPath}/settings.html`;
 
 const kStorageKeyPrefix = "IB_State_";
 const kEnabledKey = "IB_Enabled";
@@ -37,6 +46,7 @@ const kDisplayFloatingKey = "IB_DisplayFloating";
 const kDisplayPanelKey = "IB_DisplayPanel";
 const kFloatingLayoutKey = "IB_FloatingLayout";
 const kPinnedNpcsKey = "IB_PinnedNpcs";
+// kPinStorageModeKey removed — tier pins no longer use a single mode
 const kTimelineKey = "IB_Timeline_";
 const kNotificationsEnabledKey = "IB_NotificationsEnabled";
 const kNotificationThresholdKey = "IB_NotificationThreshold";
@@ -45,6 +55,9 @@ const kPanelPositionKey = "IB_PanelPosition";
 const kDefaultBoardModeInlineKey = "IB_DefaultBoardMode_Inline";
 const kDefaultBoardModeFloatingKey = "IB_DefaultBoardMode_Floating";
 const kDefaultBoardModePanelKey = "IB_DefaultBoardMode_Panel";
+const kUseMacroKey = "IB_UseMacro";
+const kInjectPositionKey = "IB_InjectPosition";
+const kInjectDepthKey = "IB_InjectDepth";
 
 let gEnabled = false;
 let gTheme = "nocturne";
@@ -62,6 +75,8 @@ let gDisplayFloating = false;
 let gDisplayPanel = false;
 let gLastRawXml = "";
 let gPinnedNpcs = [];
+// gPinStorageMode removed — tier pins use multi-level resolution
+let gPinRegistry = null; // cached registry, loaded once
 let gTimeline = [];
 let gPreSwipeState = null; // State to use for prompt injection during swipe+regeneration
 let gNotificationsEnabled = true;
@@ -72,6 +87,9 @@ let gPanelOpen = false;
 let gDefaultBoardModeInline = "full";
 let gDefaultBoardModeFloating = "full";
 let gDefaultBoardModePanel = "full";
+let gUseMacro = false; // false = auto-inject (default), true = macro mode {{InfoBoard}}
+let gInjectPosition = 1;  // 0=after story string, 1=in-chat, 2=before story string
+let gInjectDepth = 0;     // depth for IN_CHAT position (0 = last message)
 
 function GetThemeClassStr(theme) {
     theme = theme || gTheme;
@@ -434,6 +452,16 @@ const kLang = {
                 noPinned: "Нет закреплённых персонажей",
                 unpinFromList: "Открепить",
 compactMode: "Фильтр отношений",
+pinStorageMode: "Хранилище закрепов",
+pinStoragePerChar: "По персонажу",
+pinStoragePerChat: "По чату",
+pinStorageGlobal: "Глобально",
+pinToChat: "Закрепить (чат)",
+pinToChar: "Закрепить (карточка)",
+pinToGlobal: "Закрепить (глобально)",
+pinTierChat: "Ч",
+pinTierChar: "К",
+pinTierGlobal: "Г",
 compactTop3: "Топ 3",
 compactTop1: "Топ 1",
 compactChanged: "Только изменившиеся",
@@ -469,6 +497,12 @@ unpinNpc: "Открепить NPC",
         timeline: "Таймлайн",
         pins: "Закрепы",
         notifications: "Уведомления",
+        enableNotif: "Включить уведомления",
+        threshold: "Порог",
+        notifSensitive: "Чувствительный",
+        notifDefault: "По умолчанию",
+        notifMajor: "Только крупные",
+        notifDramatic: "Только критические",
         export: "Экспорт",
         import: "Импорт",
         debug: "XML",
@@ -501,6 +535,14 @@ unpinNpc: "Открепить NPC",
         importComplete: "📥 Импорт завершён",
         dataRestored: "Данные восстановлены",
         panelMode: "Панель",
+        useMacroMode: "Режим макроса {{InfoBoard}}",
+        useMacroHelp: "Если вкл.: промт инжектится через макрос {{InfoBoard}}, который нужно вручную разместить в системном промте. Если выкл. (по умолчанию): автоинжект, как в оригинальном Infoboard.",
+        injectPosition: "Позиция инжекта",
+        injectPosAfter: "После Story String",
+        injectPosChat: "В чате (глубина)",
+        injectPosBefore: "Перед Story String",
+        injectDepth: "Глубина",
+        injectDepthHelp: "0 = последнее сообщение в контексте. Чем больше число, тем выше в истории чата.",
     },
     en: {
         enable: "Enable Infoboard",
@@ -558,6 +600,16 @@ unpinNpc: "Открепить NPC",
                 noPinned: "No pinned characters",
                 unpinFromList: "Unpin",
 compactMode: "Relationship Filter",
+pinStorageMode: "Pin Storage",
+pinStoragePerChar: "Per Character",
+pinStoragePerChat: "Per Chat",
+pinStorageGlobal: "Global",
+pinToChat: "Pin (chat)",
+pinToChar: "Pin (character)",
+pinToGlobal: "Pin (globally)",
+pinTierChat: "C",
+pinTierChar: "H",
+pinTierGlobal: "G",
 compactTop3: "Top 3",
 compactTop1: "Top 1",
 compactChanged: "Changed only",
@@ -593,6 +645,12 @@ unpinNpc: "Unpin NPC",
         timeline: "Timeline",
         pins: "Pins",
         notifications: "Notifications",
+        enableNotif: "Enable notifications",
+        threshold: "Threshold",
+        notifSensitive: "Sensitive",
+        notifDefault: "Default",
+        notifMajor: "Major only",
+        notifDramatic: "Dramatic only",
         export: "Export",
         import: "Import",
         debug: "XML",
@@ -625,6 +683,14 @@ unpinNpc: "Unpin NPC",
         importComplete: "📥 Import Complete",
         dataRestored: "Data restored",
         panelMode: "Panel",
+        useMacroMode: "Macro mode {{InfoBoard}}",
+        useMacroHelp: "When on: prompt is injected via {{InfoBoard}} macro, which you must manually place in your system prompt. When off (default): auto-inject like the original Infoboard.",
+        injectPosition: "Inject position",
+        injectPosAfter: "After Story String",
+        injectPosChat: "In Chat (depth)",
+        injectPosBefore: "Before Story String",
+        injectDepth: "Depth",
+        injectDepthHelp: "0 = last message in context. Higher values inject further up in chat history.",
     }
 };
 
@@ -1221,7 +1287,19 @@ function RenderThemePopup(btn) {
 
 function RenderTimelinePopup(preselectNpc) {
     let existing = document.getElementById("ib_timeline_popup");
-    if (existing) { existing.remove(); return; } // Toggle OFF if already open
+    if (existing) {
+        // If popup is already open and a specific NPC is requested, switch to that NPC tab
+        if (preselectNpc) {
+            const tab = existing.querySelector(`.ib-tl-npc-tab[data-npc="${CSS.escape(preselectNpc)}"]`);
+            if (tab) {
+                tab.click();
+                return;
+            }
+        }
+        // Otherwise toggle OFF (e.g. clicking the same toolbar button again)
+        existing.remove();
+        return;
+    }
 
     const popup = document.createElement("div");
     popup.id = "ib_timeline_popup";
@@ -1556,7 +1634,7 @@ function RenderTimelinePopup(preselectNpc) {
 
     // Close on outside click
     const closeOnOutside = (ev) => {
-        if (!ev.target.closest(".ib-timeline-popup") && !ev.target.closest(".ib-btn-timeline")) {
+        if (!ev.target.closest(".ib-timeline-popup") && !ev.target.closest(".ib-btn-timeline") && !ev.target.closest(".ib-rel-timeline-btn")) {
             const p = document.getElementById("ib_timeline_popup");
             if (p) p.remove();
             document.removeEventListener("click", closeOnOutside);
@@ -2887,28 +2965,109 @@ function RenderMiniStat(meta, changed = false) {
     </div>`;
 }
 
-function GetPinnedNpcsKey() {
-    return kPinnedNpcsKey + "_" + GetChatId();
+// ============== Pin Registry System ==============
+
+function GetCurrentCharKey() {
+    try {
+        const ctx = SillyTavern.getContext();
+        const char = ctx.characters?.[ctx.characterId];
+        if (char?.avatar) return char.avatar;
+        if (char?.name) return char.name;
+    } catch {}
+    return "default";
+}
+
+function GetDefaultPinRegistry() {
+    return {
+        version: 1,
+        global: [],
+        characters: {},
+        chats: {}
+    };
+}
+
+function LoadPinRegistry() {
+    try {
+        const raw = localStorage.getItem("IB_PinRegistry");
+        if (raw) {
+            const data = JSON.parse(raw);
+            if (data && typeof data === "object") {
+                return { ...GetDefaultPinRegistry(), ...data };
+            }
+        }
+    } catch {}
+    return GetDefaultPinRegistry();
+}
+
+function SavePinRegistry(registry) {
+    try {
+        localStorage.setItem("IB_PinRegistry", JSON.stringify(registry));
+    } catch (e) {
+        console.warn("[IB] Failed to save pin registry:", e?.message);
+    }
 }
 
 function LoadPinnedNpcs() {
-    try {
-        const key = GetPinnedNpcsKey();
-        const raw = localStorage.getItem(key);
-        gPinnedNpcs = raw ? JSON.parse(raw) : [];
-        if (!Array.isArray(gPinnedNpcs)) gPinnedNpcs = [];
-    } catch {
-        gPinnedNpcs = [];
+    // Load registry if not cached
+    if (!gPinRegistry) {
+        gPinRegistry = LoadPinRegistry();
+        // Migration: remove legacy `mode` field if present
+        if (gPinRegistry.mode) {
+            delete gPinRegistry.mode;
+            SavePinRegistry(gPinRegistry);
+        }
     }
+
+    gPinnedNpcs = ResolveActivePins();
 }
 
-function SavePinnedNpcs() {
-    try {
-        const key = GetPinnedNpcsKey();
-        localStorage.setItem(key, JSON.stringify(gPinnedNpcs));
-    } catch (e) {
-        console.warn("[IB] Save pinned NPCs failed:", e);
+function ResolveActivePins() {
+    if (!gPinRegistry) return [];
+
+    const result = [];
+    const seen = new Set();
+
+    const addUnique = (names) => {
+        for (const n of names) {
+            const norm = NormalizeName(n);
+            if (!seen.has(norm)) {
+                seen.add(norm);
+                result.push(n);
+            }
+        }
+    };
+
+    // 1. Global pins first
+    addUnique(gPinRegistry.global || []);
+
+    // 2. Per-character pins
+    const charKey = GetCurrentCharKey();
+    const charEntry = gPinRegistry.characters?.[charKey];
+    if (charEntry) {
+        if (Array.isArray(charEntry.pins)) addUnique(charEntry.pins);
+        else if (Array.isArray(charEntry)) addUnique(charEntry); // legacy migration
     }
+
+    // 3. Per-chat pins
+    const chatId = GetChatId();
+    addUnique(gPinRegistry.chats?.[chatId] || []);
+
+    return result;
+}
+
+function SortPinsByName(names = []) {
+    return [...names].sort((a, b) => String(a || "").localeCompare(String(b || ""), undefined, { sensitivity: "base" }));
+}
+
+// SavePinnedNpcs() removed — use SetPinLevel/RemovePinCompletely instead
+
+function GetCurrentCharName() {
+    try {
+        const ctx = SillyTavern.getContext();
+        const char = ctx.characters?.[ctx.characterId];
+        return char?.name || "Unknown";
+    } catch {}
+    return "Unknown";
 }
 
 function IsPinnedNpc(name) {
@@ -2916,18 +3075,184 @@ function IsPinnedNpc(name) {
     return gPinnedNpcs.some(pinned => NormalizeName(pinned) === normalized);
 }
 
-function TogglePinnedNpc(name) {
-    if (!name) return;
+/**
+ * GetPinLevel(name) → "perChat" | "perChar" | "global" | null
+ * Returns the highest tier at which the NPC is pinned.
+ * Priority: global > perChar > perChat
+ */
+function GetPinLevel(name) {
+    if (!gPinRegistry || !name) return null;
     const normalized = NormalizeName(name);
-    const existingIndex = gPinnedNpcs.findIndex(pinned => NormalizeName(pinned) === normalized);
 
-    if (existingIndex >= 0) {
-        gPinnedNpcs.splice(existingIndex, 1);
-    } else {
-        gPinnedNpcs.push(name);
+    // 1. Check global
+    if ((gPinRegistry.global || []).some(n => NormalizeName(n) === normalized)) {
+        return "global";
     }
 
-    SavePinnedNpcs();
+    // 2. Check per-character
+    const charKey = GetCurrentCharKey();
+    const charEntry = gPinRegistry.characters?.[charKey];
+    if (charEntry) {
+        const pins = Array.isArray(charEntry.pins) ? charEntry.pins : (Array.isArray(charEntry) ? charEntry : []);
+        if (pins.some(n => NormalizeName(n) === normalized)) {
+            return "perChar";
+        }
+    }
+
+    // 3. Check per-chat
+    const chatId = GetChatId();
+    const chatPins = gPinRegistry.chats?.[chatId] || [];
+    if (chatPins.some(n => NormalizeName(n) === normalized)) {
+        return "perChat";
+    }
+
+    return null;
+}
+
+function RemovePinCompletely(name) {
+    if (!gPinRegistry || !name) return;
+    const normalized = NormalizeName(name);
+
+    // Remove from global
+    if (gPinRegistry.global) {
+        gPinRegistry.global = gPinRegistry.global.filter(n => NormalizeName(n) !== normalized);
+    }
+
+    // Remove from ALL characters
+    if (gPinRegistry.characters) {
+        for (const key of Object.keys(gPinRegistry.characters)) {
+            const entry = gPinRegistry.characters[key];
+            if (Array.isArray(entry?.pins)) {
+                entry.pins = entry.pins.filter(n => NormalizeName(n) !== normalized);
+            } else if (Array.isArray(entry)) {
+                gPinRegistry.characters[key] = entry.filter(n => NormalizeName(n) !== normalized);
+            }
+        }
+    }
+
+    // Remove from ALL chats
+    if (gPinRegistry.chats) {
+        for (const chatId of Object.keys(gPinRegistry.chats)) {
+            gPinRegistry.chats[chatId] = gPinRegistry.chats[chatId].filter(n => NormalizeName(n) !== normalized);
+            if (gPinRegistry.chats[chatId].length === 0) {
+                delete gPinRegistry.chats[chatId];
+            }
+        }
+    }
+
+    gPinnedNpcs = ResolveActivePins();
+    SavePinRegistry(gPinRegistry);
+}
+
+function SetPinLevel(name, level) {
+    if (!gPinRegistry || !name) return;
+    if (!gPinRegistry.global) gPinRegistry.global = [];
+    if (!gPinRegistry.characters) gPinRegistry.characters = {};
+    if (!gPinRegistry.chats) gPinRegistry.chats = {};
+
+    // Remove from all tiers first
+    RemovePinCompletely(name);
+
+    // Re-add at the specified level
+    if (level === "global") {
+        gPinRegistry.global.push(name);
+    } else if (level === "perChar") {
+        const charKey = GetCurrentCharKey();
+        const existing = gPinRegistry.characters[charKey];
+        const charName = (typeof existing === 'object' && existing.name) ? existing.name : GetCurrentCharName();
+        gPinRegistry.characters[charKey] = { name: charName, pins: [...(existing?.pins || []), name] };
+    } else if (level === "perChat") {
+        const chatId = GetChatId();
+        if (!gPinRegistry.chats[chatId]) gPinRegistry.chats[chatId] = [];
+        gPinRegistry.chats[chatId].push(name);
+    }
+    // level === null → already removed by RemovePinCompletely
+
+    gPinnedNpcs = ResolveActivePins();
+    SavePinRegistry(gPinRegistry);
+}
+
+function TogglePinnedNpc(name) {
+    if (!name) return;
+    const level = GetPinLevel(name);
+
+    // Cycle: null → perChat → perChar → global → null
+    const nextLevel = !level          ? "perChat"
+                   : level === "perChat" ? "perChar"
+                   : level === "perChar" ? "global"
+                   : null;
+
+    SetPinLevel(name, nextLevel);
+}
+
+// SetPinStorageMode() removed — tier pins use multi-level cycle instead
+
+// Migrate old perChat localStorage pins into the registry
+function MigrateOldPinsToRegistry() {
+    try {
+        const oldKey = kPinnedNpcsKey + "_" + GetChatId();
+        const raw = localStorage.getItem(oldKey);
+        if (!raw) return false;
+
+        const oldPins = JSON.parse(raw);
+        if (!Array.isArray(oldPins) || oldPins.length === 0) return false;
+
+        // Only migrate if current mode slot is empty
+        const currentPins = ResolveActivePins();
+        if (currentPins.length > 0) return false;
+
+        // Migrate old perChat pins to perChat tier in registry
+        const chatId = GetChatId();
+        if (!gPinRegistry.chats) gPinRegistry.chats = {};
+        gPinRegistry.chats[chatId] = [...oldPins];
+        gPinnedNpcs = ResolveActivePins();
+        SavePinRegistry(gPinRegistry);
+
+        // Remove old key
+        localStorage.removeItem(oldKey);
+        console.log(`[IB] Migrated ${oldPins.length} pins from old perChat key to registry`);
+        return true;
+    } catch (e) {
+        console.warn("[IB] Pin migration failed:", e?.message);
+        return false;
+    }
+}
+
+// Clean up dead entries (deleted characters and chats)
+function CleanPinRegistry() {
+    if (!gPinRegistry) return;
+
+    try {
+        const ctx = SillyTavern.getContext();
+
+        // Clean characters
+        if (gPinRegistry.characters) {
+            const validAvatars = new Set(
+                (ctx.characters || []).map(c => c.avatar).filter(Boolean)
+            );
+            for (const key of Object.keys(gPinRegistry.characters)) {
+                if (!validAvatars.has(key)) {
+                    delete gPinRegistry.characters[key];
+                }
+            }
+        }
+
+        // Clean chats — keep entries that match existing chat files
+        // (We can't easily enumerate all chat IDs, so we only clean if
+        // the current chat ID is valid)
+        if (gPinRegistry.chats) {
+            const chatId = GetChatId();
+            const hasChat = Array.isArray(ctx.chat) && ctx.chat.length > 0;
+            // Remove entries with empty pin arrays (no point keeping them)
+            for (const [key, pins] of Object.entries(gPinRegistry.chats)) {
+                if (!Array.isArray(pins) || pins.length === 0) {
+                    delete gPinRegistry.chats[key];
+                }
+            }
+        }
+    } catch (e) {
+        console.warn("[IB] Clean pin registry failed:", e?.message);
+    }
 }
 
 function GetPresencePriority(c) {
@@ -2978,6 +3303,19 @@ ${SortCharsByPriority(chars).map(c => {
                 const presenceHtml = c.presence ? `<span class="ib-presence-chip ${c.presence.cls}">${EscapeHtml(T(c.presence.key))}</span>` : "";
                 const moodPill = mood ? `<span class="ib-tag ib-mood-tag">${EscapeHtml(mood)}</span>` : "";
 
+                // Tier pin rendering
+                const level = GetPinLevel(c.name);
+                const pinnedCls = level ? "ib-pinned" : "";
+                const tierCls = level ? `ib-pin-${level}` : "";
+                const tierNum = level === "perChat" ? T("pinTierChat")
+                              : level === "perChar" ? T("pinTierChar")
+                              : level === "global"  ? T("pinTierGlobal")
+                              : "";
+                const pinTitle = !level           ? T("pinToChat")
+                              : level === "perChat" ? T("pinToChar")
+                              : level === "perChar" ? T("pinToGlobal")
+                              : T("unpinNpc");
+
                 return `
                 <div class="ib-char">
                     <div class="ib-char-left">
@@ -2993,11 +3331,11 @@ ${SortCharsByPriority(chars).map(c => {
                     </div>
                     <button
                         type="button"
-                        class="ib-pin-btn ${IsPinnedNpc(c.name) ? "ib-pinned" : ""}"
+                        class="ib-pin-btn ${pinnedCls} ${tierCls}"
                         data-ib-pin="${EscapeHtml(c.name)}"
-                        title="${EscapeHtml(IsPinnedNpc(c.name) ? T("unpinNpc") : T("pinNpc"))}"
-                        aria-label="${EscapeHtml(IsPinnedNpc(c.name) ? T("unpinNpc") : T("pinNpc"))}"
-                    ></button>
+                        title="${EscapeHtml(pinTitle)}"
+                        aria-label="${EscapeHtml(pinTitle)}"
+                    ><span class="ib-pin-tier">${tierNum}</span></button>
                 </div>`;
             }).join("")}
         </div>
@@ -3219,10 +3557,16 @@ function RenderCompactRelations(state, prevState = null) {
             const ageHtml = r.age ? `<span class="ib-age-chip">${EscapeHtml(r.age)}</span>` : "";
             const charData = (state?.chars || []).find(c => NamesLikelyMatch(c.name, r.source));
             const presenceHtml = charData?.presence ? `<span class="ib-presence-chip ib-presence-chip-sm ${charData.presence.cls}">${EscapeHtml(T(charData.presence.key))}</span>` : "";
+            const cLevel = GetPinLevel(r.source);
+            const cPinnedCls = cLevel ? "ib-pinned" : "";
+            const cTierCls = cLevel ? `ib-pin-${cLevel}` : "";
+            const cTierNum = cLevel === "perChat" ? T("pinTierChat") : cLevel === "perChar" ? T("pinTierChar") : cLevel === "global" ? T("pinTierGlobal") : "";
+            const cPinTitle = !cLevel ? T("pinToChat") : cLevel === "perChat" ? T("pinToChar") : cLevel === "perChar" ? T("pinToGlobal") : T("unpinNpc");
 
             return `
             <div class="ib-compact-rel-item">
                 <div class="ib-compact-rel-name-row">
+                    <span class="ib-rel-timeline-btn ib-rel-timeline-btn-sm" data-ib-timeline="${EscapeHtml(r.source)}" title="📈 ${EscapeHtml(T('timeline'))}">📈</span>
                     <span class="ib-compact-rel-name">${EscapeHtml(r.source)}</span>
                     ${ageHtml}${presenceHtml}
                     <span class="ib-compact-rel-status ${GetStatusClass(r.status)}">${EscapeHtml(GetStatusIcon(r.status))}</span>
@@ -3236,11 +3580,11 @@ function RenderCompactRelations(state, prevState = null) {
                     </div>
                     <button
                         type="button"
-                        class="ib-pin-btn ib-pin-btn-sm ${IsPinnedNpc(r.source) ? "ib-pinned" : ""}"
+                        class="ib-pin-btn ib-pin-btn-sm ${cPinnedCls} ${cTierCls}"
                         data-ib-pin="${EscapeHtml(r.source)}"
-                        title="${EscapeHtml(IsPinnedNpc(r.source) ? T("unpinNpc") : T("pinNpc"))}"
-                        aria-label="${EscapeHtml(IsPinnedNpc(r.source) ? T("unpinNpc") : T("pinNpc"))}"
-                    ></button>
+                        title="${EscapeHtml(cPinTitle)}"
+                        aria-label="${EscapeHtml(cPinTitle)}"
+                    ><span class="ib-pin-tier">${cTierNum}</span></button>
                 </div>
             </div>`;
         }).join("")}
@@ -3537,9 +3881,12 @@ function WireBoardControls(boardEl, prevState) {
                     setTimeout(() => { editBtn.textContent = T("editXml") || "Edit"; }, 1200);
                     return;
                 }
+                const preHeight = pre.offsetHeight;
                 pre.style.display = "none";
                 textarea.style.display = "block";
+                textarea.style.height = preHeight + "px";
                 textarea.value = raw;
+
                 editBtn.style.display = "none";
                 copyBtn.style.display = "none";
                 saveBtn.style.display = "";
@@ -3649,8 +3996,70 @@ function WireBoardControls(boardEl, prevState) {
             if (!name) return;
             TogglePinnedNpc(name);
             ReprocessChat();
+            // Закрыть попап со списком пинов, если открыт
+            document.querySelectorAll(".ib-pins-popup").forEach(p => p.remove());
         });
     });
+
+    // Обновление открытого попапа со списком пинов
+    const RefreshPinsPopup = () => {
+        const popup = document.querySelector(".ib-pins-popup");
+        if (!popup) return;
+
+        // Пересобираем gPinnedNpcs на случай изменений
+        gPinnedNpcs = ResolveActivePins();
+
+        let content = `<div class="ib-pins-header">${EscapeHtml(T("pinnedList"))}</div>`;
+
+        if (gPinnedNpcs.length === 0) {
+            content += `<div class="ib-pins-empty">${EscapeHtml(T("noPinned"))}</div>`;
+        } else {
+            content += `<div class="ib-pins-table">`;
+            content += `<div class="ib-pins-table-header">
+                <span class="ib-pins-th-name"></span>
+                <span class="ib-pins-th-tier" title="${EscapeHtml(T("pinTierChat"))}">${EscapeHtml(T("pinTierChat"))}</span>
+                <span class="ib-pins-th-tier" title="${EscapeHtml(T("pinTierChar"))}">${EscapeHtml(T("pinTierChar"))}</span>
+                <span class="ib-pins-th-tier" title="${EscapeHtml(T("pinTierGlobal"))}">${EscapeHtml(T("pinTierGlobal"))}</span>
+            </div>`;
+
+            SortPinsByName(gPinnedNpcs).forEach(name => {
+                const currentLevel = GetPinLevel(name);
+                const makeRadio = (level) => {
+                    const isActive = currentLevel === level;
+                    const activeCls = isActive ? "ib-tier-radio-active" : "";
+                    const tierVar = level === "perChat" ? "1" : level === "perChar" ? "2" : "3";
+                    return `<span class="ib-tier-radio ${activeCls} ${isActive ? `ib-tier-radio-tier-${tierVar}` : ''}" 
+                        data-ib-pin-name="${EscapeHtml(name)}" 
+                        data-ib-pin-level="${level}"
+                        title="${EscapeHtml(level === "perChat" ? T("pinTierChat") : level === "perChar" ? T("pinTierChar") : T("pinTierGlobal"))}">${isActive ? "●" : "○"}</span>`;
+                };
+                content += `<div class="ib-pins-row" style="display:grid;grid-template-columns:1fr 28px 28px 28px;gap:4px;align-items:center"><span class="ib-pins-name">${EscapeHtml(name)}</span>${makeRadio("perChat")}${makeRadio("perChar")}${makeRadio("global")}</div>`;
+            });
+            content += `</div>`;
+        }
+
+        popup.innerHTML = content;
+
+        // Перевешиваем обработчики на новые элементы
+        popup.querySelectorAll(".ib-tier-radio").forEach(radio => {
+            radio.addEventListener("click", (ev) => {
+                ev.stopPropagation();
+                const name = radio.dataset.ibPinName;
+                const level = radio.dataset.ibPinLevel;
+                const currentLevel = GetPinLevel(name);
+
+                if (currentLevel === level) {
+                    SetPinLevel(name, null);
+                    ReprocessChat();
+                    RefreshPinsPopup();
+                } else {
+                    SetPinLevel(name, level);
+                    ReprocessChat();
+                    RefreshPinsPopup();
+                }
+            });
+        });
+    };
 
     // 4. Логика списка закреплённых (Кнопка 📍)
     const closePinsPopupHandler = (e) => {
@@ -3687,15 +4096,27 @@ function WireBoardControls(boardEl, prevState) {
             if (gPinnedNpcs.length === 0) {
                 content += `<div class="ib-pins-empty">${EscapeHtml(T("noPinned"))}</div>`;
             } else {
-                content += `<div class="ib-pins-list">`;
-                gPinnedNpcs.forEach(name => {
-                    content += `
-                    <div class="ib-pins-item">
-                        <span class="ib-pins-name">${EscapeHtml(name)}</span>
-                        <button class="ib-pins-unpin-btn" data-ib-unpin="${EscapeHtml(name)}">
-                            ${EscapeHtml(T("unpinFromList"))}
-                        </button>
-                    </div>`;
+                // Table header: Name | Ч | К | Г
+                content += `<div class="ib-pins-table">`;
+                content += `<div class="ib-pins-table-header">
+                    <span class="ib-pins-th-name"></span>
+                    <span class="ib-pins-th-tier" title="${EscapeHtml(T("pinTierChat"))}">${EscapeHtml(T("pinTierChat"))}</span>
+                    <span class="ib-pins-th-tier" title="${EscapeHtml(T("pinTierChar"))}">${EscapeHtml(T("pinTierChar"))}</span>
+                    <span class="ib-pins-th-tier" title="${EscapeHtml(T("pinTierGlobal"))}">${EscapeHtml(T("pinTierGlobal"))}</span>
+                </div>`;
+
+                SortPinsByName(gPinnedNpcs).forEach(name => {
+                    const currentLevel = GetPinLevel(name);
+                    const makeRadio = (level) => {
+                        const isActive = currentLevel === level;
+                        const activeCls = isActive ? "ib-tier-radio-active" : "";
+                        const tierVar = level === "perChat" ? "1" : level === "perChar" ? "2" : "3";
+                        return `<span class="ib-tier-radio ${activeCls} ${isActive ? `ib-tier-radio-tier-${tierVar}` : ''}" 
+                            data-ib-pin-name="${EscapeHtml(name)}" 
+                            data-ib-pin-level="${level}"
+                            title="${EscapeHtml(level === "perChat" ? T("pinTierChat") : level === "perChar" ? T("pinTierChar") : T("pinTierGlobal"))}">${isActive ? "●" : "○"}</span>`;
+                    };
+                    content += `<div class="ib-pins-row" style="display:grid;grid-template-columns:1fr 28px 28px 28px;gap:4px;align-items:center"><span class="ib-pins-name">${EscapeHtml(name)}</span>${makeRadio("perChat")}${makeRadio("perChar")}${makeRadio("global")}</div>`;
                 });
                 content += `</div>`;
             }
@@ -3705,14 +4126,25 @@ function WireBoardControls(boardEl, prevState) {
 
             PositionPopupNearButton(popup, btn);
 
-            // Обработка клика по кнопке "Открепить" внутри списка
-            popup.querySelectorAll(".ib-pins-unpin-btn").forEach(unpinBtn => {
-                unpinBtn.addEventListener("click", (ev) => {
+            // Обработка клика по tier-радио внутри списка
+            popup.querySelectorAll(".ib-tier-radio").forEach(radio => {
+                radio.addEventListener("click", (ev) => {
                     ev.stopPropagation();
-                    const nameToUnpin = unpinBtn.dataset.ibUnpin;
-                    TogglePinnedNpc(nameToUnpin);
-                    popup.remove(); // Закрываем после действия
-                    ReprocessChat();
+                    const name = radio.dataset.ibPinName;
+                    const level = radio.dataset.ibPinLevel;
+                    const currentLevel = GetPinLevel(name);
+
+                    if (currentLevel === level) {
+                        // Клик на активную галочку → открепить
+                        SetPinLevel(name, null);
+                        ReprocessChat();
+                        RefreshPinsPopup();
+                    } else {
+                        // Клик на неактивную → переместить на этот уровень
+                        SetPinLevel(name, level);
+                        ReprocessChat();
+                        RefreshPinsPopup();
+                    }
                 });
             });
 
@@ -4481,16 +4913,44 @@ function MigrateDisplayMode() {
     localStorage.setItem(kDisplayPanelKey, String(gDisplayPanel));
 }
 
+function UpdateInjectDepthVisibility() {
+    // Show/hide entire inject position section based on macro mode
+    if (gUseMacro) {
+        $("#ib_inject_position_row").hide();
+        $("#ib_inject_depth_row").hide();
+        $("#ib_inject_depth_help").hide();
+        return;
+    }
+    $("#ib_inject_position_row").show();
+    // Show depth row only when position is IN_CHAT (1)
+    if (gInjectPosition === 1) {
+        $("#ib_inject_depth_row").show();
+        $("#ib_inject_depth_help").show();
+    } else {
+        $("#ib_inject_depth_row").hide();
+        $("#ib_inject_depth_help").hide();
+    }
+}
+
 function UpdateSettingsText() {
     $('label[for="ib_enabled"]').html(`<b>${T("enable")}</b>`);
     $('label[for="ib_lang"]').html(`<b>${T("language")}</b>`);
     $('label[for="ib_theme"]').html(`<b>${T("theme")}</b>`);
     $('label[for="ib_bar_style"]').html(`<b>${T("barStyle")}</b>`);
     $('label[for="ib_compact_mode"]').html(`<b>${T("compactMode")}</b>`);
+    // ib_pin_storage_mode label removed — tier pins don't use a single mode dropdown
     $('label[for="ib_hide_raw"]').text(T("hideRaw"));
     $('label[for="ib_hide_thought_leaks"]').text(T("hideThoughtLeaks"));
     $('label[for="ib_show_nsfw"]').text(T("showNsfw"));
     $('label[for="ib_hover_fx"]').text(T("hoverFx"));
+    $('label[for="ib_use_macro"]').html(`<b>${T("useMacroMode")}</b>`);
+    $("#ib_use_macro_help").text(T("useMacroHelp"));
+    $("#ib_inject_position_label").html(`<b>${T("injectPosition")}</b>`);
+    $("#ib_inject_pos_after").text(T("injectPosAfter"));
+    $("#ib_inject_pos_chat").text(T("injectPosChat"));
+    $("#ib_inject_pos_before").text(T("injectPosBefore"));
+    $('label[for="ib_inject_depth"]').html(`<b>${T("injectDepth")}</b>`);
+    $("#ib_inject_depth_help").text(T("injectDepthHelp"));
     $("#ib_state_label").text(T("currentState"));
     $("#ib_reset_state").text(T("resetState"));
     $("#ib_reprocess_chat").text(T("reprocess"));
@@ -4504,6 +4964,7 @@ function UpdateSettingsText() {
 $("#ib_compact_mode option[value='top1']").text(T("compactTop1"));
 $("#ib_compact_mode option[value='changed']").text(T("compactChanged"));
 $("#ib_compact_mode option[value='all']").text(T("compactAll"));
+    // ib_pin_storage_mode options removed
     // Display modes section
     $("#ib_display_modes_label").text(T("displayModes"));
     $('label[for="ib_display_inline"]').text(T("displayInline"));
@@ -4527,6 +4988,14 @@ $("#ib_compact_mode option[value='all']").text(T("compactAll"));
         $(`${sel} option[value='compact']`).text(T("boardModeCompact"));
         $(`${sel} option[value='collapsed']`).text(T("boardModeCollapsed"));
     }
+    // Notifications section
+    $("#ib_notif_title_text").text(T("notifications"));
+    $('label[for="ib_notifications_enabled"]').text(T("enableNotif"));
+    $('label[for="ib_notification_threshold"]').html(`<b>${T("threshold")}</b>`);
+    $("#ib_notification_threshold option[value='3']").text(`3 (${T("notifSensitive")})`);
+    $("#ib_notification_threshold option[value='5']").text(`5 (${T("notifDefault")})`);
+    $("#ib_notification_threshold option[value='10']").text(`10 (${T("notifMajor")})`);
+    $("#ib_notification_threshold option[value='20']").text(`20 (${T("notifDramatic")})`);
     UpdateThemePreview();
 }
 
@@ -4936,11 +5405,13 @@ function RebuildStateFromCurrentChat() {
     SaveState();
 }
 
-function OnChatChanged() {
+async function OnChatChanged() {
     gPreSwipeState = null; // Clear pre-swipe state on chat change
     LoadState();
     LoadTimeline();
     LoadPinnedNpcs();
+    MigrateOldPinsToRegistry();
+    CleanPinRegistry();
     UpdateSettingsText();
     UpdateStatusDisplay();
     UpdateLastUpdateDisplay();
@@ -4996,7 +5467,8 @@ function ExportState() {
                 defaultBoardModePanel: gDefaultBoardModePanel
             },
             timeline: gTimeline,
-            pinnedNpcs: gPinnedNpcs
+            pinnedNpcs: gPinnedNpcs,
+            pinRegistry: gPinRegistry
         };
         const data = JSON.stringify(exportData, null, 2);
         const blob = new Blob([data], { type: "application/json" });
@@ -5092,6 +5564,7 @@ async function ImportStateFromFile(file) {
                 $("#ib_hover_fx").prop("checked", gHoverFx);
                 $("#ib_hide_thought_leaks").prop("checked", gHideThoughtLeaks);
                 $("#ib_compact_mode").val(gCompactMode);
+                // ib_pin_storage_mode dropdown removed
                 $("#ib_display_inline").prop("checked", gDisplayInline);
                 $("#ib_display_floating").prop("checked", gDisplayFloating);
                 $("#ib_display_panel").prop("checked", gDisplayPanel);
@@ -5111,8 +5584,21 @@ async function ImportStateFromFile(file) {
             }
 
             if (Array.isArray(parsed.pinnedNpcs)) {
-                gPinnedNpcs = parsed.pinnedNpcs;
-                SavePinnedNpcs();
+                // Legacy: migrate flat pinnedNpcs array to perChat tier
+                const chatId = GetChatId();
+                if (!gPinRegistry.chats) gPinRegistry.chats = {};
+                gPinRegistry.chats[chatId] = [...parsed.pinnedNpcs];
+                gPinnedNpcs = ResolveActivePins();
+                SavePinRegistry(gPinRegistry);
+            }
+
+            // v4/v5: full pin registry restore
+            if (parsed.pinRegistry && typeof parsed.pinRegistry === "object") {
+                gPinRegistry = { ...GetDefaultPinRegistry(), ...parsed.pinRegistry };
+                // Migration: remove legacy `mode` field if present
+                if (gPinRegistry.mode) delete gPinRegistry.mode;
+                gPinnedNpcs = ResolveActivePins();
+                SavePinRegistry(gPinRegistry);
             }
 
             UpdateSettingsText();
@@ -5168,7 +5654,7 @@ function RegisterFallbackPromptInjection(stContext) {
                 if (typeof SillyTavern !== 'undefined' && SillyTavern.getContext) {
                     const ctx = SillyTavern.getContext();
                     if (ctx.setExtensionPrompt) {
-                        ctx.setExtensionPrompt('InfoBoard', fullPrompt, 1, 0, true);
+                        ctx.setExtensionPrompt('InfoBoard', fullPrompt, gInjectPosition, gInjectDepth, true);
                     }
                 }
             } catch (e) {
@@ -5210,6 +5696,13 @@ jQuery(async () => {
             <div class="ib-setting-row">
                 <input type="checkbox" id="ib_enabled" />
                 <label for="ib_enabled"><b>Enable Infoboard</b></label>
+            </div>
+            <div class="ib-setting-row">
+                <input type="checkbox" id="ib_use_macro" />
+                <label for="ib_use_macro" id="ib_use_macro_label"><b>Macro mode {{InfoBoard}}</b></label>
+            </div>
+            <div class="ib-custom-css-help" id="ib_use_macro_help" style="margin-top: -6px; margin-bottom: 6px;">
+                When on: prompt is injected via {{InfoBoard}} macro. When off (default): auto-inject.
             </div>
             <div class="ib-setting-row">
                 <label for="ib_lang"><b>Language</b></label>
@@ -5418,6 +5911,11 @@ jQuery(async () => {
     gDisplayMode = localStorage.getItem(kDisplayModeKey) || "inline";
     gNotificationsEnabled = localStorage.getItem(kNotificationsEnabledKey) !== "false";
     gNotificationThreshold = parseInt(localStorage.getItem(kNotificationThresholdKey)) || 5;
+    gUseMacro = localStorage.getItem(kUseMacroKey) === "true";
+    gInjectPosition = parseInt(localStorage.getItem(kInjectPositionKey));
+    if (isNaN(gInjectPosition) || ![0, 1, 2].includes(gInjectPosition)) gInjectPosition = 1;
+    gInjectDepth = parseInt(localStorage.getItem(kInjectDepthKey));
+    if (isNaN(gInjectDepth) || gInjectDepth < 0) gInjectDepth = 0;
     gPanelWidth = parseInt(localStorage.getItem(kPanelWidthKey)) || 380;
     gDefaultBoardModeInline = localStorage.getItem(kDefaultBoardModeInlineKey) || "full";
     gDefaultBoardModeFloating = localStorage.getItem(kDefaultBoardModeFloatingKey) || "full";
@@ -5442,6 +5940,8 @@ jQuery(async () => {
     LoadState();
     ApplyCustomCss();
     LoadPinnedNpcs();
+    MigrateOldPinsToRegistry();
+    CleanPinRegistry();
     LoadTimeline();
 
     // Fallback: ensure old cached settings.html elements are cleaned up
@@ -5519,6 +6019,11 @@ jQuery(async () => {
     }
 
     $("#ib_enabled").prop("checked", gEnabled);
+    $("#ib_use_macro").prop("checked", gUseMacro);
+    $("#ib_inject_position").val(String(gInjectPosition));
+    $("#ib_inject_depth").val(gInjectDepth);
+    // Show/hide depth row based on position
+    UpdateInjectDepthVisibility();
     $("#ib_lang").val(gLang);
     $("#ib_theme").val(gTheme);
     $("#ib_bar_style").val(gBarStyle);
@@ -5528,6 +6033,8 @@ jQuery(async () => {
         localStorage.setItem(kCompactModeKey, gCompactMode);
         ReprocessChat();
     });
+
+    // ib_pin_storage_mode dropdown handler removed — tier pins use multi-level cycle
     
     $("#ib_hide_raw").prop("checked", gHideRaw);
     $("#ib_hide_thought_leaks").on("change", function () {
@@ -5569,6 +6076,66 @@ jQuery(async () => {
             document.querySelectorAll(".ib-board-host").forEach(el => el.remove());
             RemoveFloatingBoard();
             RemovePanelMode();
+            // Clear auto-inject when disabled
+            if (!gUseMacro) {
+                try {
+                    const ctx = SillyTavern.getContext();
+                    if (ctx.setExtensionPrompt) {
+                        ctx.setExtensionPrompt('InfoBoard', '', gInjectPosition, gInjectDepth, true);
+                    }
+                } catch {}
+            }
+        }
+    });
+
+    $("#ib_use_macro").on("change", function () {
+        gUseMacro = $(this).is(":checked");
+        localStorage.setItem(kUseMacroKey, String(gUseMacro));
+
+        if (gUseMacro) {
+            // Switching to macro mode — clear any existing auto-inject
+            try {
+                const ctx = SillyTavern.getContext();
+                if (ctx.setExtensionPrompt) {
+                    ctx.setExtensionPrompt('InfoBoard', '', gInjectPosition, gInjectDepth, true);
+                }
+            } catch {}
+            console.log("[IB] Switched to macro mode — use {{InfoBoard}} in your prompt");
+        } else {
+            // Switching to auto-inject mode — will inject on next generation
+            console.log("[IB] Switched to auto-inject mode");
+        }
+        UpdateInjectDepthVisibility();
+    });
+
+    $("#ib_inject_position").on("change", function () {
+        gInjectPosition = parseInt($(this).val());
+        if (isNaN(gInjectPosition)) gInjectPosition = 1;
+        localStorage.setItem(kInjectPositionKey, String(gInjectPosition));
+        UpdateInjectDepthVisibility();
+    });
+
+    $("#ib_inject_depth").on("input change", function () {
+        gInjectDepth = parseInt($(this).val());
+        if (isNaN(gInjectDepth) || gInjectDepth < 0) gInjectDepth = 0;
+        if (gInjectDepth > 999) gInjectDepth = 999;
+        $(this).val(gInjectDepth);
+        localStorage.setItem(kInjectDepthKey, String(gInjectDepth));
+    });
+
+    $("#ib_depth_minus").on("click", function () {
+        if (gInjectDepth > 0) {
+            gInjectDepth--;
+            $("#ib_inject_depth").val(gInjectDepth);
+            localStorage.setItem(kInjectDepthKey, String(gInjectDepth));
+        }
+    });
+
+    $("#ib_depth_plus").on("click", function () {
+        if (gInjectDepth < 999) {
+            gInjectDepth++;
+            $("#ib_inject_depth").val(gInjectDepth);
+            localStorage.setItem(kInjectDepthKey, String(gInjectDepth));
         }
     });
 
@@ -5831,7 +6398,7 @@ if (stContext.eventTypes.MESSAGE_EDITED) {
         localStorage.setItem(kNotificationThresholdKey, String(gNotificationThreshold));
     });
 
-    // --- НАЧАЛО: Регистрация макроса {{InfoBoard}} ---
+    // --- НАЧАЛО: Регистрация макроса {{InfoBoard}} и автоинжекта ---
     if (power_user && typeof power_user === 'object') {
         try {
             power_user.experimental_macro_engine = true;
@@ -5840,31 +6407,66 @@ if (stContext.eventTypes.MESSAGE_EDITED) {
         }
     }
 
+    // Always register the macro (if available) — it checks gUseMacro at runtime
     if (macros && macros.registry && typeof macros.registry.registerMacro === 'function') {
         try {
             macros.registry.registerMacro('InfoBoard', {
                 category: 'Infoboard',
                 aliases: [{ alias: 'IB' }],
-                description: 'Injects the Infoboard system prompt and current state. Place this in your System Prompt or Author\'s Note.',
+                description: 'Injects the Infoboard system prompt and current state. Place this in your System Prompt or Author\'s Note. Only works when "Macro mode" is enabled in settings.',
                 handler: () => {
-                    // Если расширение выключено, макрос вернет пустую строку
-                    if (!gEnabled) return '';
+                    // Macro only returns content when macro mode is enabled
+                    if (!gEnabled || !gUseMacro) return '';
 
-                    // Генерируем промпт
                     const systemPrompt = gLang === "en" ? kSystemPromptEn : kSystemPromptRu;
                     const fullPrompt = `${systemPrompt}\n\n${BuildStateInjection()}`;
 
                     return fullPrompt;
                 }
             });
-            console.log("[IB] Infoboard extension ready (Macro Mode)");
+            console.log("[IB] Macro {{InfoBoard}} registered (active only when macro mode is on)");
         } catch (e) {
-            console.warn("[IB] Macro registration failed, falling back to event-based injection:", e?.message);
-            RegisterFallbackPromptInjection(stContext);
+            console.warn("[IB] Macro registration failed:", e?.message);
         }
     } else {
-        console.warn("[IB] Macro system not available — using fallback prompt injection");
-        RegisterFallbackPromptInjection(stContext);
+        console.warn("[IB] Macro system not available — macro mode will not work");
     }
-    // --- КОНЕЦ: Регистрация макроса ---
+
+    // Always register the auto-inject handler — it checks !gUseMacro at runtime
+    if (stContext?.eventSource && stContext?.eventTypes?.GENERATION_STARTED) {
+        stContext.eventSource.on(stContext.eventTypes.GENERATION_STARTED, () => {
+            // Auto-inject only when macro mode is OFF
+            if (!gEnabled || gUseMacro) {
+                // Clear any previous auto-inject to avoid stale prompts
+                try {
+                    const ctx = SillyTavern.getContext();
+                    if (ctx.setExtensionPrompt) {
+                        ctx.setExtensionPrompt('InfoBoard', '', gInjectPosition, gInjectDepth, true);
+                    }
+                } catch {}
+                return;
+            }
+            try {
+                const systemPrompt = gLang === "en" ? kSystemPromptEn : kSystemPromptRu;
+                const stateBlock = BuildStateInjection();
+                const fullPrompt = `${systemPrompt}\n\n${stateBlock}`;
+
+                if (typeof SillyTavern !== 'undefined' && SillyTavern.getContext) {
+                    const ctx = SillyTavern.getContext();
+                    if (ctx.setExtensionPrompt) {
+                        ctx.setExtensionPrompt('InfoBoard', fullPrompt, gInjectPosition, gInjectDepth, true);
+                    }
+                }
+            } catch (e) {
+                console.warn("[IB] Auto-inject failed:", e?.message);
+            }
+        });
+        console.log("[IB] Auto-inject handler registered (active only when macro mode is off)");
+    } else {
+        console.warn("[IB] GENERATION_STARTED event not available — auto-inject disabled");
+    }
+
+    // Log current mode at startup
+    console.log(`[IB] Infoboard extension ready — mode: ${gUseMacro ? 'macro {{InfoBoard}}' : 'auto-inject'}`);
+    // --- КОНЕЦ: Регистрация макроса и автоинжекта ---
 });

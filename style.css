@@ -960,6 +960,62 @@
     line-height: 1.4;
 }
 
+/* ============ Inject Depth Input ============ */
+.ib-depth-input-wrap {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.ib-depth-field {
+    width: 48px;
+    text-align: center;
+    border: none;
+    background: transparent;
+    color: var(--ib-text, #e0e0e0);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 4px 0;
+    outline: none;
+    -moz-appearance: textfield;
+}
+
+.ib-depth-field::-webkit-inner-spin-button,
+.ib-depth-field::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.ib-depth-btn {
+    width: 28px;
+    height: 30px;
+    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--ib-text, #ccc);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+    user-select: none;
+    line-height: 1;
+}
+
+.ib-depth-btn:hover {
+    background: var(--ib-accent, #7b5ea7);
+    color: #fff;
+}
+
+.ib-depth-btn:active {
+    background: var(--ib-accent, #7b5ea7);
+    filter: brightness(1.3);
+}
+
 #ib_custom_css {
     width: 100%;
     margin-top: 8px;
@@ -3234,6 +3290,8 @@
     box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.04),
         0 8px 18px rgba(0,0,0,0.16);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .ib-control-btn.ib-btn-debug {
@@ -3741,6 +3799,7 @@
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
     flex-shrink: 0;
     box-shadow: none;
+    position: relative;
 }
 
 .ib-pin-btn:hover {
@@ -3849,9 +3908,9 @@
     box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.04),
         0 8px 18px rgba(0,0,0,0.16);
-    min-height: 120px;
     width: 100%;
-    resize: vertical;
+    box-sizing: border-box;
+    resize: none;
     outline: none;
 }
 
@@ -3997,6 +4056,86 @@
     content: var(--ib-pin-icon-on);
 }
 
+/* ---------- PIN TIER BADGE ---------- */
+:root {
+    --ib-pin-tier-1: var(--ib-accent-2);
+    --ib-pin-tier-2: var(--ib-accent);
+    --ib-pin-tier-3: var(--ib-green);
+}
+
+.ib-pin-tier {
+    position: absolute;
+    bottom: -2px;
+    right: -4px;
+    font-size: 8px;
+    font-weight: 800;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 10;
+    text-shadow: 0 0 4px var(--ib-bg, #000);
+    display: none;
+    font-family: var(--ib-font, inherit);
+    letter-spacing: -0.5px;
+}
+
+.ib-pin-btn.ib-pin-perChat .ib-pin-tier,
+.ib-pin-btn.ib-pin-perChar .ib-pin-tier,
+.ib-pin-btn.ib-pin-global .ib-pin-tier {
+    display: block;
+}
+
+.ib-pin-btn.ib-pin-perChat .ib-pin-tier { color: var(--ib-pin-tier-1); }
+.ib-pin-btn.ib-pin-perChar .ib-pin-tier { color: var(--ib-pin-tier-2); }
+.ib-pin-btn.ib-pin-global .ib-pin-tier  { color: var(--ib-pin-tier-3); }
+
+/* Tier overrides for themes where accent = green */
+.ib-theme-terminal .ib-pin-tier,
+.ib-theme-lockdown .ib-pin-tier {
+    --ib-pin-tier-3: var(--ib-danger);
+}
+
+/* ---------- PINNED LIST TIER RADIO (●/○) ---------- */
+
+.ib-tier-radio {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    color: rgba(255,255,255,0.18);
+    transition: color 0.15s, text-shadow 0.15s, transform 0.12s;
+    user-select: none;
+    padding: 2px 4px;
+}
+
+.ib-tier-radio:hover {
+    color: rgba(255,255,255,0.5);
+    transform: scale(1.15);
+}
+
+.ib-tier-radio-active {
+    color: var(--ib-pin-tier-1);
+    text-shadow: 0 0 6px color-mix(in srgb, var(--ib-pin-tier-1) 40%, transparent);
+}
+
+.ib-tier-radio-active.ib-tier-radio-tier-2 {
+    color: var(--ib-pin-tier-2);
+    text-shadow: 0 0 6px color-mix(in srgb, var(--ib-pin-tier-2) 40%, transparent);
+}
+
+.ib-tier-radio-active.ib-tier-radio-tier-3 {
+    color: var(--ib-pin-tier-3);
+    text-shadow: 0 0 6px color-mix(in srgb, var(--ib-pin-tier-3) 40%, transparent);
+}
+
+/* Tier radio overrides for themes where accent = green */
+.ib-theme-terminal .ib-tier-radio-tier-3,
+.ib-theme-lockdown .ib-tier-radio-tier-3 {
+    color: var(--ib-danger);
+    text-shadow: 0 0 6px color-mix(in srgb, var(--ib-danger) 40%, transparent);
+}
+
 /* ---------- PIN COLORS BY THEME ---------- */
 
 .ib-theme-nocturne {
@@ -4011,6 +4150,8 @@
     --ib-pin-border-active: rgba(224, 167, 255, 0.34);
     --ib-pin-bg-active: rgba(210, 120, 150, 0.15);
     --ib-pin-glow: rgba(255, 155, 179, 0.18);
+    --ib-pin-icon-off: "●";
+    --ib-pin-icon-on: "❣︎";
 }
 
 .ib-theme-ashrose {
@@ -5001,9 +5142,9 @@
 /* ---------- NOCTURNE ---------- */
 
 .ib-theme-nocturne .ib-pin-btn {
-    --ib-pin-icon-off: "☆";
-    --ib-pin-icon-on: "★";
     background: #182136 !important;
+    --ib-pin-icon-off: "☆";
+    --ib-pin-icon-on: "☪︎";
     border-color: rgba(143, 180, 255, 0.24) !important;
     color: #8fa0cc !important;
 }
@@ -5497,7 +5638,7 @@ button.ib-pin-btn.ib-pinned::before,
 
 .ib-theme-nocturne {
     --ib-pin-icon-off: "☆";
-    --ib-pin-icon-on: "★";
+    --ib-pin-icon-on: "☪︎";
     --ib-pin-bg-off: #182136;
     --ib-pin-bg-hover: #223052;
     --ib-pin-bg-on: #30224c;
@@ -12108,8 +12249,9 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 .ib-pins-popup {
     position: fixed !important;
     z-index: 99999 !important;
-    min-width: 200px;
-    max-width: 300px;
+    width: fit-content;
+    min-width: 0;
+    max-width: 340px;
     background: var(--ib-bg-2, #1a1a1a);
     border: 1px solid var(--ib-border, #333);
     border-radius: 10px;
@@ -12125,29 +12267,103 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-.ib-pins-item {
+.ib-pins-table {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ib-pins-table-header {
+    display: grid;
+    grid-template-columns: 1fr 28px 28px 28px;
+    gap: 4px;
+    align-items: center;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 2px;
+}
+
+.ib-pins-th-name {
+    font-size: 0.75em;
+    opacity: 0.5;
+}
+
+.ib-pins-th-tier {
+    font-size: 0.7em;
+    font-weight: 700;
+    text-align: center;
+    opacity: 0.6;
+}
+
+.ib-pins-row {
+    display: grid;
+    grid-template-columns: 1fr 28px 28px 28px;
+    gap: 4px;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 0.9em;
+}
+
+.ib-pins-item {
+    display: grid;
+    grid-template-columns: 1fr 28px 28px 28px;
+    gap: 4px;
     align-items: center;
     padding: 4px 0;
     font-size: 0.9em;
 }
 
 .ib-pins-name {
-    margin-right: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.ib-pins-unpin-btn {
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #ff8f9f;
-    border-radius: 4px;
-    padding: 2px 6px;
+.ib-pins-radio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    font-size: 0.85em;
+    position: relative;
 }
-.ib-pins-unpin-btn:hover {
-    background: rgba(255, 143, 159, 0.2);
+
+.ib-pins-radio input[type="radio"] {
+    display: none;
+}
+
+.ib-pins-radio-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.ib-pins-radio:hover .ib-pins-radio-dot {
+    border-color: rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.05);
+}
+
+.ib-pins-radio-active .ib-pins-dot-chat {
+    background: var(--ib-pin-tier-1, var(--ib-accent-2));
+    border-color: var(--ib-pin-tier-1, var(--ib-accent-2));
+    box-shadow: 0 0 6px color-mix(in srgb, var(--ib-pin-tier-1, var(--ib-accent-2)) 40%, transparent);
+}
+
+.ib-pins-radio-active .ib-pins-dot-char {
+    background: var(--ib-pin-tier-2, var(--ib-accent));
+    border-color: var(--ib-pin-tier-2, var(--ib-accent));
+    box-shadow: 0 0 6px color-mix(in srgb, var(--ib-pin-tier-2, var(--ib-accent)) 40%, transparent);
+}
+
+.ib-pins-radio-active .ib-pins-dot-global {
+    background: var(--ib-pin-tier-3, var(--ib-green));
+    border-color: var(--ib-pin-tier-3, var(--ib-green));
+    box-shadow: 0 0 6px color-mix(in srgb, var(--ib-pin-tier-3, var(--ib-green)) 40%, transparent);
 }
 
 .ib-pins-empty {
@@ -13346,6 +13562,18 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     background: rgba(255,255,255,0.08);
     border-color: var(--ib-chip-border);
     box-shadow: 0 0 8px var(--ib-border-neon);
+}
+
+.ib-rel-timeline-btn-sm {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    border-radius: 4px;
+    opacity: 0.55;
+}
+
+.ib-rel-timeline-btn-sm:hover {
+    opacity: 1;
 }
 
 /* --- Thoughts section as proper ib-section --- */

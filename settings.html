@@ -12,6 +12,35 @@
             </div>
 
             <div class="ib-setting-row">
+                <input type="checkbox" id="ib_use_macro" />
+                <label for="ib_use_macro" id="ib_use_macro_label"><b>Macro mode {{InfoBoard}}</b></label>
+            </div>
+            <div class="ib-custom-css-help" id="ib_use_macro_help" style="margin-top: -6px; margin-bottom: 6px;">
+                When on: prompt is injected via {{InfoBoard}} macro, which you must manually place in your system prompt. When off (default): auto-inject like the original Infoboard.
+            </div>
+
+            <div class="ib-setting-row" id="ib_inject_position_row">
+                <label for="ib_inject_position"><b id="ib_inject_position_label">Inject position</b></label>
+                <select id="ib_inject_position">
+                    <option value="0" id="ib_inject_pos_after">After Story String</option>
+                    <option value="1" id="ib_inject_pos_chat" selected>In Chat (depth)</option>
+                    <option value="2" id="ib_inject_pos_before">Before Story String</option>
+                </select>
+            </div>
+
+            <div class="ib-setting-row" id="ib_inject_depth_row">
+                <label for="ib_inject_depth"><b id="ib_inject_depth_label">Depth</b></label>
+                <div class="ib-depth-input-wrap">
+                    <button type="button" class="ib-depth-btn ib-depth-minus" id="ib_depth_minus">−</button>
+                    <input type="number" id="ib_inject_depth" min="0" max="999" value="0" class="ib-depth-field" />
+                    <button type="button" class="ib-depth-btn ib-depth-plus" id="ib_depth_plus">+</button>
+                </div>
+            </div>
+            <div class="ib-custom-css-help" id="ib_inject_depth_help" style="margin-top: -6px; margin-bottom: 6px;">
+                0 = last message in context. Higher values inject further up in chat history.
+            </div>
+
+            <div class="ib-setting-row">
                 <label for="ib_lang"><b>Language</b></label>
                 <select id="ib_lang">
                     <option value="ru">Русский</option>
