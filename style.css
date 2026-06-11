@@ -964,10 +964,11 @@
 .ib-depth-input-wrap {
     display: inline-flex;
     align-items: center;
+    gap: 2px;
     border-radius: 8px;
-    overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(0, 0, 0, 0.25);
+    padding: 2px;
 }
 
 .ib-depth-field {
@@ -978,7 +979,7 @@
     color: var(--ib-text, #e0e0e0);
     font-size: 14px;
     font-weight: 600;
-    padding: 4px 0;
+    padding: 4px 6px;
     outline: none;
     -moz-appearance: textfield;
 }
@@ -1004,6 +1005,7 @@
     transition: background 0.15s, color 0.15s;
     user-select: none;
     line-height: 1;
+    border-radius: 6px;
 }
 
 .ib-depth-btn:hover {
@@ -1014,6 +1016,211 @@
 .ib-depth-btn:active {
     background: var(--ib-accent, #7b5ea7);
     filter: brightness(1.3);
+}
+
+/* ============ Settings Popup ============ */
+.ib-settings-popup label {
+    pointer-events: none;
+}
+
+.ib-settings-popup {
+    position: fixed !important;
+    z-index: 99999 !important;
+    width: 340px;
+    max-width: 90vw;
+    max-height: 80vh;
+    background: var(--ib-bg-2, #1a1a1a);
+    border: 1px solid var(--ib-border, #333);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    color: var(--ib-text, #ccc);
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ib-sp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+}
+
+.ib-sp-title {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.ib-sp-close {
+    background: none;
+    border: none;
+    color: var(--ib-text, #999);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    opacity: 0.6;
+    transition: opacity 0.15s;
+}
+
+.ib-sp-close:hover {
+    opacity: 1;
+    color: #fff;
+}
+
+.ib-sp-body {
+    overflow-y: auto;
+    padding: 6px 14px 14px;
+    flex: 1;
+}
+
+.ib-sp-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.ib-sp-body::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+}
+
+.ib-sp-section {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.ib-sp-section:last-child {
+    border-bottom: none;
+}
+
+.ib-sp-section-title {
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.6;
+    margin-bottom: 6px;
+}
+
+.ib-sp-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.ib-sp-row label {
+    flex-shrink: 0;
+    font-size: 12px;
+}
+
+.ib-sp-row select,
+.ib-sp-row input[type="number"] {
+    margin-left: auto;
+    background: var(--ib-bg-2, #1c2232);
+    border: 1px solid var(--ib-border, rgba(255,255,255,0.1));
+    color: var(--ib-text, #ccc);
+    border-radius: 6px;
+    padding: 3px 6px;
+    font-size: 12px;
+    outline: none;
+}
+
+.ib-sp-row select option {
+    background: var(--ib-bg-2, #1c2232);
+    color: var(--ib-text, #ccc);
+    padding: 4px 6px;
+}
+
+/* Styled scrollbar for select dropdown lists */
+.ib-settings-popup select::-webkit-scrollbar {
+    width: 6px;
+}
+.ib-settings-popup select::-webkit-scrollbar-track {
+    background: var(--ib-bg-1, #141824);
+    border-radius: 3px;
+}
+.ib-settings-popup select::-webkit-scrollbar-thumb {
+    background: var(--ib-accent, #7b5ea7);
+    border-radius: 3px;
+    opacity: 0.6;
+}
+.ib-settings-popup select::-webkit-scrollbar-thumb:hover {
+    background: var(--ib-accent-2, #c09cff);
+}
+
+.ib-sp-row select:focus,
+.ib-sp-row input[type="number"]:focus {
+    border-color: var(--ib-accent, #7b5ea7);
+}
+
+.ib-sp-row input[type="checkbox"] {
+    flex-shrink: 0;
+}
+
+.ib-sp-inline-select {
+    width: auto;
+    min-width: 80px;
+}
+
+.ib-sp-subhelp {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.3;
+    margin: -2px 0 4px 22px;
+}
+
+.ib-sp-textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--ib-text, #ccc);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11px;
+    resize: vertical;
+    outline: none;
+    min-height: 60px;
+}
+
+.ib-sp-textarea:focus {
+    border-color: var(--ib-accent, #7b5ea7);
+}
+
+.ib-sp-btn-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.ib-sp-btn {
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    background: var(--ib-bg-1, #141824) !important;
+    color: var(--ib-text, #ccc) !important;
+    border: 1px solid var(--ib-border, rgba(255,255,255,0.1)) !important;
+    flex: 1;
+    text-align: center;
+}
+
+.ib-sp-btn:hover {
+    background: var(--ib-accent, #7b5ea7) !important;
+    color: #fff !important;
+    border-color: var(--ib-accent, #7b5ea7) !important;
+}
+
+.ib-sp-btn-danger {
+    color: var(--ib-danger, #ff6b6b) !important;
+    border-color: var(--ib-danger, rgba(255,107,107,0.3)) !important;
+}
+
+.ib-sp-btn-danger:hover {
+    background: var(--ib-danger, #ff6b6b) !important;
+    color: #fff !important;
+    border-color: var(--ib-danger, #ff6b6b) !important;
 }
 
 #ib_custom_css {
@@ -3655,6 +3862,26 @@
 .ib-floating-dragging,
 .ib-floating-dragging * {
     user-select: none !important;
+}
+
+/* Smooth drag/resize: promote to GPU layer + disable expensive effects during drag */
+.ib-floating-dragging #ib_floating_host,
+#ib_floating_host.ib-floating-dragging {
+    will-change: transform, left, top, width, height;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Also disable backdrop during CSS resize */
+#ib_floating_host.ib-floating-resizing,
+#ib_floating_host.ib-floating-resizing .ib-floating-shell {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Also speed up resize — disable backdrop while resizing */
+#ib_floating_host {
+    transition: none;
 }
 
 @media (max-width: 760px) {
@@ -12251,20 +12478,21 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     z-index: 99999 !important;
     width: fit-content;
     min-width: 0;
-    max-width: 340px;
+    max-width: 300px;
     background: var(--ib-bg-2, #1a1a1a);
     border: 1px solid var(--ib-border, #333);
     border-radius: 10px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     padding: 10px 12px;
     color: var(--ib-text, #ccc);
+    transition: max-width 0.25s ease;
 }
 
 .ib-pins-header {
     font-weight: bold;
     margin-bottom: 8px;
     padding-bottom: 4px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid var(--ib-soft-border, rgba(255,255,255,0.1));
 }
 
 .ib-pins-table {
@@ -12275,7 +12503,7 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 
 .ib-pins-table-header {
     display: grid;
-    grid-template-columns: 1fr 28px 28px 28px;
+    grid-template-columns: 20px 1fr 28px 28px 28px;
     gap: 4px;
     align-items: center;
     padding-bottom: 4px;
@@ -12297,7 +12525,7 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 
 .ib-pins-row {
     display: grid;
-    grid-template-columns: 1fr 28px 28px 28px;
+    grid-template-columns: 20px 1fr 28px 28px 28px;
     gap: 4px;
     align-items: center;
     padding: 4px 0;
@@ -12313,6 +12541,11 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     font-size: 0.9em;
 }
 
+.ib-pins-icon {
+    font-size: 1em;
+    line-height: 1;
+}
+
 .ib-pins-name {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -12325,6 +12558,159 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     justify-content: center;
     cursor: pointer;
     position: relative;
+}
+
+/* ---------- PINS POPUP: EXPAND/COLLAPSE OTHER PINS ---------- */
+
+.ib-pins-other-section {
+    margin-top: 6px;
+    border-top: 1px solid var(--ib-soft-border, rgba(255,255,255,0.06));
+}
+
+.ib-pins-expand-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 4px;
+    cursor: pointer;
+    opacity: 0.5;
+    font-size: 0.78em;
+    transition: opacity 0.15s, background 0.15s;
+    border-radius: 4px;
+    user-select: none;
+}
+.ib-pins-expand-btn:hover {
+    opacity: 0.8;
+    background: rgba(255,255,255,0.04);
+}
+.ib-pins-expand-btn-expanded {
+    opacity: 0.7;
+}
+
+.ib-pins-expand-label {
+    font-style: italic;
+}
+
+.ib-pins-expand-arrow {
+    font-size: 1.1em;
+    transition: transform 0.25s ease;
+}
+
+.ib-pins-expand-btn-expanded .ib-pins-expand-arrow {
+    transform: rotate(180deg);
+}
+
+.ib-pins-other-list {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.25s ease;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.ib-pins-other-list-expanded {
+    max-height: 500px;
+    opacity: 1;
+    padding-top: 4px;
+}
+
+.ib-pins-other-row {
+    display: grid;
+    grid-template-columns: 20px 20px 1fr 28px 28px 28px 20px 20px;
+    gap: 4px;
+    align-items: center;
+    padding: 5px 6px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--ib-soft-border, rgba(255,255,255,0.05));
+    border-radius: 5px;
+    transition: border-color 0.15s;
+}
+
+/* When other-pins section is expanded, widen the popup */
+.ib-pins-popup.ib-pins-expanded {
+    max-width: 420px !important;
+}
+.ib-pins-other-row:hover {
+    border-color: var(--ib-soft-border, rgba(255,255,255,0.12));
+}
+
+.ib-pins-other-icon {
+    font-size: 1em;
+    line-height: 1;
+}
+
+.ib-pins-other-name {
+    font-weight: 600;
+    font-size: 0.88em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ib-pins-other-goto {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.7em;
+    transition: color 0.15s, background 0.15s;
+}
+.ib-pins-other-goto:hover {
+    color: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.12);
+}
+
+.ib-pins-radio-disabled {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
+}
+
+.ib-pins-other-pinhere {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75em;
+    transition: color 0.15s, background 0.15s;
+}
+.ib-pins-other-pinhere:hover {
+    color: rgba(255,255,255,0.9);
+    background: rgba(110,168,224,0.15);
+    border-color: rgba(110,168,224,0.3);
+}
+
+.ib-pins-other-unpin {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 11px;
+    opacity: 0.25;
+    border-radius: 3px;
+    transition: opacity 0.15s, background 0.15s;
+    user-select: none;
+}
+.ib-pins-other-unpin:hover {
+    opacity: 1;
+    background: rgba(255,80,80,0.2);
 }
 
 .ib-pins-radio input[type="radio"] {
@@ -12375,7 +12761,7 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 .ib-theme-popup {
     position: fixed !important;
     z-index: 99999 !important;
-    width: 340px;
+    width: 306px;
     max-width: 90vw;
     max-height: 70vh;
     overflow-y: auto;
@@ -12385,6 +12771,15 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     box-shadow: 0 12px 36px rgba(0,0,0,0.55);
     padding: 12px;
     color: var(--ib-text, #ccc);
+}
+
+.ib-theme-popup::-webkit-scrollbar {
+    width: 5px;
+}
+
+.ib-theme-popup::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
 }
 
 .ib-theme-popup-header {
@@ -12481,15 +12876,15 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     width: 480px;
     max-width: 90vw;
     max-height: 80vh;
-    background: #1a1d27;
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--ib-bg-2, #1a1d27);
+    border: 1px solid var(--ib-border, rgba(255,255,255,0.1));
     border-radius: 12px;
     box-shadow: 0 16px 48px rgba(0,0,0,0.5);
     overflow: visible;
     display: flex;
     flex-direction: column;
     font-family: inherit;
-    color: #dde2f0;
+    color: var(--ib-text, #dde2f0);
 }
 
 .ib-tl-header {
@@ -12553,8 +12948,28 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 }
 
 .ib-tl-graph {
-    padding: 12px 16px;
     border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.ib-tl-graph-viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ib-accent, rgba(140,180,255,0.4)) transparent;
+}
+.ib-tl-graph-viewport::-webkit-scrollbar {
+    height: 6px;
+}
+.ib-tl-graph-viewport::-webkit-scrollbar-track {
+    background: transparent;
+}
+.ib-tl-graph-viewport::-webkit-scrollbar-thumb {
+    background: var(--ib-accent, rgba(140,180,255,0.4));
+    border-radius: 3px;
+}
+
+.ib-tl-graph-canvas {
+    min-width: 100%;
 }
 
 .ib-tl-svg {
@@ -12682,10 +13097,11 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 
 .ib-tl-graph-wrap {
     position: relative;
+    padding: 12px 16px;
 }
 
 .ib-tl-tooltip {
-    position: absolute;
+    position: fixed;
     background: rgba(20, 22, 32, 0.92);
     border: 1px solid rgba(255,255,255,0.12);
     border-radius: 6px;
@@ -12693,14 +13109,12 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     font-size: 0.75em;
     color: #dde2f0;
     pointer-events: none;
-    z-index: 100;
-    transform: translate(-50%, -100%);
+    z-index: 999999;
     white-space: nowrap;
 }
 
-.ib-tl-controls {
-    padding: 6px 16px 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+.ib-tl-controls-old {
+    /* merged into .ib-tl-controls below */
 }
 
 .ib-tl-filter {
@@ -12766,6 +13180,87 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 .ib-tl-dot-a { color: #5dc98a; }
 .ib-tl-dot-tr { color: #6ea8e0; }
 .ib-tl-dot-l { color: #b07ce8; }
+
+/* ── Dots toggle ── */
+.ib-tl-legend-dots { color: rgba(255,255,255,0.6); }
+
+/* ── Zoom controls ── */
+.ib-tl-controls {
+    padding: 6px 16px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.ib-tl-zoom-controls-removed {
+    /* no longer used - magnifier panel is a standalone row */
+}
+
+.ib-tl-magnifier-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: var(--ib-text, #ccc);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 8px;
+    transition: background 0.15s, border-color 0.15s;
+    line-height: 1.4;
+}
+.ib-tl-magnifier-btn:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.18);
+}
+.ib-tl-magnifier-btn.ib-active {
+    background: var(--ib-accent, rgba(140,180,255,0.2));
+    border-color: var(--ib-accent, rgba(140,180,255,0.4));
+}
+
+.ib-tl-magnifier-panel {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    background: rgba(0,0,0,0.15);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.ib-tl-zoom-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    color: var(--ib-text, #ccc);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 2px 8px;
+    transition: background 0.15s;
+    line-height: 1;
+}
+.ib-tl-zoom-btn:hover:not(:disabled) {
+    background: var(--ib-accent, #8fb4ff);
+    color: #fff;
+}
+.ib-tl-zoom-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.ib-tl-zoom-slider {
+    width: 100px;
+    accent-color: var(--ib-accent, #8fb4ff);
+    cursor: pointer;
+}
+
+.ib-tl-zoom-level {
+    font-size: 11px;
+    color: var(--ib-muted, #95a3c7);
+    min-width: 32px;
+    text-align: center;
+}
 
 /* --- Notification Toasts --- */
 .ib-toast-container {
@@ -13872,3 +14367,4 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 .ib-theme-pixel .ib-pin-btn::before {
     border-radius: 0 !important;
 }
+                    

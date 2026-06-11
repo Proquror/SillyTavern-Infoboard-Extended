@@ -421,10 +421,10 @@ const kLang = {
         hatred: "🩸 Ненависть",
         fetishes: "Фетиши",
         positions: "Позиции",
-        resetState: "🗑 Сбросить состояние",
-        reprocess: "🔄 Перепарсить чат",
-        exportState: "📤 Экспорт состояния",
-        importState: "📥 Импорт состояния",
+        resetState: "Сбросить состояние",
+        reprocess: "Перепарсить чат",
+        exportState: "Экспорт состояния",
+        importState: "Импорт состояния",
         importFail: "Импорт не удался. Невалидный JSON.",
         resetConfirm: "Сбросить состояние Infoboard для этого чата?",
         stateNpcLabel: "NPCs",
@@ -432,9 +432,21 @@ const kLang = {
         noStatus: "не определено",
         customCssLabel: "Пользовательский CSS",
         customCssHelp: "Применяется после встроенных стилей. Можно переопределять цвета, отступы, полосы и любые классы Infoboard.",
-        saveCustomCss: "💾 Сохранить CSS",
-        clearCustomCss: "🧹 Очистить CSS",
+        saveCustomCss: "Сохранить CSS",
+        clearCustomCss: "Очистить CSS",
         clearCustomCssConfirm: "Очистить пользовательский CSS?",
+        cleanOrphanSnapshots: "Очистить осиротевшие снимки",
+        cleanOrphanSnapshotsConfirm: "Удалить снимки данных закреплённых NPC, которые больше нигде не закреплены? Сами активные закрепы не затрагиваются.",
+        pinEditor: "Редактор",
+        allPins: "Все закрепы",
+        allPinsUnpin: "Открепить",
+        allPinsNavigate: "Перейти к источнику: {source}",
+        pinNavNotFound: "Карточка персонажа не найдена",
+        pinHere: "Закрепить в этом чате",
+        pinHereAlready: "Уже закреплён в этом контексте",
+        pinHereDone: "Закреплён в этом чате",
+        pinsExpandOther: "Ещё в других чатах и карточках",
+        pinsCollapseOther: "Свернуть",
         compactMore: "ещё",
         focus: "в фокусе",
         activeHere: "активен",
@@ -448,13 +460,13 @@ const kLang = {
         palettePreview: "Палитра темы",
         paletteMissing: "Превью палитры недоступно",
         hideThoughtLeaks: "Скрывать утёкшие мысли NPC из текста",
-                pinnedList: "Список закреплённых",
+                pinnedList: "Закреплённые",
                 noPinned: "Нет закреплённых персонажей",
                 unpinFromList: "Открепить",
 compactMode: "Фильтр отношений",
 pinStorageMode: "Хранилище закрепов",
-pinStoragePerChar: "По персонажу",
-pinStoragePerChat: "По чату",
+pinStoragePerChar: "В карточке",
+pinStoragePerChat: "В чате",
 pinStorageGlobal: "Глобально",
 pinToChat: "Закрепить (чат)",
 pinToChar: "Закрепить (карточка)",
@@ -525,16 +537,20 @@ unpinNpc: "Открепить NPC",
         tlMilestoneZero: "переход через 0",
         tlMilestone50: "±50",
         tlMilestone80: "±80",
+        tlMilestoneSharpUp: "резкий рост",
+        tlMilestoneSharpDown: "резкое падение",
         tlMilestoneStatus: "смена статуса",
         tlMetricAffection: "Привязанность",
         tlMetricTrust: "Доверие",
         tlMetricLove: "Любовь",
+        tlMetricDots: "Точки",
         offscreenTag: "за кадром",
         exportComplete: "📤 Экспорт завершён",
         allDataExported: "Все данные экспортированы",
         importComplete: "📥 Импорт завершён",
         dataRestored: "Данные восстановлены",
         panelMode: "Панель",
+        settingsTitle: "Настройки",
         useMacroMode: "Режим макроса {{InfoBoard}}",
         useMacroHelp: "Если вкл.: промт инжектится через макрос {{InfoBoard}}, который нужно вручную разместить в системном промте. Если выкл. (по умолчанию): автоинжект, как в оригинальном Infoboard.",
         injectPosition: "Позиция инжекта",
@@ -569,10 +585,10 @@ unpinNpc: "Открепить NPC",
         hatred: "🩸 Hatred",
         fetishes: "Fetishes",
         positions: "Positions",
-        resetState: "🗑 Reset State",
-        reprocess: "🔄 Reprocess Chat",
-        exportState: "📤 Export State",
-        importState: "📥 Import State",
+        resetState: "Reset State",
+        reprocess: "Reprocess Chat",
+        exportState: "Export State",
+        importState: "Import State",
         importFail: "Import failed. Invalid JSON.",
         resetConfirm: "Reset Infoboard state for this chat?",
         stateNpcLabel: "NPCs",
@@ -580,9 +596,21 @@ unpinNpc: "Открепить NPC",
         noStatus: "undefined",
         customCssLabel: "Custom CSS Overrides",
         customCssHelp: "Applied after built-in styles. Use to override colors, spacing, bars, or any Infoboard classes.",
-        saveCustomCss: "💾 Save Custom CSS",
-        clearCustomCss: "🧹 Clear Custom CSS",
+        saveCustomCss: "Save Custom CSS",
+        clearCustomCss: "Clear Custom CSS",
         clearCustomCssConfirm: "Clear custom CSS?",
+        cleanOrphanSnapshots: "Clean Orphaned Snapshots",
+        cleanOrphanSnapshotsConfirm: "Remove snapshot data for pinned NPCs that are no longer pinned anywhere? Active pins are not affected.",
+        pinEditor: "Editor",
+        allPins: "All Pins",
+        allPinsUnpin: "Unpin",
+        allPinsNavigate: "Go to source: {source}",
+        pinNavNotFound: "Character card not found",
+        pinHere: "Pin in this chat",
+        pinHereAlready: "Already pinned in this context",
+        pinHereDone: "Pinned in this chat",
+        pinsExpandOther: "More in other chats and cards",
+        pinsCollapseOther: "Collapse",
         compactMore: "more",
         focus: "focus",
         activeHere: "active",
@@ -596,13 +624,13 @@ unpinNpc: "Открепить NPC",
         palettePreview: "Theme palette",
         paletteMissing: "Palette preview unavailable",
         hideThoughtLeaks: "Hide leaked NPC thoughts from visible text",
-                pinnedList: "Pinned List",
+                pinnedList: "Pinned",
                 noPinned: "No pinned characters",
                 unpinFromList: "Unpin",
 compactMode: "Relationship Filter",
 pinStorageMode: "Pin Storage",
-pinStoragePerChar: "Per Character",
-pinStoragePerChat: "Per Chat",
+pinStoragePerChar: "In Card",
+pinStoragePerChat: "In Chat",
 pinStorageGlobal: "Global",
 pinToChat: "Pin (chat)",
 pinToChar: "Pin (character)",
@@ -673,16 +701,20 @@ unpinNpc: "Unpin NPC",
         tlMilestoneZero: "crossed 0",
         tlMilestone50: "±50",
         tlMilestone80: "±80",
+        tlMilestoneSharpUp: "sharp rise",
+        tlMilestoneSharpDown: "sharp drop",
         tlMilestoneStatus: "status change",
         tlMetricAffection: "Affection",
         tlMetricTrust: "Trust",
         tlMetricLove: "Love",
+        tlMetricDots: "Dots",
         offscreenTag: "offscreen",
         exportComplete: "📤 Export Complete",
         allDataExported: "All data exported",
         importComplete: "📥 Import Complete",
         dataRestored: "Data restored",
         panelMode: "Panel",
+        settingsTitle: "Settings",
         useMacroMode: "Macro mode {{InfoBoard}}",
         useMacroHelp: "When on: prompt is injected via {{InfoBoard}} macro, which you must manually place in your system prompt. When off (default): auto-inject like the original Infoboard.",
         injectPosition: "Inject position",
@@ -722,6 +754,7 @@ Optional only for explicitly intimate scenes:
 - age: age of the character (e.g., "24")
 - tags: 1-6 short tags separated by |
 - time: per-message change, usually +5
+- date: DD.MM.YY only
 
 - Never put presence info in "tags" attribute
 - presence: Use one of these EXACT ENGLISH KEYWORDS to indicate present NPCs:
@@ -750,7 +783,7 @@ Optional only for explicitly intimate scenes:
 - Negative love = hatred/destructive obsession/anti-attachment
 - Relationship values must evolve logically
 - status: 1-3 words only, relationship phase/status only
-- status must not describe events, thoughts, explanations, or causes
+- status: must not describe events, thoughts, explanations, or causes
 - Never write full sentences in status
 - Good status examples: заинтересована | доверяет | тянется | защитная привязанность | сложное влечение
 - Bad status examples: её слова о душе пробили защитные слои | впервые не знает что сказать | привязанность перешла в новую фазу
@@ -815,6 +848,7 @@ Optional only for explicitly intimate scenes:
 - age: age of the character (e.g., "24")
 - tags: 1-6 short tags separated by |
 - time: per-message change, usually +5
+- date: DD.MM.YY only
 
 - Never put presence info in "tags" attribute
 - presence: Use one of these EXACT ENGLISH KEYWORDS to indicate present NPCs:
@@ -843,7 +877,7 @@ Optional only for explicitly intimate scenes:
 - Negative love = hatred/destructive obsession/anti-attachment
 - Relationship values must evolve logically
 - status: 1-3 words only, relationship phase/status only
-- status must not describe events, thoughts, explanations, or causes
+- status: must not describe events, thoughts, explanations, or causes
 - Never write full sentences in status
 - Good status examples: interested | trusts you | drawn in | protective attachment | complicated attraction
 - Bad status examples: her words pierced his defenses | he does not know what to say | attachment moved into a new phase
@@ -893,8 +927,56 @@ const kDefaultState = {
 
 let gState = JSON.parse(JSON.stringify(kDefaultState));
 
-function T(key) {
-    return kLang[gLang]?.[key] ?? key;
+/**
+ * Returns a merged state object that includes pinned NPCs from snapshots
+ * even when they're not in the current chat's gState.
+ * Used for panel/floating board rendering so globally pinned NPCs remain visible.
+ */
+function GetMergedStateForRendering() {
+    const merged = JSON.parse(JSON.stringify(gState));
+
+    if (!gPinRegistry?.pinSnapshots || !gPinnedNpcs.length) return merged;
+
+    // Build set of NPC names already in current state (normalized)
+    const stateCharNames = new Set(merged.chars.map(c => NormalizeName(c.name)));
+
+    for (const pinnedName of gPinnedNpcs) {
+        const normalized = NormalizeName(pinnedName);
+        if (stateCharNames.has(normalized)) continue;
+
+        const snap = gPinRegistry.pinSnapshots[normalized];
+        if (!snap) continue;
+
+        // Add character with offscreen presence
+        merged.chars.push({
+            icon: snap.icon || "•",
+            name: snap.name,
+            age: snap.age || "",
+            tags: snap.tags || [],
+            mood: snap.mood || "",
+            presence: { key: "offscreen", cls: "ib-presence-offscreen" }
+        });
+
+        // Add relation from snapshot
+        if (snap.rel) {
+            merged.rels.push({ ...snap.rel });
+        }
+
+        // Add thought from snapshot
+        if (snap.thought) {
+            merged.thoughts.push({ ...snap.thought });
+        }
+    }
+
+    return merged;
+}
+
+function T(key, params = {}) {
+    let str = kLang[gLang]?.[key] ?? key;
+    for (const [k, v] of Object.entries(params)) {
+        str = str.replaceAll(`{${k}}`, v);
+    }
+    return str;
 }
 
 function GetThemeTitleData(theme = gTheme) {
@@ -1204,16 +1286,26 @@ function AddTimelineEntry(rels) {
     SaveTimeline();
 }
 
+/** Close all toolbar popups except timeline (theme, settings, pins, notifications). */
+function CloseOtherPopups(exceptSelector) {
+    const popupSelectors = [".ib-theme-popup", ".ib-settings-popup", ".ib-pins-popup", ".ib-notifications-popup"];
+    for (const sel of popupSelectors) {
+        if (sel !== exceptSelector) {
+            document.querySelectorAll(sel).forEach(p => p.remove());
+        }
+    }
+}
+
 function RenderThemePopup(btn) {
     let existing = document.querySelector(".ib-theme-popup");
+    CloseOtherPopups(".ib-theme-popup");
     document.querySelectorAll(".ib-theme-popup").forEach(p => p.remove());
     if (existing) return;
 
     const popup = document.createElement("div");
     popup.className = `ib-theme-popup ib-popup-fixed ${GetThemeClassStr()}`;
 
-    let content = `<div class="ib-theme-popup-header">🎨 ${EscapeHtml(T("theme"))}</div>`;
-    content += `<div class="ib-theme-popup-grid">`;
+    let content = `<div class="ib-theme-popup-grid">`;
 
     const themeKeys = Object.keys(kThemePreviewMap);
     themeKeys.forEach(key => {
@@ -1240,20 +1332,8 @@ function RenderThemePopup(btn) {
 
     PositionPopupNearButton(popup, btn);
 
-    // Clamp popup within viewport & scroll active theme into view
+    // Scroll active theme item into center of the grid (after position is computed)
     requestAnimationFrame(() => {
-        const rect = popup.getBoundingClientRect();
-        if (rect.right > window.innerWidth - 8) {
-            popup.style.left = `${Math.max(8, window.innerWidth - rect.width - 8)}px`;
-        }
-        if (rect.bottom > window.innerHeight - 8) {
-            popup.style.top = "auto";
-            popup.style.bottom = "8px";
-        }
-        if (rect.left < 8) {
-            popup.style.left = "8px";
-        }
-        // Scroll active theme item into center of the grid
         const activeItem = popup.querySelector(".ib-theme-popup-active");
         if (activeItem) {
             activeItem.scrollIntoView({ block: "center", behavior: "instant" });
@@ -1287,6 +1367,7 @@ function RenderThemePopup(btn) {
 
 function RenderTimelinePopup(preselectNpc) {
     let existing = document.getElementById("ib_timeline_popup");
+    document.querySelectorAll(".ib-settings-popup").forEach(p => p.remove());
     if (existing) {
         // If popup is already open and a specific NPC is requested, switch to that NPC tab
         if (preselectNpc) {
@@ -1303,7 +1384,7 @@ function RenderTimelinePopup(preselectNpc) {
 
     const popup = document.createElement("div");
     popup.id = "ib_timeline_popup";
-    popup.className = "ib-timeline-popup";
+    popup.className = `ib-timeline-popup ${GetThemeClassStr()}`;
 
     const allNpcNames = [...new Set(gTimeline.flatMap(e => (e.rels || []).map(r => r.source)))];
 
@@ -1351,6 +1432,18 @@ function RenderTimelinePopup(preselectNpc) {
     // Metric filter state
     let showA = true, showTr = true, showL = true;
 
+    // Zoom state
+    let zoomLevel = 1;
+    let showDots = true;
+    const ZOOM_MIN = 1;
+    const ZOOM_MAX = 10;
+    const ZOOM_STEP = 0.5;
+    const ZOOM_WHEEL_STEP = 0.2;
+    const ZOOM_MIN_ENTRIES = 0;
+    // Pinch-zoom tracking
+    let pinchStartDist = 0;
+    let pinchStartZoom = 1;
+
     function computeMilestones(npcEntries) {
         const milestones = [];
         for (let i = 1; i < npcEntries.length; i++) {
@@ -1380,9 +1473,21 @@ function RenderTimelinePopup(preselectNpc) {
                     labels.push(`${metricLabel} ${T("tlMilestone80")}`);
                 }
             }
+            // Sharp change (±15 delta)
+            for (const key of ['a', 'tr', 'l']) {
+                const delta = cur[key] - prev[key];
+                if (delta >= 15) {
+                    const metricLabel = key === 'a' ? 'A' : key === 'tr' ? 'T' : 'L';
+                    labels.push(`${metricLabel} ${T("tlMilestoneSharpUp")} (+${delta})`);
+                } else if (delta <= -15) {
+                    const metricLabel = key === 'a' ? 'A' : key === 'tr' ? 'T' : 'L';
+                    labels.push(`${metricLabel} ${T("tlMilestoneSharpDown")} (${delta})`);
+                }
+            }
+
             // Status change
             if (prev.status && cur.status && prev.status !== cur.status) {
-                labels.push(`${T("tlMilestoneStatus")}: ${EscapeHtml(prev.status)} → ${EscapeHtml(cur.status)}`);
+                labels.push(`${EscapeHtml(prev.status)} → ${EscapeHtml(cur.status)}`);
             }
 
             if (labels.length) {
@@ -1402,9 +1507,11 @@ function RenderTimelinePopup(preselectNpc) {
         const milestones = computeMilestones(npcEntries);
 
         let graphHtml = '';
+        const canZoom = npcEntries.length >= ZOOM_MIN_ENTRIES;
         if (npcEntries.length > 1) {
-            const w = 100;
+            const baseW = 100;
             const h = 40;
+            const w = baseW * zoomLevel;
             const step = w / Math.max(1, npcEntries.length - 1);
 
             function makePoints(key) {
@@ -1425,38 +1532,51 @@ function RenderTimelinePopup(preselectNpc) {
 
             // Data point circles for click interaction
             let dotsSvg = '';
-            const metricKeys = [];
-            if (showA) metricKeys.push({ key: 'a', cls: 'ib-tl-dot-a' });
-            if (showTr) metricKeys.push({ key: 'tr', cls: 'ib-tl-dot-tr' });
-            if (showL) metricKeys.push({ key: 'l', cls: 'ib-tl-dot-l' });
+            if (showDots) {
+                const metricKeys = [];
+                if (showA) metricKeys.push({ key: 'a', cls: 'ib-tl-dot-a' });
+                if (showTr) metricKeys.push({ key: 'tr', cls: 'ib-tl-dot-tr' });
+                if (showL) metricKeys.push({ key: 'l', cls: 'ib-tl-dot-l' });
 
-            metricKeys.forEach(mk => {
-                npcEntries.forEach((e, i) => {
-                    const x = (i * step).toFixed(1);
-                    const val = Clamp(e.rel[mk.key] || 0, -100, 100);
-                    const y = h - ((val + 100) / 200 * h);
-                    dotsSvg += `<circle cx="${x}" cy="${y.toFixed(1)}" r="1.2" class="ib-tl-dot ${mk.cls}" data-idx="${i}" fill="currentColor"/>`;
+                metricKeys.forEach(mk => {
+                    npcEntries.forEach((e, i) => {
+                        const x = (i * step).toFixed(1);
+                        const val = Clamp(e.rel[mk.key] || 0, -100, 100);
+                        const y = h - ((val + 100) / 200 * h);
+                        dotsSvg += `<circle cx="${x}" cy="${y.toFixed(1)}" r="1.2" class="ib-tl-dot ${mk.cls}" data-idx="${i}" fill="currentColor"/>`;
+                    });
                 });
-            });
+            }
 
-            graphHtml = `<div class="ib-tl-graph-wrap">
-                <svg viewBox="0 0 ${w} ${h}" class="ib-tl-svg">
-                    <line x1="0" y1="${h/2}" x2="${w}" y2="${h/2}" stroke="var(--ib-tl-grid, rgba(255,255,255,0.1))" stroke-width="0.3"/>
-                    ${milestoneSvg}
-                    ${showA ? `<polyline points="${makePoints('a')}" fill="none" stroke="#5dc98a" stroke-width="1" class="ib-tl-line-a"/>` : ''}
-                    ${showTr ? `<polyline points="${makePoints('tr')}" fill="none" stroke="#6ea8e0" stroke-width="1" class="ib-tl-line-tr"/>` : ''}
-                    ${showL ? `<polyline points="${makePoints('l')}" fill="none" stroke="#b07ce8" stroke-width="1" class="ib-tl-line-l"/>` : ''}
-                    ${dotsSvg}
-                </svg>
-                <div class="ib-tl-tooltip" style="display:none;"></div>
+            graphHtml = `<div class="ib-tl-graph-viewport">
+                <div class="ib-tl-graph-canvas" style="min-width:100%;">
+                    <div class="ib-tl-graph-wrap">
+                        <svg viewBox="0 0 ${w.toFixed(1)} ${h}" class="ib-tl-svg" data-base-w="${baseW}" data-h="${h}" data-zoom="${zoomLevel}">
+                            <line x1="0" y1="${h/2}" x2="${w.toFixed(1)}" y2="${h/2}" stroke="var(--ib-tl-grid, rgba(255,255,255,0.1))" stroke-width="0.3"/>
+                            ${milestoneSvg}
+                            ${showA ? `<polyline points="${makePoints('a')}" fill="none" stroke="#5dc98a" stroke-width="1" class="ib-tl-line-a"/>` : ''}
+                            ${showTr ? `<polyline points="${makePoints('tr')}" fill="none" stroke="#6ea8e0" stroke-width="1" class="ib-tl-line-tr"/>` : ''}
+                            ${showL ? `<polyline points="${makePoints('l')}" fill="none" stroke="#b07ce8" stroke-width="1" class="ib-tl-line-l"/>` : ''}
+                            ${dotsSvg}
+                        </svg>
+                    </div>
+                </div>
             </div>
             <div class="ib-tl-controls">
                 <div class="ib-tl-legend">
                     <label class="ib-tl-filter"><input type="checkbox" ${showA ? 'checked' : ''} data-metric="a"/><span class="ib-tl-legend-a">A — ${EscapeHtml(T("tlMetricAffection"))}</span></label>
                     <label class="ib-tl-filter"><input type="checkbox" ${showTr ? 'checked' : ''} data-metric="tr"/><span class="ib-tl-legend-tr">T — ${EscapeHtml(T("tlMetricTrust"))}</span></label>
                     <label class="ib-tl-filter"><input type="checkbox" ${showL ? 'checked' : ''} data-metric="l"/><span class="ib-tl-legend-l">L — ${EscapeHtml(T("tlMetricLove"))}</span></label>
+                    <label class="ib-tl-filter"><input type="checkbox" ${showDots ? 'checked' : ''} data-metric="dots"/><span class="ib-tl-legend-dots">⬤ ${EscapeHtml(T("tlMetricDots"))}</span></label>
                 </div>
-            </div>`;
+                ${canZoom ? `<button class="ib-tl-magnifier-btn" type="button" title="Zoom">🔍</button>` : ''}
+            </div>
+            ${canZoom ? `<div class="ib-tl-magnifier-panel" style="display:none;">
+                <button class="ib-tl-zoom-btn ib-zoom-out" type="button" ${zoomLevel <= ZOOM_MIN ? 'disabled' : ''}>−</button>
+                <input type="range" class="ib-tl-zoom-slider" min="${ZOOM_MIN}" max="${ZOOM_MAX}" step="${ZOOM_STEP}" value="${zoomLevel}"/>
+                <button class="ib-tl-zoom-btn ib-zoom-in" type="button" ${zoomLevel >= ZOOM_MAX ? 'disabled' : ''}>+</button>
+                <span class="ib-tl-zoom-level">${zoomLevel.toFixed(1)}x</span>
+            </div>` : ''}`;
         }
 
         // Build log entries with game time + message link
@@ -1503,12 +1623,109 @@ function RenderTimelinePopup(preselectNpc) {
         <div class="ib-tl-list">${listHtml}</div>`;
     }
 
-    function bindEvents() {
+    function bindEvents(tooltipEl) {
         popup.querySelector('.ib-tl-close')?.addEventListener('click', () => popup.remove());
 
-        // Fix oval dots: adjust viewBox to match container aspect ratio
-        // so circles stay circular. Original viewBox is 100×40 (2.5:1 aspect).
-        // Container is wider → widen viewBox and rescale X coords to fill.
+        // ── rebuildGraph: efficient partial rebuild on zoom change ──
+        function rebuildGraph() {
+            const svgEl = popup.querySelector('.ib-tl-svg');
+            const viewport = popup.querySelector('.ib-tl-graph-viewport');
+            const canvas = popup.querySelector('.ib-tl-graph-canvas');
+            if (!svgEl || !viewport || !canvas) return;
+
+            const entries = gTimeline.filter(e => e.rels?.some(r => NamesLikelyMatch(r.source, selectedNpc)));
+            const npcEntriesLocal = entries.map(e => {
+                const r = e.rels.find(r => NamesLikelyMatch(r.source, selectedNpc));
+                return r ? { ...e, rel: r } : null;
+            }).filter(Boolean);
+
+            const baseW = parseFloat(svgEl.dataset.baseW) || 100;
+            const h = parseFloat(svgEl.dataset.h) || 40;
+            const w = baseW * zoomLevel;
+            const step = w / Math.max(1, npcEntriesLocal.length - 1);
+
+            svgEl.setAttribute('viewBox', `0 0 ${w.toFixed(1)} ${h}`);
+            svgEl.dataset.zoom = zoomLevel;
+
+            // Recompute polyline points
+            function makePointsLocal(key) {
+                return npcEntriesLocal.map((e, i) => {
+                    const x = (i * step).toFixed(1);
+                    const val = Clamp(e.rel[key] || 0, -100, 100);
+                    const y = h - ((val + 100) / 200 * h);
+                    return `${x},${y.toFixed(1)}`;
+                }).join(' ');
+            }
+
+            if (showA) {
+                const pl = svgEl.querySelector('.ib-tl-line-a');
+                if (pl) pl.setAttribute('points', makePointsLocal('a'));
+            }
+            if (showTr) {
+                const pl = svgEl.querySelector('.ib-tl-line-tr');
+                if (pl) pl.setAttribute('points', makePointsLocal('tr'));
+            }
+            if (showL) {
+                const pl = svgEl.querySelector('.ib-tl-line-l');
+                if (pl) pl.setAttribute('points', makePointsLocal('l'));
+            }
+
+            // Recompute milestone lines
+            svgEl.querySelectorAll('line[stroke="rgba(255,200,80,0.3)"]').forEach(line => {
+                // Remove old milestone lines
+                line.remove();
+            });
+            const milestoneEntries = computeMilestones(npcEntriesLocal);
+            const zeroLine = svgEl.querySelector('line[stroke*="ib-tl-grid"], line:first-child');
+            milestoneEntries.forEach(m => {
+                const x = (m.index * step).toFixed(1);
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x);
+                line.setAttribute('y1', '0');
+                line.setAttribute('x2', x);
+                line.setAttribute('y2', h);
+                line.setAttribute('stroke', 'rgba(255,200,80,0.3)');
+                line.setAttribute('stroke-width', '0.4');
+                line.setAttribute('stroke-dasharray', '1,1');
+                svgEl.insertBefore(line, svgEl.querySelector('.ib-tl-line-a') || svgEl.querySelector('.ib-tl-dot'));
+            });
+
+            // Update zero line
+            const zeroLn = svgEl.querySelector('line[stroke*="ib-tl-grid"], line:first-child');
+            if (zeroLn) {
+                zeroLn.setAttribute('x2', w.toFixed(1));
+            }
+
+            // Recompute dot positions
+            svgEl.querySelectorAll('.ib-tl-dot').forEach(dot => {
+                const idx = parseInt(dot.dataset.idx);
+                if (isNaN(idx)) return;
+                const mk = dot.classList.contains('ib-tl-dot-a') ? 'a' : dot.classList.contains('ib-tl-dot-tr') ? 'tr' : 'l';
+                const entry = npcEntriesLocal[idx];
+                if (!entry) return;
+                const x = (idx * step).toFixed(1);
+                const val = Clamp(entry.rel[mk] || 0, -100, 100);
+                const y = h - ((val + 100) / 200 * h);
+                dot.setAttribute('cx', x);
+                dot.setAttribute('cy', y.toFixed(1));
+            });
+
+            // Update canvas width
+            const viewportWidth = viewport.clientWidth;
+            canvas.style.width = `${viewportWidth * zoomLevel}px`;
+
+            // Update zoom controls state
+            const levelEl = popup.querySelector('.ib-tl-zoom-level');
+            if (levelEl) levelEl.textContent = `${zoomLevel.toFixed(1)}x`;
+            const outBtn = popup.querySelector('.ib-zoom-out');
+            const inBtn = popup.querySelector('.ib-zoom-in');
+            if (outBtn) outBtn.disabled = zoomLevel <= ZOOM_MIN;
+            if (inBtn) inBtn.disabled = zoomLevel >= ZOOM_MAX;
+            const slider = popup.querySelector('.ib-tl-zoom-slider');
+            if (slider) slider.value = zoomLevel;
+        }
+
+        // ── Fix oval dots: adjust viewBox for aspect ratio ──
         requestAnimationFrame(() => {
             const svgEl = popup.querySelector('.ib-tl-svg');
             if (svgEl) {
@@ -1520,11 +1737,11 @@ function RenderTimelinePopup(preselectNpc) {
                         const [, , oldW, oldH] = currentViewBox.split(' ').map(Number);
                         const oldAspect = oldW / oldH;
                         if (containerAspect > oldAspect) {
-                            // Container is wider → widen viewBox to match
                             const newW = oldH * containerAspect;
                             const scaleX = newW / oldW;
                             svgEl.setAttribute('viewBox', `0 0 ${newW.toFixed(1)} ${oldH}`);
-                            // Rescale all X coordinates to fill new width
+                            // Update data-base-w so rebuildGraph uses correct base
+                            svgEl.dataset.baseW = newW.toFixed(1);
                             svgEl.querySelectorAll('polyline').forEach(pl => {
                                 const pts = pl.getAttribute('points');
                                 if (pts) {
@@ -1549,35 +1766,136 @@ function RenderTimelinePopup(preselectNpc) {
                     }
                 }
             }
+
+            // Set initial canvas width after layout
+            const viewport = popup.querySelector('.ib-tl-graph-viewport');
+            const canvas = popup.querySelector('.ib-tl-graph-canvas');
+            if (viewport && canvas && zoomLevel > 1) {
+                canvas.style.width = `${viewport.clientWidth * zoomLevel}px`;
+            }
         });
 
-        // NPC tab clicks
+        // ── NPC tab clicks ──
         popup.querySelectorAll('.ib-tl-npc-tab').forEach(tab => {
             tab.addEventListener('click', (ev) => {
-                ev.stopPropagation(); // prevent outside-click handler from closing popup
+                ev.stopPropagation();
                 selectedNpc = tab.dataset.npc;
+                zoomLevel = 1; // reset zoom on tab switch
                 popup.innerHTML = buildContent();
-                bindEvents();
+                bindEvents(tooltip);
             });
         });
 
-        // Metric filter checkboxes
+        // ── Metric filter checkboxes ──
         popup.querySelectorAll('.ib-tl-filter input[type="checkbox"]').forEach(cb => {
             cb.addEventListener('change', (ev) => {
                 ev.stopPropagation();
                 const metric = cb.dataset.metric;
                 if (metric === 'a') showA = cb.checked;
-                if (metric === 'tr') showTr = cb.checked;
-                if (metric === 'l') showL = cb.checked;
+                else if (metric === 'tr') showTr = cb.checked;
+                else if (metric === 'l') showL = cb.checked;
+                else if (metric === 'dots') {
+                    showDots = cb.checked;
+                    // Toggle dot visibility without full rebuild
+                    popup.querySelectorAll('.ib-tl-dot').forEach(dot => {
+                        dot.style.display = showDots ? '' : 'none';
+                    });
+                    return; // skip full rebuild
+                }
                 popup.innerHTML = buildContent();
-                bindEvents();
+                bindEvents(tooltip);
             });
         });
 
-        // Graph dot hover/click — show tooltip with game time
-        const tooltip = popup.querySelector('.ib-tl-tooltip');
+        // ── Magnifier button toggle ──
+        const magBtn = popup.querySelector('.ib-tl-magnifier-btn');
+        const magPanel = popup.querySelector('.ib-tl-magnifier-panel');
+        if (magBtn && magPanel) {
+            magBtn.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                const isVisible = magPanel.style.display !== 'none';
+                magPanel.style.display = isVisible ? 'none' : 'flex';
+                magBtn.classList.toggle('ib-active', !isVisible);
+                // Reset zoom when closing the panel
+                if (isVisible && zoomLevel !== 1) {
+                    zoomLevel = 1;
+                    rebuildGraph();
+                }
+            });
+        }
+
+        // ── Zoom slider ──
+        const zoomSlider = popup.querySelector('.ib-tl-zoom-slider');
+        if (zoomSlider) {
+            zoomSlider.addEventListener('input', (ev) => {
+                ev.stopPropagation();
+                zoomLevel = parseFloat(zoomSlider.value);
+                rebuildGraph();
+            });
+        }
+
+        // ── Zoom +/- buttons ──
+        popup.querySelectorAll('.ib-tl-zoom-btn').forEach(btn => {
+            btn.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                if (btn.classList.contains('ib-zoom-out')) {
+                    zoomLevel = Math.max(ZOOM_MIN, zoomLevel - ZOOM_STEP);
+                } else if (btn.classList.contains('ib-zoom-in')) {
+                    zoomLevel = Math.min(ZOOM_MAX, zoomLevel + ZOOM_STEP);
+                }
+                rebuildGraph();
+            });
+        });
+
+        // ── Ctrl + Mouse wheel zoom ──
+        const viewport = popup.querySelector('.ib-tl-graph-viewport');
+        if (viewport) {
+            viewport.addEventListener('wheel', (ev) => {
+                if (!ev.ctrlKey && !ev.metaKey) return;
+                ev.preventDefault();
+                const delta = ev.deltaY > 0 ? -ZOOM_WHEEL_STEP : ZOOM_WHEEL_STEP;
+                const oldZoom = zoomLevel;
+                zoomLevel = Clamp(zoomLevel + delta, ZOOM_MIN, ZOOM_MAX);
+                if (zoomLevel !== oldZoom) {
+                    // Zoom toward cursor position
+                    const rect = viewport.getBoundingClientRect();
+                    const mouseXRatio = (ev.clientX - rect.left + viewport.scrollLeft)
+                                        / (rect.width * oldZoom);
+                    rebuildGraph();
+                    const newScrollLeft = mouseXRatio * rect.width * zoomLevel
+                                          - (ev.clientX - rect.left);
+                    viewport.scrollLeft = Math.max(0, newScrollLeft);
+                }
+            }, { passive: false });
+        }
+
+        // ── Pinch zoom (touch) ──
+        if (viewport) {
+            viewport.addEventListener('touchstart', (ev) => {
+                if (ev.touches.length !== 2) return;
+                const dx = ev.touches[0].clientX - ev.touches[1].clientX;
+                const dy = ev.touches[0].clientY - ev.touches[1].clientY;
+                pinchStartDist = Math.sqrt(dx * dx + dy * dy);
+                pinchStartZoom = zoomLevel;
+            }, { passive: true });
+
+            viewport.addEventListener('touchmove', (ev) => {
+                if (ev.touches.length !== 2) return;
+                ev.preventDefault();
+                const dx = ev.touches[0].clientX - ev.touches[1].clientX;
+                const dy = ev.touches[0].clientY - ev.touches[1].clientY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (pinchStartDist <= 0) return;
+                const scale = dist / pinchStartDist;
+                zoomLevel = Clamp(pinchStartZoom * scale, ZOOM_MIN, ZOOM_MAX);
+                rebuildGraph();
+            }, { passive: false });
+        }
+
+        // ── Graph dot hover/click — show tooltip ──
+        const tooltip = tooltipEl;
         const svgEl = popup.querySelector('.ib-tl-svg');
-        if (svgEl && tooltip) {
+        if (svgEl && tooltip && showDots) {
             const entries = gTimeline.filter(e => e.rels?.some(r => NamesLikelyMatch(r.source, selectedNpc)));
             const npcEntries = entries.map(e => {
                 const r = e.rels.find(r => NamesLikelyMatch(r.source, selectedNpc));
@@ -1594,10 +1912,21 @@ function RenderTimelinePopup(preselectNpc) {
                     const metricKey = dot.classList.contains('ib-tl-dot-a') ? 'A' : dot.classList.contains('ib-tl-dot-tr') ? 'T' : 'L';
                     tooltip.innerHTML = `<b>${gameTimeStr}</b><br>${metricKey}: ${r[metricKey === 'A' ? 'a' : metricKey === 'T' ? 'tr' : 'l']}`;
                     tooltip.style.display = 'block';
-                    const rect = svgEl.getBoundingClientRect();
+
+                    // Position relative to viewport (tooltip is position:fixed)
                     const dotRect = dot.getBoundingClientRect();
-                    tooltip.style.left = `${dotRect.left - rect.left + dotRect.width / 2}px`;
-                    tooltip.style.top = `${dotRect.top - rect.top - 4}px`;
+                    const ttW = tooltip.offsetWidth;
+                    const ttH = tooltip.offsetHeight;
+                    // Center horizontally above the dot
+                    let tx = dotRect.left + dotRect.width / 2 - ttW / 2;
+                    let ty = dotRect.top - ttH - 4;
+                    // Clamp: don't overflow left/right edges of popup
+                    const popupRect = popup.getBoundingClientRect();
+                    tx = Math.max(popupRect.left + 2, Math.min(tx, popupRect.right - ttW - 2));
+                    // If above would clip top, show below the dot instead
+                    if (ty < popupRect.top + 2) ty = dotRect.bottom + 4;
+                    tooltip.style.left = `${tx}px`;
+                    tooltip.style.top = `${ty}px`;
                 });
                 dot.addEventListener('mouseleave', () => {
                     tooltip.style.display = 'none';
@@ -1613,7 +1942,7 @@ function RenderTimelinePopup(preselectNpc) {
             });
         }
 
-        // Click on goto button → scroll to message
+        // ── Click on goto button → scroll to message ──
         popup.querySelectorAll('.ib-tl-goto').forEach(btn => {
             btn.addEventListener('click', (ev) => {
                 ev.stopPropagation();
@@ -1630,7 +1959,22 @@ function RenderTimelinePopup(preselectNpc) {
 
     popup.innerHTML = buildContent();
     document.body.appendChild(popup);
-    bindEvents();
+
+    // Create tooltip as a separate body element (not inside popup)
+    // because popup's transform breaks position:fixed for children
+    const tooltip = document.createElement('div');
+    tooltip.className = 'ib-tl-tooltip';
+    tooltip.style.display = 'none';
+    document.body.appendChild(tooltip);
+
+    // Clean up tooltip when popup is removed
+    const origRemove = popup.remove.bind(popup);
+    popup.remove = () => {
+        tooltip.remove();
+        origRemove();
+    };
+
+    bindEvents(tooltip);
 
     // Close on outside click
     const closeOnOutside = (ev) => {
@@ -1644,6 +1988,30 @@ function RenderTimelinePopup(preselectNpc) {
 }
 
 // ============== Notifications ==============
+/** Show a toast notification that always appears, regardless of gNotificationsEnabled. */
+function ShowToast(icon, body, type = "info") {
+    let container = document.getElementById("ib_toast_container");
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "ib_toast_container";
+        container.className = "ib-toast-container";
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement("div");
+    toast.className = `ib-toast ib-toast-${type}`;
+    toast.innerHTML = `<div class="ib-toast-title">${icon}</div><div class="ib-toast-body">${EscapeHtml(body)}</div>`;
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => toast.classList.add("ib-toast-show"));
+
+    setTimeout(() => {
+        toast.classList.remove("ib-toast-show");
+        toast.classList.add("ib-toast-hide");
+        setTimeout(() => toast.remove(), 400);
+    }, 2500);
+}
+
 function ShowNotification(title, body, type = "info") {
     if (!gNotificationsEnabled) return;
 
@@ -1737,7 +2105,7 @@ function OpenPanel() {
     if (host) {
         const body = host.querySelector(".ib-panel-body");
         if (body) {
-            body.innerHTML = RenderBoard(gState, false, null, "panel");
+            body.innerHTML = RenderBoard(GetMergedStateForRendering(), false, null, "panel");
             const boardEl = body.querySelector(".ib-board");
             if (boardEl) {
                 WireBoardControls(boardEl, null);
@@ -1898,7 +2266,7 @@ function RenderPanelBoard() {
     shell.innerHTML = `
         <div class="ib-panel-resize-handle"></div>
         <div class="ib-panel-body">
-            ${gPanelOpen ? RenderBoard(gState, false, null, "panel") : ""}
+            ${gPanelOpen ? RenderBoard(GetMergedStateForRendering(), false, null, "panel") : ""}
         </div>
     `;
 
@@ -1957,6 +2325,8 @@ function RenderPanelBoard() {
 function SaveState() {
     try {
         localStorage.setItem(GetStorageKey(), JSON.stringify(gState));
+        // Update pin snapshots so pinned NPC data persists across chat switches
+        UpdateAllPinSnapshots();
     } catch (e) {
         console.error("[IB] SaveState failed:", e);
     }
@@ -2626,40 +2996,55 @@ function BuildStateInjection() {
 
     const lines = [];
     lines.push("[INFOBOARD STATE]");
-    //lines.push(`Time: ${gState.time}`);
-    //lines.push(`Date: ${gState.date}`);
-    //lines.push(`Weather: ${gState.weather}`);
-    //lines.push(`Location: ${gState.loc}`);
 
-    if (state.chars.length) {
+    // Build a set of NPC names already present in current state (normalized)
+    const stateCharNames = new Set(state.chars.map(c => NormalizeName(c.name)));
+
+    // --- Collect pinned NPCs that are NOT in the current chat state ---
+    // These come from pinSnapshots (saved when the NPC was last seen in any chat)
+    const missingPinnedNpcs = [];
+    if (gPinRegistry?.pinSnapshots && gPinnedNpcs.length) {
+        for (const pinnedName of gPinnedNpcs) {
+            const normalized = NormalizeName(pinnedName);
+            if (!stateCharNames.has(normalized)) {
+                const snapshot = gPinRegistry.pinSnapshots[normalized];
+                if (snapshot) {
+                    missingPinnedNpcs.push(snapshot);
+                }
+            }
+        }
+    }
+
+    const hasAnyChars = state.chars.length > 0 || missingPinnedNpcs.length > 0;
+
+    if (hasAnyChars) {
         lines.push("NPCs:");
         for (const c of state.chars) {
-            // --- НАЧАЛО ИСПРАВЛЕНИЯ ---
-            // Проверяем, закреплен ли персонаж
             const isPinned = IsPinnedNpc(c.name);
-            // Проверяем, находится ли он "вне игры"
             const isGone = ["offscreen", "leftScene"].includes(c.presence?.key);
 
-            // Если персонаж НЕ закреплен и ушел/за кадром -> НЕ инжектим его в промпт.
-            // Это позволит ИИ "забыть" его и удалить из следующего ответа.
             if (!isPinned && isGone) {
                 continue;
             }
-            // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
 
             const tags = (c.tags || []).join(", ");
             const currentPresence = c.presence?.key || "unknown";
             const pinnedMarker = isPinned ? ", pinned" : "";
             lines.push(`- ${c.name} (${currentPresence}${pinnedMarker})${tags ? ` [${tags}]` : ""}`);
         }
+
+        // Add pinned NPCs from snapshots that aren't in current state
+        for (const snap of missingPinnedNpcs) {
+            const tags = (snap.tags || []).join(", ");
+            // Force offscreen presence — this NPC is from another chat
+            const presence = "offscreen";
+            lines.push(`- ${snap.name} (${presence}, pinned)${tags ? ` [${tags}]` : ""}`);
+        }
     }
 
     if (state.rels.length) {
         lines.push("Relations:");
         for (const r of state.rels) {
-            // --- СИНХРОНИЗАЦИЯ RELATIONS ---
-            // Если мы скрыли персонажа из списка NPC, скрываем и его отношения,
-            // чтобы не смущать ИИ.
             const charData = state.chars.find(c => NamesLikelyMatch(c.name, r.source));
             
             if (charData) {
@@ -2670,16 +3055,35 @@ function BuildStateInjection() {
                     continue;
                 }
             }
-            // -------------------------------
 
             lines.push(`- ${r.source}: A ${r.a} (${SignedText(r.ac)}), T ${r.tr} (${SignedText(r.tc)}), L ${r.l} (${SignedText(r.lc)}), ${r.status}`);
         }
+
+        // Add relations from snapshots for pinned NPCs not in current state
+        for (const snap of missingPinnedNpcs) {
+            if (snap.rel) {
+                const r = snap.rel;
+                lines.push(`- ${r.source}: A ${r.a} (${SignedText(r.ac)}), T ${r.tr} (${SignedText(r.tc)}), L ${r.l} (${SignedText(r.lc)}), ${r.status}`);
+            }
+        }
+    } else if (missingPinnedNpcs.length) {
+        // Current state has no rels but we have snapshot rels
+        const snapshotRels = missingPinnedNpcs.filter(s => s.rel);
+        if (snapshotRels.length) {
+            lines.push("Relations:");
+            for (const snap of snapshotRels) {
+                const r = snap.rel;
+                lines.push(`- ${r.source}: A ${r.a} (${SignedText(r.ac)}), T ${r.tr} (${SignedText(r.tc)}), L ${r.l} (${SignedText(r.lc)}), ${r.status}`);
+            }
+        }
     }
 
-    if (state.thoughts.length) {
+    const hasStateThoughts = state.thoughts.length > 0;
+    const snapshotThoughts = missingPinnedNpcs.filter(s => s.thought);
+
+    if (hasStateThoughts || snapshotThoughts.length) {
         lines.push("PRIVATE NPC THOUGHTS - internal memory only, never write these in visible narrative:");
         for (const t of state.thoughts) {
-            // --- СИНХРОНИЗАЦИЯ МЫСЛЕЙ ---
             const charData = state.chars.find(c => NamesLikelyMatch(c.name, t.name));
             if (charData) {
                 const isPinned = IsPinnedNpc(charData.name);
@@ -2688,9 +3092,13 @@ function BuildStateInjection() {
                     continue;
                 }
             }
-            // ----------------------------
             
             lines.push(`- ${t.name}: ${t.text}`);
+        }
+
+        // Add thoughts from snapshots for pinned NPCs not in current state
+        for (const snap of snapshotThoughts) {
+            lines.push(`- ${snap.thought.name}: ${snap.thought.text}`);
         }
     }
 
@@ -2965,6 +3373,100 @@ function RenderMiniStat(meta, changed = false) {
     </div>`;
 }
 
+// ============== Pin Navigation ==============
+
+/**
+ * Navigate to a character card by avatar key (e.g. "Komac.png").
+ * Finds the character in the SillyTavern character list and opens it.
+ */
+function NavigateToCharacterCard(avatarKey) {
+    try {
+        const ctx = SillyTavern.getContext();
+        const chars = ctx.characters || [];
+        const idx = chars.findIndex(c => c.avatar === avatarKey);
+        if (idx >= 0 && typeof ctx.selectCharacterById === "function") {
+            ctx.selectCharacterById(idx);
+        } else if (idx < 0) {
+            ShowToast("📍", T("pinNavNotFound"), "warning");
+        }
+    } catch (e) {
+        console.warn("[IB] NavigateToCharacterCard failed:", e?.message);
+    }
+}
+
+/**
+ * Get the avatar key (e.g. "Komac.png") for a pinned NPC at a given level.
+ * Returns null if not found.
+ */
+function GetPinCharKey(name) {
+    if (!gPinRegistry || !name) return null;
+    const normalized = NormalizeName(name);
+
+    // Check perChar — find which character has this pin
+    if (gPinRegistry.characters) {
+        for (const [key, entry] of Object.entries(gPinRegistry.characters)) {
+            const pins = Array.isArray(entry?.pins) ? entry.pins : (Array.isArray(entry) ? entry : []);
+            if (pins.some(n => NormalizeName(n) === normalized)) {
+                return key; // avatar key like "Komac.png"
+            }
+        }
+    }
+
+    // Check global — use snapshot to find the character card
+    if ((gPinRegistry.global || []).some(n => NormalizeName(n) === normalized)) {
+        // Try to find the character by NPC name in the character list
+        try {
+            const ctx = SillyTavern.getContext();
+            const chars = ctx.characters || [];
+            const match = chars.find(c => NamesLikelyMatch(c.name, name));
+            if (match?.avatar) return match.avatar;
+        } catch {}
+    }
+
+    return null;
+}
+
+/**
+ * Get the chat ID where a pinned NPC is stored at perChat level.
+ * Returns null if the NPC is not pinned per-chat.
+ */
+function GetPinChatId(name) {
+    if (!gPinRegistry || !name) return null;
+    const normalized = NormalizeName(name);
+
+    if (gPinRegistry.chats) {
+        for (const [chatId, pins] of Object.entries(gPinRegistry.chats)) {
+            if (Array.isArray(pins) && pins.some(n => NormalizeName(n) === normalized)) {
+                return chatId;
+            }
+        }
+    }
+    return null;
+}
+
+/**
+ * Get the avatar key for a chat ID by parsing the chat ID format.
+ * SillyTavern chat IDs are like "Komac - 2025-06-03@16h52m23s410ms"
+ * The avatar can be found by matching the character name prefix.
+ */
+function GetCharKeyForChatId(chatId) {
+    if (!chatId) return null;
+    try {
+        const ctx = SillyTavern.getContext();
+        const chars = ctx.characters || [];
+        // Chat ID format: "CharacterName - datetime"
+        const chatPrefix = chatId.split(" - ")[0]?.trim();
+        if (chatPrefix) {
+            const match = chars.find(c => {
+                const charName = String(c.name || "").replace(/[^a-zA-Z0-9_\-]/g, "_");
+                return charName === chatPrefix || NamesLikelyMatch(c.name, chatPrefix);
+            });
+            if (match?.avatar) return match.avatar;
+        }
+    } catch {}
+    return null;
+}
+
 // ============== Pin Registry System ==============
 
 function GetCurrentCharKey() {
@@ -2979,10 +3481,12 @@ function GetCurrentCharKey() {
 
 function GetDefaultPinRegistry() {
     return {
-        version: 1,
+        version: 2,
         global: [],
         characters: {},
-        chats: {}
+        chats: {},
+        pinSources: {}, // normalized NPC name -> charKey (avatar key of the card that pinned it globally)
+        pinSnapshots: {} // normalized NPC name -> { name, icon, age, tags, mood, presence, rel, thought }
     };
 }
 
@@ -3007,9 +3511,10 @@ function SavePinRegistry(registry) {
     }
 }
 
-function LoadPinnedNpcs() {
-    // Load registry if not cached
-    if (!gPinRegistry) {
+function LoadPinnedNpcs(forceReload = false) {
+    // Load registry if not cached, or if forced (e.g. on chat change
+    // to recover from any in-memory corruption that happened during init)
+    if (!gPinRegistry || forceReload) {
         gPinRegistry = LoadPinRegistry();
         // Migration: remove legacy `mode` field if present
         if (gPinRegistry.mode) {
@@ -3050,7 +3555,51 @@ function ResolveActivePins() {
 
     // 3. Per-chat pins
     const chatId = GetChatId();
-    addUnique(gPinRegistry.chats?.[chatId] || []);
+    const chatEntry = gPinRegistry.chats?.[chatId];
+    if (chatEntry) {
+        if (Array.isArray(chatEntry)) addUnique(chatEntry); // legacy format
+        else if (Array.isArray(chatEntry.pins)) addUnique(chatEntry.pins); // new format
+    }
+
+    return result;
+}
+
+/**
+ * Resolve ALL pinned NPCs from the entire registry, regardless of current context.
+ * Returns array of { name, level, charKey, chatId } objects.
+ * Used by the Pin Editor to show all pins across all characters/chats.
+ */
+function ResolveAllPins() {
+    if (!gPinRegistry) return [];
+    const result = [];
+
+    // 1. Global pins
+    (gPinRegistry.global || []).forEach(n => {
+        const charKey = gPinRegistry.pinSources?.[NormalizeName(n)] || null;
+        result.push({ name: n, level: "global", charKey: charKey, chatId: null });
+    });
+
+    // 2. Per-character pins
+    if (gPinRegistry.characters) {
+        for (const [key, entry] of Object.entries(gPinRegistry.characters)) {
+            const pins = Array.isArray(entry?.pins) ? entry.pins : (Array.isArray(entry) ? entry : []);
+            pins.forEach(n => result.push({ name: n, level: "perChar", charKey: key, chatId: null }));
+        }
+    }
+
+    // 3. Per-chat pins
+    if (gPinRegistry.chats) {
+        for (const [chatId, entry] of Object.entries(gPinRegistry.chats)) {
+            if (Array.isArray(entry)) {
+                // Legacy format: chatId -> [names]
+                const charKey = GetCharKeyForChatId(chatId);
+                entry.forEach(n => result.push({ name: n, level: "perChat", charKey: charKey, chatId: chatId }));
+            } else if (entry?.pins) {
+                // New format: chatId -> { charKey, pins: [names] }
+                entry.pins.forEach(n => result.push({ name: n, level: "perChat", charKey: entry.charKey || null, chatId: chatId }));
+            }
+        }
+    }
 
     return result;
 }
@@ -3101,12 +3650,106 @@ function GetPinLevel(name) {
 
     // 3. Check per-chat
     const chatId = GetChatId();
-    const chatPins = gPinRegistry.chats?.[chatId] || [];
+    const chatEntry = gPinRegistry.chats?.[chatId];
+    const chatPins = Array.isArray(chatEntry) ? chatEntry : (chatEntry?.pins || []);
     if (chatPins.some(n => NormalizeName(n) === normalized)) {
         return "perChat";
     }
 
     return null;
+}
+
+/**
+ * Remove a pin from the CURRENT context only (current chat/character/global).
+ * Used by SetPinLevel and the ✕ unpin button for active pins.
+ * Unlike RemovePinCompletely, this does NOT touch pins in other chats/characters.
+ */
+function RemoveFromCurrentContext(name, level) {
+    if (!gPinRegistry || !name) return;
+    const normalized = NormalizeName(name);
+
+    if (level === "perChat") {
+        const chatId = GetChatId();
+        if (gPinRegistry.chats?.[chatId]) {
+            const entry = gPinRegistry.chats[chatId];
+            if (Array.isArray(entry)) {
+                gPinRegistry.chats[chatId] = entry.filter(n => NormalizeName(n) !== normalized);
+                if (gPinRegistry.chats[chatId].length === 0) delete gPinRegistry.chats[chatId];
+            } else if (entry?.pins) {
+                entry.pins = entry.pins.filter(n => NormalizeName(n) !== normalized);
+                if (entry.pins.length === 0) delete gPinRegistry.chats[chatId];
+            }
+        }
+    } else if (level === "perChar") {
+        const charKey = GetCurrentCharKey();
+        if (gPinRegistry.characters?.[charKey]) {
+            const entry = gPinRegistry.characters[charKey];
+            if (Array.isArray(entry?.pins)) {
+                entry.pins = entry.pins.filter(n => NormalizeName(n) !== normalized);
+                if (entry.pins.length === 0) delete gPinRegistry.characters[charKey];
+            } else if (Array.isArray(entry)) {
+                gPinRegistry.characters[charKey] = entry.filter(n => NormalizeName(n) !== normalized);
+                if (gPinRegistry.characters[charKey].length === 0) delete gPinRegistry.characters[charKey];
+            }
+        }
+    } else if (level === "global") {
+        if (gPinRegistry.global) {
+            gPinRegistry.global = gPinRegistry.global.filter(n => NormalizeName(n) !== normalized);
+        }
+        if (gPinRegistry.pinSources) {
+            delete gPinRegistry.pinSources[normalized];
+        }
+    }
+}
+
+/**
+ * Remove a pin from a SPECIFIC context (given level, charKey, chatId).
+ * Used by the ✕ button in the "other" section of the pins popup.
+ * If the pin no longer exists in any context after removal, also removes the snapshot.
+ */
+function RemoveFromSpecificContext(name, level, charKey, chatId) {
+    if (!gPinRegistry || !name) return;
+    const normalized = NormalizeName(name);
+
+    if (level === "perChat" && chatId) {
+        if (gPinRegistry.chats?.[chatId]) {
+            const entry = gPinRegistry.chats[chatId];
+            if (Array.isArray(entry)) {
+                gPinRegistry.chats[chatId] = entry.filter(n => NormalizeName(n) !== normalized);
+                if (gPinRegistry.chats[chatId].length === 0) delete gPinRegistry.chats[chatId];
+            } else if (entry?.pins) {
+                entry.pins = entry.pins.filter(n => NormalizeName(n) !== normalized);
+                if (entry.pins.length === 0) delete gPinRegistry.chats[chatId];
+            }
+        }
+    } else if (level === "perChar" && charKey) {
+        if (gPinRegistry.characters?.[charKey]) {
+            const entry = gPinRegistry.characters[charKey];
+            if (Array.isArray(entry?.pins)) {
+                entry.pins = entry.pins.filter(n => NormalizeName(n) !== normalized);
+                if (entry.pins.length === 0) delete gPinRegistry.characters[charKey];
+            } else if (Array.isArray(entry)) {
+                gPinRegistry.characters[charKey] = entry.filter(n => NormalizeName(n) !== normalized);
+                if (gPinRegistry.characters[charKey].length === 0) delete gPinRegistry.characters[charKey];
+            }
+        }
+    } else if (level === "global") {
+        if (gPinRegistry.global) {
+            gPinRegistry.global = gPinRegistry.global.filter(n => NormalizeName(n) !== normalized);
+        }
+        if (gPinRegistry.pinSources) {
+            delete gPinRegistry.pinSources[normalized];
+        }
+    }
+
+    // Check if pin still exists in any context — if not, clean up snapshot
+    const stillExists = ResolveAllPins().some(p => NormalizeName(p.name) === normalized);
+    if (!stillExists) {
+        RemovePinSnapshot(name);
+    }
+
+    gPinnedNpcs = ResolveActivePins();
+    SavePinRegistry(gPinRegistry);
 }
 
 function RemovePinCompletely(name) {
@@ -3124,8 +3767,16 @@ function RemovePinCompletely(name) {
             const entry = gPinRegistry.characters[key];
             if (Array.isArray(entry?.pins)) {
                 entry.pins = entry.pins.filter(n => NormalizeName(n) !== normalized);
+                // Clean up empty character entries
+                if (entry.pins.length === 0) {
+                    delete gPinRegistry.characters[key];
+                }
             } else if (Array.isArray(entry)) {
                 gPinRegistry.characters[key] = entry.filter(n => NormalizeName(n) !== normalized);
+                // Clean up empty character entries (legacy format)
+                if (gPinRegistry.characters[key].length === 0) {
+                    delete gPinRegistry.characters[key];
+                }
             }
         }
     }
@@ -3133,12 +3784,31 @@ function RemovePinCompletely(name) {
     // Remove from ALL chats
     if (gPinRegistry.chats) {
         for (const chatId of Object.keys(gPinRegistry.chats)) {
-            gPinRegistry.chats[chatId] = gPinRegistry.chats[chatId].filter(n => NormalizeName(n) !== normalized);
-            if (gPinRegistry.chats[chatId].length === 0) {
-                delete gPinRegistry.chats[chatId];
+            const entry = gPinRegistry.chats[chatId];
+            if (Array.isArray(entry)) {
+                // Legacy format
+                gPinRegistry.chats[chatId] = entry.filter(n => NormalizeName(n) !== normalized);
+                if (gPinRegistry.chats[chatId].length === 0) {
+                    delete gPinRegistry.chats[chatId];
+                }
+            } else if (entry?.pins) {
+                // New format
+                entry.pins = entry.pins.filter(n => NormalizeName(n) !== normalized);
+                if (entry.pins.length === 0) {
+                    delete gPinRegistry.chats[chatId];
+                }
             }
         }
     }
+
+    // Remove from pinSources (global source tracking)
+    if (gPinRegistry.pinSources) {
+        delete gPinRegistry.pinSources[normalized];
+    }
+
+    // NOTE: Do NOT remove snapshot here — callers (e.g. CleanPinRegistry) may
+    // still need it. Snapshots are cleaned up by CleanPinRegistry() or
+    // RemoveFromSpecificContext when the pin is confirmed gone from all contexts.
 
     gPinnedNpcs = ResolveActivePins();
     SavePinRegistry(gPinRegistry);
@@ -3150,12 +3820,23 @@ function SetPinLevel(name, level) {
     if (!gPinRegistry.characters) gPinRegistry.characters = {};
     if (!gPinRegistry.chats) gPinRegistry.chats = {};
 
-    // Remove from all tiers first
-    RemovePinCompletely(name);
+    // Preserve existing snapshot BEFORE removing — for safety during level-change.
+    const normalized = NormalizeName(name);
+    const savedSnapshot = gPinRegistry.pinSnapshots?.[normalized]
+        ? JSON.parse(JSON.stringify(gPinRegistry.pinSnapshots[normalized]))
+        : null;
+
+    // Remove from CURRENT context only (not from all contexts like RemovePinCompletely).
+    // This preserves pins created by PinHere in other chats/characters.
+    const currentLevel = GetPinLevel(name);
+    RemoveFromCurrentContext(name, currentLevel);
 
     // Re-add at the specified level
     if (level === "global") {
         gPinRegistry.global.push(name);
+        // Track which character card this was pinned from
+        if (!gPinRegistry.pinSources) gPinRegistry.pinSources = {};
+        gPinRegistry.pinSources[normalized] = GetCurrentCharKey();
     } else if (level === "perChar") {
         const charKey = GetCurrentCharKey();
         const existing = gPinRegistry.characters[charKey];
@@ -3163,12 +3844,227 @@ function SetPinLevel(name, level) {
         gPinRegistry.characters[charKey] = { name: charName, pins: [...(existing?.pins || []), name] };
     } else if (level === "perChat") {
         const chatId = GetChatId();
-        if (!gPinRegistry.chats[chatId]) gPinRegistry.chats[chatId] = [];
-        gPinRegistry.chats[chatId].push(name);
+        const charKey = GetCurrentCharKey();
+        const existing = gPinRegistry.chats[chatId];
+        if (!existing) {
+            gPinRegistry.chats[chatId] = { charKey: charKey, pins: [name] };
+        } else if (Array.isArray(existing)) {
+            // Migrate legacy format
+            gPinRegistry.chats[chatId] = { charKey: charKey, pins: [...existing, name] };
+        } else {
+            // New format — update charKey if needed
+            if (!existing.charKey) existing.charKey = charKey;
+            existing.pins.push(name);
+        }
     }
-    // level === null → already removed by RemovePinCompletely
+    // level === null → already removed by RemoveFromCurrentContext above
+
+    // If completely unpinning (level === null), check if pin still exists elsewhere.
+    // Only remove snapshot if the pin is completely gone from all contexts.
+    if (level === null) {
+        const stillExists = ResolveAllPins().some(p => NormalizeName(p.name) === normalized);
+        if (!stillExists) {
+            RemovePinSnapshot(name);
+        }
+    } else {
+        // Restore snapshot if it was lost during removal (safety net)
+        // and UpdatePinSnapshot below won't find the NPC (e.g. empty chat).
+        if (savedSnapshot && !gPinRegistry.pinSnapshots?.[normalized]) {
+            if (!gPinRegistry.pinSnapshots) gPinRegistry.pinSnapshots = {};
+            gPinRegistry.pinSnapshots[normalized] = savedSnapshot;
+            console.log(`[IB] SetPinLevel: restored preserved snapshot for "${name}" (level → ${level})`);
+        }
+    }
 
     gPinnedNpcs = ResolveActivePins();
+    // Save snapshot of pinned NPC data from current gState (only if NPC is present)
+    if (level !== null) {
+        UpdatePinSnapshot(name);
+    }
+
+    gPinnedNpcs = ResolveActivePins();
+    SavePinRegistry(gPinRegistry);
+
+    console.log(`[IB] SetPinLevel: "${name}" → ${level}, gPinnedNpcs=[${gPinnedNpcs.join(",")}], snapshotExists=${!!gPinRegistry.pinSnapshots?.[normalized]}`);
+}
+
+/**
+ * Pin an NPC to the current chat (perChat) WITHOUT removing it from other levels.
+ * If already pinned in this chat, does nothing. Returns true if added.
+ */
+function PinHere(name) {
+    if (!gPinRegistry || !name) return false;
+    if (!gPinRegistry.chats) gPinRegistry.chats = {};
+
+    // Already pinned in current context at ANY level? Don't create a shadow duplicate.
+    if (GetPinLevel(name)) return false;
+
+    const chatId = GetChatId();
+    const charKey = GetCurrentCharKey();
+    const existing = gPinRegistry.chats[chatId];
+
+    // Already pinned in this chat?
+    if (existing) {
+        const pins = Array.isArray(existing) ? existing : (existing.pins || []);
+        if (pins.some(p => NormalizeName(p) === NormalizeName(name))) return false;
+    }
+
+    // Add to current chat
+    if (!existing) {
+        gPinRegistry.chats[chatId] = { charKey: charKey, pins: [name] };
+    } else if (Array.isArray(existing)) {
+        // Migrate legacy format
+        gPinRegistry.chats[chatId] = { charKey: charKey, pins: [...existing, name] };
+    } else {
+        if (!existing.charKey) existing.charKey = charKey;
+        existing.pins.push(name);
+    }
+
+    // Preserve/restore snapshot if available
+    const normalized = NormalizeName(name);
+    if (gPinRegistry.pinSnapshots?.[normalized]) {
+        // Snapshot already exists from the source context — keep it
+    } else {
+        // Try to create one from current gState
+        UpdatePinSnapshot(name);
+    }
+
+    gPinnedNpcs = ResolveActivePins();
+    SavePinRegistry(gPinRegistry);
+    console.log(`[IB] PinHere: "${name}" added to chat ${chatId}`);
+    return true;
+}
+
+/**
+ * Save a snapshot of an NPC's current state data into the pin registry.
+ * This allows the NPC to appear in prompt injection even when their
+ * original chat is not active (e.g. globally pinned NPC in a new character card).
+ */
+function UpdatePinSnapshot(name) {
+    if (!gPinRegistry || !name) return;
+    if (!gPinRegistry.pinSnapshots) gPinRegistry.pinSnapshots = {};
+
+    const normalized = NormalizeName(name);
+
+    // Find NPC data in current gState
+    const charData = gState.chars.find(c => NamesLikelyMatch(c.name, name));
+    const relData = gState.rels.find(r => NamesLikelyMatch(r.source, name));
+    const thoughtData = gState.thoughts.find(t => NamesLikelyMatch(t.name, name));
+
+    // Only update snapshot if we have at least char data
+    if (!charData) return;
+
+    // Check if current data is a placeholder (created by PatchPinnedData fallback)
+    // If so, don't overwrite an existing richer snapshot
+    const existing = gPinRegistry.pinSnapshots[normalized];
+    const isPlaceholder = charData.icon === "📌" && (!charData.age && !charData.mood);
+    if (isPlaceholder && existing) {
+        // Only update rel/thought if we have real data; preserve existing otherwise
+        if (relData) {
+            existing.rel = {
+                source: relData.source,
+                a: relData.a, ac: relData.ac,
+                tr: relData.tr, tc: relData.tc,
+                l: relData.l, lc: relData.lc,
+                status: relData.status
+            };
+        }
+        if (thoughtData) {
+            existing.thought = { name: thoughtData.name, text: thoughtData.text };
+        }
+        SavePinRegistry(gPinRegistry);
+        return;
+    }
+
+    gPinRegistry.pinSnapshots[normalized] = {
+        name: charData.name,
+        icon: charData.icon || "•",
+        age: charData.age || "",
+        tags: charData.tags || [],
+        mood: charData.mood || "",
+        presence: charData.presence || { key: "offscreen", cls: "ib-presence-offscreen" },
+        rel: relData ? {
+            source: relData.source,
+            a: relData.a, ac: relData.ac,
+            tr: relData.tr, tc: relData.tc,
+            l: relData.l, lc: relData.lc,
+            status: relData.status
+        } : (existing?.rel || null),
+        thought: thoughtData ? { name: thoughtData.name, text: thoughtData.text } : (existing?.thought || null)
+    };
+
+    SavePinRegistry(gPinRegistry);
+}
+
+/**
+ * Update snapshots for ALL currently pinned NPCs from current gState.
+ * Called after each state update (new message parsed, reprocess, etc.)
+ */
+function UpdateAllPinSnapshots() {
+    if (!gPinRegistry || !gPinnedNpcs.length) return;
+    let changed = false;
+    for (const name of gPinnedNpcs) {
+        const charData = gState.chars.find(c => NamesLikelyMatch(c.name, name));
+        if (charData) {
+            const normalized = NormalizeName(name);
+            if (!gPinRegistry.pinSnapshots) gPinRegistry.pinSnapshots = {};
+
+            const relData = gState.rels.find(r => NamesLikelyMatch(r.source, name));
+            const thoughtData = gState.thoughts.find(t => NamesLikelyMatch(t.name, name));
+            const existing = gPinRegistry.pinSnapshots[normalized];
+
+            // Check if current data is a placeholder (created by PatchPinnedData fallback)
+            // If so, don't overwrite an existing richer snapshot
+            const isPlaceholder = charData.icon === "📌" && (!charData.age && !charData.mood);
+            if (isPlaceholder && existing) {
+                // Only update rel/thought if we have real data; preserve existing otherwise
+                if (relData) {
+                    existing.rel = {
+                        source: relData.source,
+                        a: relData.a, ac: relData.ac,
+                        tr: relData.tr, tc: relData.tc,
+                        l: relData.l, lc: relData.lc,
+                        status: relData.status
+                    };
+                    changed = true;
+                }
+                if (thoughtData) {
+                    existing.thought = { name: thoughtData.name, text: thoughtData.text };
+                    changed = true;
+                }
+                continue;
+            }
+
+            gPinRegistry.pinSnapshots[normalized] = {
+                name: charData.name,
+                icon: charData.icon || "•",
+                age: charData.age || "",
+                tags: charData.tags || [],
+                mood: charData.mood || "",
+                presence: charData.presence || { key: "offscreen", cls: "ib-presence-offscreen" },
+                rel: relData ? {
+                    source: relData.source,
+                    a: relData.a, ac: relData.ac,
+                    tr: relData.tr, tc: relData.tc,
+                    l: relData.l, lc: relData.lc,
+                    status: relData.status
+                } : (existing?.rel || null),
+                thought: thoughtData ? { name: thoughtData.name, text: thoughtData.text } : (existing?.thought || null)
+            };
+            changed = true;
+        }
+    }
+    if (changed) SavePinRegistry(gPinRegistry);
+}
+
+/**
+ * Remove a pin snapshot when an NPC is completely unpinned.
+ */
+function RemovePinSnapshot(name) {
+    if (!gPinRegistry || !name) return;
+    if (!gPinRegistry.pinSnapshots) return;
+    const normalized = NormalizeName(name);
+    delete gPinRegistry.pinSnapshots[normalized];
     SavePinRegistry(gPinRegistry);
 }
 
@@ -3225,31 +4121,93 @@ function CleanPinRegistry() {
     try {
         const ctx = SillyTavern.getContext();
 
-        // Clean characters
+        // Clean characters — but ONLY if ctx.characters is actually loaded.
+        // If it's empty (e.g. extension init before character list is fetched),
+        // we can't tell which characters are valid, so we skip the cleanup
+        // to avoid accidentally deleting all per-character pins.
         if (gPinRegistry.characters) {
-            const validAvatars = new Set(
-                (ctx.characters || []).map(c => c.avatar).filter(Boolean)
-            );
+            // Remove entries with empty pins arrays (orphaned character slots)
             for (const key of Object.keys(gPinRegistry.characters)) {
-                if (!validAvatars.has(key)) {
+                const entry = gPinRegistry.characters[key];
+                const pins = Array.isArray(entry?.pins) ? entry.pins : (Array.isArray(entry) ? entry : []);
+                if (pins.length === 0) {
                     delete gPinRegistry.characters[key];
+                    continue;
+                }
+            }
+            // Remove entries for characters that no longer exist in ST
+            const charList = ctx.characters || [];
+            if (charList.length > 0) {
+                const validAvatars = new Set(
+                    charList.map(c => c.avatar).filter(Boolean)
+                );
+                for (const key of Object.keys(gPinRegistry.characters)) {
+                    if (!validAvatars.has(key)) {
+                        delete gPinRegistry.characters[key];
+                    }
                 }
             }
         }
 
         // Clean chats — keep entries that match existing chat files
-        // (We can't easily enumerate all chat IDs, so we only clean if
-        // the current chat ID is valid)
         if (gPinRegistry.chats) {
-            const chatId = GetChatId();
-            const hasChat = Array.isArray(ctx.chat) && ctx.chat.length > 0;
-            // Remove entries with empty pin arrays (no point keeping them)
-            for (const [key, pins] of Object.entries(gPinRegistry.chats)) {
-                if (!Array.isArray(pins) || pins.length === 0) {
+            for (const [key, entry] of Object.entries(gPinRegistry.chats)) {
+                if (Array.isArray(entry)) {
+                    // Legacy format: migrate to new format with charKey
+                    const charKey = GetCharKeyForChatId(key);
+                    if (entry.length === 0) {
+                        delete gPinRegistry.chats[key];
+                    } else {
+                        gPinRegistry.chats[key] = { charKey: charKey || null, pins: entry };
+                    }
+                } else if (entry?.pins) {
+                    // New format
+                    if (entry.pins.length === 0) {
+                        delete gPinRegistry.chats[key];
+                    }
+                } else {
                     delete gPinRegistry.chats[key];
                 }
             }
         }
+
+        // Clean pinSources — remove entries for NPCs no longer pinned globally
+        if (gPinRegistry.pinSources) {
+            const globalNames = new Set((gPinRegistry.global || []).map(n => NormalizeName(n)));
+            for (const key of Object.keys(gPinRegistry.pinSources)) {
+                if (!globalNames.has(key)) {
+                    delete gPinRegistry.pinSources[key];
+                }
+            }
+            if (Object.keys(gPinRegistry.pinSources).length === 0) {
+                delete gPinRegistry.pinSources;
+            }
+        }
+
+        // Clean pinSnapshots — remove snapshots for NPCs that are no longer pinned anywhere
+        if (gPinRegistry.pinSnapshots) {
+            const allPinnedNames = new Set();
+            (gPinRegistry.global || []).forEach(n => allPinnedNames.add(NormalizeName(n)));
+            Object.values(gPinRegistry.characters || {}).forEach(entry => {
+                const pins = Array.isArray(entry?.pins) ? entry.pins : (Array.isArray(entry) ? entry : []);
+                pins.forEach(n => allPinnedNames.add(NormalizeName(n)));
+            });
+            Object.values(gPinRegistry.chats || {}).forEach(entry => {
+                const pins = Array.isArray(entry) ? entry : (entry?.pins || []);
+                pins.forEach(n => allPinnedNames.add(NormalizeName(n)));
+            });
+            for (const key of Object.keys(gPinRegistry.pinSnapshots)) {
+                if (!allPinnedNames.has(key)) {
+                    delete gPinRegistry.pinSnapshots[key];
+                }
+            }
+            if (Object.keys(gPinRegistry.pinSnapshots).length === 0) {
+                delete gPinRegistry.pinSnapshots;
+            }
+        }
+
+        // Persist any cleanup changes immediately so in-memory and localStorage stay in sync
+        SavePinRegistry(gPinRegistry);
     } catch (e) {
         console.warn("[IB] Clean pin registry failed:", e?.message);
     }
@@ -3597,7 +4555,8 @@ function RenderBoard(state, isFresh = false, prevState = null, renderContext = n
 
     // Theme button — top-left
     const toolbarLeft = `
-<div class="ib-control-btn ib-btn-theme" title="${EscapeHtml(T("theme"))}">🎨</div>`;
+<div class="ib-control-btn ib-btn-theme" title="${EscapeHtml(T("theme"))}">🎨</div>
+<div class="ib-control-btn ib-btn-settings" title="${EscapeHtml(T("settingsTitle"))}">⚙️</div>`;
 
     // Shared toolbar buttons (pins, notifications, timeline, export, import, debug)
     const toolbarRight = `
@@ -3746,17 +4705,460 @@ function WireAccordionControls(boardEl) {
 
 function PositionPopupNearButton(popup, btn) {
     const btnRect = btn.getBoundingClientRect();
-    const spaceBelow = window.innerHeight - btnRect.bottom;
-    const spaceAbove = btnRect.top;
     popup.style.position = "fixed";
     popup.style.left = `${btnRect.left}px`;
-    if (spaceBelow >= 220 || spaceBelow >= spaceAbove) {
-        popup.style.top = `${btnRect.bottom + 4}px`;
-        popup.style.bottom = "auto";
-    } else {
-        popup.style.bottom = `${window.innerHeight - btnRect.top + 4}px`;
-        popup.style.top = "auto";
+
+    // Place below the button by default
+    popup.style.top = `${btnRect.bottom + 4}px`;
+    popup.style.bottom = "auto";
+
+    // After the browser has laid out the popup, clamp it into the viewport
+    requestAnimationFrame(() => {
+        const rect = popup.getBoundingClientRect();
+        const popupHeight = rect.height;
+
+        // Clamp horizontal
+        if (rect.right > window.innerWidth - 8) {
+            popup.style.left = `${Math.max(8, window.innerWidth - rect.width - 8)}px`;
+        }
+        if (rect.left < 8) {
+            popup.style.left = "8px";
+        }
+
+        // Clamp vertical
+        const spaceBelow = window.innerHeight - btnRect.bottom - 8;
+        const spaceAbove = btnRect.top - 8;
+
+        if (rect.bottom > window.innerHeight - 8) {
+            if (spaceAbove >= popupHeight) {
+                // Fits above — flip
+                popup.style.top = "auto";
+                popup.style.bottom = `${window.innerHeight - btnRect.top + 4}px`;
+            } else {
+                // Doesn't fully fit above either — pin to whichever side has more room
+                if (spaceAbove > spaceBelow) {
+                    popup.style.top = "8px";
+                    popup.style.bottom = "auto";
+                } else {
+                    popup.style.top = "auto";
+                    popup.style.bottom = "8px";
+                }
+            }
+        }
+    });
+}
+
+// ============== Settings Popup ==============
+function RenderSettingsPopup(btn) {
+    // Close any existing settings popup (toggle)
+    const existing = document.querySelector(".ib-settings-popup");
+    CloseOtherPopups(".ib-settings-popup");
+    document.querySelectorAll(".ib-settings-popup").forEach(p => p.remove());
+    if (existing) return; // Toggle OFF
+
+    const popup = document.createElement("div");
+    popup.className = `ib-settings-popup ib-popup-fixed ${GetThemeClassStr()}`;
+
+    // Theme options list (same as settings.html)
+    const themeOptions = [
+        ["nocturne","🌙 Nocturne"],["burgundy","🍷 Burgundy"],["ashrose","🌸 Ash Rose"],
+        ["coldsteel","🩶 Cold Steel"],["frostwhite","🧊 Frostwhite"],["pixel","🕹 Pixel Arcade"],
+        ["pinkbite","💗 Pink Bite"],["violetglass","🟣 Violet Glass"],["verdantgrove","🌿 Verdant Grove"],
+        ["sandalwood","🟤 Sandalwood"],["gengar","👻 Gengar"],["systemlog","💠 System Log"],
+        ["terminal","🟩 Terminal"],["oraclemoon","🌙 Oracle Moon"],["bloodmoon","🩸 Blood Moon"],
+        ["casefile","🕵️ Case File"],["obsidianregistry","🗝 Obsidian Registry"],
+        ["neonquest","🤖 Neon Quest"],["shockwave","🟣 Shockwave"],["lockdown","🎯 Lockdown"],
+        ["hotrod","🔥 Hot Rod"],["gryffindor","🦁 Gryffindor"],["slytherin","🐍 Slytherin"],
+        ["ravenclaw","🦅 Ravenclaw"],["hufflepuff","🦡 Hufflepuff"]
+    ];
+
+    const barOptions = [
+        ["classic","Classic"],["deep","Deep Neon"],["glass","Glass Needle"],["soft","Soft Matte"],
+        ["pixel","Pixel Blocks"],["candy","Candy Gloss"],["prism","Prism Glass"],["neon","Neon Rails"],
+        ["terminal","Terminal Segments"],["hearts","Heart Meter"],["constellation","Constellation Stars"],
+        ["vials","Vials"],["evidence","Evidence Tape"],["runic","Runic Shards"],
+        ["sigil","Sigil Bands"],["energon","Energon"]
+    ];
+
+    const compactOptions = [["top3","top3"],["top1","top1"],["changed","changed"],["all","all"]];
+    const boardModes = [["full","full"],["compact","compact"],["collapsed","collapsed"]];
+    const notifThresholds = [["3","3"],["5","5"],["10","10"],["20","20"]];
+
+    const sel = (arr, current) => arr.map(([v,l]) =>
+        `<option value="${v}"${v===current?' selected':''}>${l}</option>`
+    ).join('');
+
+    const chk = (id, val) => ` type="checkbox" id="${id}"${val?' checked':''}`;
+
+    // Build sections
+    popup.innerHTML = `
+    <div class="ib-sp-header">
+        <span class="ib-sp-title">⚙️ ${EscapeHtml(T("settingsTitle"))}</span>
+        <button type="button" class="ib-sp-close" id="ib_sp_close">×</button>
+    </div>
+    <div class="ib-sp-body">
+
+        <!-- Inject section -->
+        <div class="ib-sp-section">
+            <div class="ib-sp-row">
+                <input${chk("ib_sp_use_macro", gUseMacro)} />
+                <label for="ib_sp_use_macro" id="ib_sp_use_macro_label"><b>${T("useMacroMode")}</b></label>
+            </div>
+            <div class="ib-sp-subhelp" id="ib_sp_use_macro_help">${T("useMacroHelp")}</div>
+
+            <div class="ib-sp-row" id="ib_sp_inject_position_row">
+                <label for="ib_sp_inject_position"><b id="ib_sp_inject_position_label">${T("injectPosition")}</b></label>
+                <select id="ib_sp_inject_position">
+                    <option value="0"${gInjectPosition===0?' selected':''}>${T("injectPosAfter")}</option>
+                    <option value="1"${gInjectPosition===1?' selected':''}>${T("injectPosChat")}</option>
+                    <option value="2"${gInjectPosition===2?' selected':''}>${T("injectPosBefore")}</option>
+                </select>
+            </div>
+
+            <div class="ib-sp-row" id="ib_sp_inject_depth_row">
+                <label for="ib_sp_inject_depth"><b id="ib_sp_inject_depth_label">${T("injectDepth")}</b></label>
+                <div class="ib-depth-input-wrap">
+                    <button type="button" class="ib-depth-btn ib-depth-minus" id="ib_sp_depth_minus">−</button>
+                    <input type="number" id="ib_sp_inject_depth" min="0" max="999" value="${gInjectDepth}" class="ib-depth-field" />
+                    <button type="button" class="ib-depth-btn ib-depth-plus" id="ib_sp_depth_plus">+</button>
+                </div>
+            </div>
+            <div class="ib-sp-subhelp" id="ib_sp_inject_depth_help">${T("injectDepthHelp")}</div>
+        </div>
+
+        <!-- Language & Theme -->
+        <div class="ib-sp-section">
+            <div class="ib-sp-row">
+                <label for="ib_sp_lang"><b>${T("language")}</b></label>
+                <select id="ib_sp_lang">
+                    <option value="ru"${gLang==='ru'?' selected':''}>Русский</option>
+                    <option value="en"${gLang==='en'?' selected':''}>English</option>
+                </select>
+            </div>
+            <div class="ib-sp-row">
+                <label for="ib_sp_theme"><b>${T("theme")}</b></label>
+                <select id="ib_sp_theme">${sel(themeOptions, gTheme)}</select>
+            </div>
+            <div class="ib-sp-row">
+                <label for="ib_sp_bar_style"><b>${T("barStyle")}</b></label>
+                <select id="ib_sp_bar_style">${sel(barOptions, gBarStyle)}</select>
+            </div>
+        </div>
+
+        <!-- Relationship Filter -->
+        <div class="ib-sp-section">
+            <div class="ib-sp-row">
+                <label for="ib_sp_compact_mode"><b>${T("compactMode")}</b></label>
+                <select id="ib_sp_compact_mode">${sel(compactOptions, gCompactMode)}</select>
+            </div>
+        </div>
+
+        <!-- Display Modes -->
+        <div class="ib-sp-section">
+            <div class="ib-sp-section-title">${T("displayModes")}</div>
+            <div class="ib-sp-row">
+                <input${chk("ib_sp_display_inline", gDisplayInline)} />
+                <label for="ib_sp_display_inline">${T("displayInline")}</label>
+                <select id="ib_sp_board_mode_inline" class="ib-sp-inline-select">${sel(boardModes, gDefaultBoardModeInline)}</select>
+            </div>
+            <div class="ib-sp-row">
+                <input${chk("ib_sp_display_floating", gDisplayFloating)} />
+                <label for="ib_sp_display_floating">${T("displayFloating")}</label>
+                <select id="ib_sp_board_mode_floating" class="ib-sp-inline-select">${sel(boardModes, gDefaultBoardModeFloating)}</select>
+            </div>
+            <div class="ib-sp-row">
+                <input${chk("ib_sp_display_panel", gDisplayPanel)} />
+                <label for="ib_sp_display_panel">${T("displayPanel")}</label>
+                <select id="ib_sp_board_mode_panel" class="ib-sp-inline-select">${sel(boardModes, gDefaultBoardModePanel)}</select>
+            </div>
+            <div class="ib-sp-row" id="ib_sp_panel_position_row">
+                <label for="ib_sp_panel_position"><b>${T("panelPosition")}</b></label>
+                <select id="ib_sp_panel_position">
+                    <option value="left"${gPanelPosition==='left'?' selected':''}>${T("panelLeft")}</option>
+                    <option value="right"${gPanelPosition==='right'?' selected':''}>${T("panelRight")}</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Toggles -->
+        <div class="ib-sp-section">
+            <div class="ib-sp-row">
+                <input${chk("ib_sp_hover_fx", gHoverFx)} />
+                <label for="ib_sp_hover_fx">${T("hoverFx")}</label>
+            </div>
+            <div class="ib-sp-row">
+                <input${chk("ib_sp_hide_raw", gHideRaw)} />
+                <label for="ib_sp_hide_raw">${T("hideRaw")}</label>
+            </div>
+            <div class="ib-sp-row">
+                <input${chk("ib_sp_hide_thought_leaks", gHideThoughtLeaks)} />
+                <label for="ib_sp_hide_thought_leaks">${T("hideThoughtLeaks")}</label>
+            </div>
+            <div class="ib-sp-row">
+                <input${chk("ib_sp_show_nsfw", gShowNsfw)} />
+                <label for="ib_sp_show_nsfw">${T("showNsfw")}</label>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="ib-sp-section">
+            <div class="ib-sp-section-title">🔔 ${T("notifications")}</div>
+            <div class="ib-sp-row">
+                <input${chk("ib_sp_notifications_enabled", gNotificationsEnabled)} />
+                <label for="ib_sp_notifications_enabled">${T("enableNotif")}</label>
+            </div>
+            <div class="ib-sp-row">
+                <label for="ib_sp_notification_threshold"><b>${T("threshold")}</b></label>
+                <select id="ib_sp_notification_threshold">${sel(notifThresholds, String(gNotificationThreshold))}</select>
+            </div>
+        </div>
+
+        <!-- Custom CSS -->
+        <div class="ib-sp-section">
+            <div class="ib-sp-section-title">${T("customCssLabel")}</div>
+            <textarea id="ib_sp_custom_css" class="ib-sp-textarea" rows="5" placeholder=".ib-board { border-radius: 20px; }">${EscapeHtml(gCustomCss)}</textarea>
+            <div class="ib-sp-btn-row">
+                <div class="menu_button ib-sp-btn" id="ib_sp_save_css">💾 ${T("saveCustomCss")}</div>
+                <div class="menu_button ib-sp-btn" id="ib_sp_clear_css">🧹 ${T("clearCustomCss")}</div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="ib-sp-section">
+            <div class="ib-sp-btn-row">
+                <div class="menu_button ib-sp-btn ib-sp-btn-danger" id="ib_sp_reset_state">🗑 ${T("resetState")}</div>
+                <div class="menu_button ib-sp-btn" id="ib_sp_reprocess">🔄 ${T("reprocess")}</div>
+            </div>
+            <div class="ib-sp-btn-row" style="margin-top:4px">
+                <div class="menu_button ib-sp-btn ib-sp-btn-danger" id="ib_sp_clean_orphan_snapshots">🧹 ${T("cleanOrphanSnapshots")}</div>
+            </div>
+        </div>
+    </div>`;
+
+    document.body.appendChild(popup);
+    PositionPopupNearButton(popup, btn);
+
+    // ---- Visibility helpers ----
+    function updateDepthVisibility() {
+        if (gUseMacro) {
+            popup.querySelector("#ib_sp_inject_position_row").style.display = "none";
+            popup.querySelector("#ib_sp_inject_depth_row").style.display = "none";
+            popup.querySelector("#ib_sp_inject_depth_help").style.display = "none";
+        } else {
+            popup.querySelector("#ib_sp_inject_position_row").style.display = "";
+            const showDepth = gInjectPosition === 1;
+            popup.querySelector("#ib_sp_inject_depth_row").style.display = showDepth ? "" : "none";
+            popup.querySelector("#ib_sp_inject_depth_help").style.display = showDepth ? "" : "none";
+        }
     }
+    updateDepthVisibility();
+
+    // ---- Sync sidebar helper ----
+    function syncSidebar() {
+        const sb = (id) => document.getElementById(id);
+        if (sb("ib_use_macro")) $(sb("ib_use_macro")).prop("checked", gUseMacro);
+        if (sb("ib_inject_position")) $(sb("ib_inject_position")).val(String(gInjectPosition));
+        if (sb("ib_inject_depth")) $(sb("ib_inject_depth")).val(gInjectDepth);
+        if (sb("ib_lang")) $(sb("ib_lang")).val(gLang);
+        if (sb("ib_theme")) $(sb("ib_theme")).val(gTheme);
+        if (sb("ib_bar_style")) $(sb("ib_bar_style")).val(gBarStyle);
+        if (sb("ib_compact_mode")) $(sb("ib_compact_mode")).val(gCompactMode);
+        if (sb("ib_display_inline")) $(sb("ib_display_inline")).prop("checked", gDisplayInline);
+        if (sb("ib_display_floating")) $(sb("ib_display_floating")).prop("checked", gDisplayFloating);
+        if (sb("ib_display_panel")) $(sb("ib_display_panel")).prop("checked", gDisplayPanel);
+        if (sb("ib_board_mode_inline")) $(sb("ib_board_mode_inline")).val(gDefaultBoardModeInline);
+        if (sb("ib_board_mode_floating")) $(sb("ib_board_mode_floating")).val(gDefaultBoardModeFloating);
+        if (sb("ib_board_mode_panel")) $(sb("ib_board_mode_panel")).val(gDefaultBoardModePanel);
+        if (sb("ib_panel_position")) $(sb("ib_panel_position")).val(gPanelPosition);
+        if (sb("ib_hover_fx")) $(sb("ib_hover_fx")).prop("checked", gHoverFx);
+        if (sb("ib_hide_raw")) $(sb("ib_hide_raw")).prop("checked", gHideRaw);
+        if (sb("ib_hide_thought_leaks")) $(sb("ib_hide_thought_leaks")).prop("checked", gHideThoughtLeaks);
+        if (sb("ib_show_nsfw")) $(sb("ib_show_nsfw")).prop("checked", gShowNsfw);
+        if (sb("ib_notifications_enabled")) $(sb("ib_notifications_enabled")).prop("checked", gNotificationsEnabled);
+        if (sb("ib_notification_threshold")) $(sb("ib_notification_threshold")).val(String(gNotificationThreshold));
+        if (sb("ib_custom_css")) $(sb("ib_custom_css")).val(gCustomCss);
+        UpdateInjectDepthVisibility();
+    }
+
+    // ---- Event handlers ----
+
+    // Macro mode
+    popup.querySelector("#ib_sp_use_macro").addEventListener("change", function() {
+        gUseMacro = this.checked;
+        localStorage.setItem(kUseMacroKey, String(gUseMacro));
+        if (gUseMacro) {
+            try { const ctx = SillyTavern.getContext(); if (ctx.setExtensionPrompt) ctx.setExtensionPrompt('InfoBoard', '', gInjectPosition, gInjectDepth, true); } catch {}
+        }
+        updateDepthVisibility();
+        syncSidebar();
+    });
+
+    // Inject position
+    popup.querySelector("#ib_sp_inject_position").addEventListener("change", function() {
+        gInjectPosition = parseInt(this.value) || 1;
+        localStorage.setItem(kInjectPositionKey, String(gInjectPosition));
+        updateDepthVisibility();
+        syncSidebar();
+    });
+
+    // Depth input
+    popup.querySelector("#ib_sp_inject_depth").addEventListener("input change", function() {
+        gInjectDepth = parseInt(this.value);
+        if (isNaN(gInjectDepth) || gInjectDepth < 0) gInjectDepth = 0;
+        if (gInjectDepth > 999) gInjectDepth = 999;
+        this.value = gInjectDepth;
+        localStorage.setItem(kInjectDepthKey, String(gInjectDepth));
+        syncSidebar();
+    });
+
+    // Depth ± buttons
+    popup.querySelector("#ib_sp_depth_minus").addEventListener("click", function() {
+        if (gInjectDepth > 0) { gInjectDepth--; $("#ib_sp_inject_depth").val(gInjectDepth); localStorage.setItem(kInjectDepthKey, String(gInjectDepth)); syncSidebar(); }
+    });
+    popup.querySelector("#ib_sp_depth_plus").addEventListener("click", function() {
+        if (gInjectDepth < 999) { gInjectDepth++; $("#ib_sp_inject_depth").val(gInjectDepth); localStorage.setItem(kInjectDepthKey, String(gInjectDepth)); syncSidebar(); }
+    });
+
+    // Language
+    popup.querySelector("#ib_sp_lang").addEventListener("change", function() {
+        gLang = this.value;
+        localStorage.setItem(kLangKey, gLang);
+        UpdateSettingsText();
+        UpdateStatusDisplay();
+        UpdateLastUpdateDisplay();
+        // Re-render all boards with new language
+        ReprocessChat();
+        // Re-render popup with new language
+        popup.remove();
+        const freshBtn = document.querySelector(".ib-btn-settings");
+        if (freshBtn) RenderSettingsPopup(freshBtn);
+        return;
+    });
+
+    // Theme
+    popup.querySelector("#ib_sp_theme").addEventListener("change", function() {
+        gTheme = this.value;
+        localStorage.setItem(kThemeKey, gTheme);
+        ReprocessChat();
+        syncSidebar();
+        // Re-render popup with new theme class
+        popup.remove();
+        const freshBtn = document.querySelector(".ib-btn-settings");
+        if (freshBtn) RenderSettingsPopup(freshBtn);
+    });
+
+    // Bar style
+    popup.querySelector("#ib_sp_bar_style").addEventListener("change", function() {
+        gBarStyle = this.value;
+        localStorage.setItem(kBarStyleKey, gBarStyle);
+        ReprocessChat();
+        syncSidebar();
+    });
+
+    // Compact mode
+    popup.querySelector("#ib_sp_compact_mode").addEventListener("change", function() {
+        gCompactMode = this.value;
+        localStorage.setItem(kCompactModeKey, gCompactMode);
+        ReprocessChat();
+        syncSidebar();
+    });
+
+    // Display modes
+    popup.querySelector("#ib_sp_display_inline").addEventListener("change", function() {
+        gDisplayInline = this.checked; localStorage.setItem(kDisplayInlineKey, String(gDisplayInline)); OnDisplayModeChange(); syncSidebar();
+    });
+    popup.querySelector("#ib_sp_display_floating").addEventListener("change", function() {
+        gDisplayFloating = this.checked; localStorage.setItem(kDisplayFloatingKey, String(gDisplayFloating)); OnDisplayModeChange(); syncSidebar();
+    });
+    popup.querySelector("#ib_sp_display_panel").addEventListener("change", function() {
+        gDisplayPanel = this.checked; localStorage.setItem(kDisplayPanelKey, String(gDisplayPanel)); OnDisplayModeChange(); syncSidebar();
+    });
+    popup.querySelector("#ib_sp_board_mode_inline").addEventListener("change", function() {
+        gDefaultBoardModeInline = this.value; gCurrentBoardModeInline = gDefaultBoardModeInline; localStorage.setItem(kDefaultBoardModeInlineKey, gDefaultBoardModeInline); ReprocessChat(); syncSidebar();
+    });
+    popup.querySelector("#ib_sp_board_mode_floating").addEventListener("change", function() {
+        gDefaultBoardModeFloating = this.value; gCurrentBoardModeFloating = gDefaultBoardModeFloating; localStorage.setItem(kDefaultBoardModeFloatingKey, gDefaultBoardModeFloating); ReprocessChat(); syncSidebar();
+    });
+    popup.querySelector("#ib_sp_board_mode_panel").addEventListener("change", function() {
+        gDefaultBoardModePanel = this.value; gCurrentBoardModePanel = gDefaultBoardModePanel; localStorage.setItem(kDefaultBoardModePanelKey, gDefaultBoardModePanel); ReprocessChat(); syncSidebar();
+    });
+    popup.querySelector("#ib_sp_panel_position").addEventListener("change", function() {
+        gPanelPosition = this.value; localStorage.setItem(kPanelPositionKey, gPanelPosition); if (gDisplayPanel) RenderPanelBoard(); syncSidebar();
+    });
+
+    // Toggles
+    popup.querySelector("#ib_sp_hover_fx").addEventListener("change", function() {
+        gHoverFx = this.checked; localStorage.setItem(kHoverFxKey, String(gHoverFx)); ReprocessChat(); syncSidebar();
+    });
+    popup.querySelector("#ib_sp_hide_raw").addEventListener("change", function() {
+        gHideRaw = this.checked; localStorage.setItem(kHideRawKey, String(gHideRaw)); ReprocessChat(); syncSidebar();
+    });
+    popup.querySelector("#ib_sp_hide_thought_leaks").addEventListener("change", function() {
+        gHideThoughtLeaks = this.checked; localStorage.setItem(kHideThoughtLeaksKey, String(gHideThoughtLeaks)); ReprocessChat(); syncSidebar();
+    });
+    popup.querySelector("#ib_sp_show_nsfw").addEventListener("change", function() {
+        gShowNsfw = this.checked; localStorage.setItem(kShowNsfwKey, String(gShowNsfw)); ReprocessChat(); syncSidebar();
+    });
+
+    // Notifications
+    popup.querySelector("#ib_sp_notifications_enabled").addEventListener("change", function() {
+        gNotificationsEnabled = this.checked; localStorage.setItem(kNotificationsEnabledKey, String(gNotificationsEnabled)); syncSidebar();
+    });
+    popup.querySelector("#ib_sp_notification_threshold").addEventListener("change", function() {
+        gNotificationThreshold = parseInt(this.value) || 5; localStorage.setItem(kNotificationThresholdKey, String(gNotificationThreshold)); syncSidebar();
+    });
+
+    // Custom CSS
+    popup.querySelector("#ib_sp_save_css").addEventListener("click", function() {
+        gCustomCss = popup.querySelector("#ib_sp_custom_css").value || "";
+        localStorage.setItem(kCustomCssKey, gCustomCss);
+        ApplyCustomCss();
+        ReprocessChat();
+        syncSidebar();
+    });
+    popup.querySelector("#ib_sp_clear_css").addEventListener("click", function() {
+        if (!confirm(T("clearCustomCssConfirm"))) return;
+        gCustomCss = "";
+        localStorage.setItem(kCustomCssKey, "");
+        popup.querySelector("#ib_sp_custom_css").value = "";
+        ApplyCustomCss();
+        ReprocessChat();
+        syncSidebar();
+    });
+
+    // Actions
+    popup.querySelector("#ib_sp_reset_state").addEventListener("click", function() {
+        if (confirm(T("resetConfirm"))) {
+            gState = JSON.parse(JSON.stringify(kDefaultState));
+            SaveState();
+            ReprocessChat();
+        }
+    });
+    popup.querySelector("#ib_sp_reprocess").addEventListener("click", function() {
+        ReprocessChat();
+    });
+
+    // Clean orphaned snapshots
+    popup.querySelector("#ib_sp_clean_orphan_snapshots").addEventListener("click", function() {
+        if (!confirm(T("cleanOrphanSnapshotsConfirm"))) return;
+        CleanPinRegistry();
+        ReprocessChat();
+    });
+
+    // Close button ×
+    popup.querySelector("#ib_sp_close").addEventListener("click", (e) => {
+        e.stopPropagation();
+        popup.remove();
+    });
+
+    // Click outside to close
+    const closeOnOutside = (ev) => {
+        if (!ev.target.closest(".ib-settings-popup") && !ev.target.closest(".ib-btn-settings")) {
+            popup.remove();
+            document.removeEventListener("click", closeOnOutside);
+        }
+    };
+    setTimeout(() => document.addEventListener("click", closeOnOutside), 10);
 }
 
 function WireBoardControls(boardEl, prevState) {
@@ -3795,6 +5197,14 @@ function WireBoardControls(boardEl, prevState) {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
             RenderThemePopup(btn);
+        });
+    });
+
+    // Settings button
+    boardEl.querySelectorAll(".ib-btn-settings").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            RenderSettingsPopup(btn);
         });
     });
 
@@ -3998,6 +5408,7 @@ function WireBoardControls(boardEl, prevState) {
             ReprocessChat();
             // Закрыть попап со списком пинов, если открыт
             document.querySelectorAll(".ib-pins-popup").forEach(p => p.remove());
+            document.querySelectorAll(".ib-settings-popup").forEach(p => p.remove());
         });
     });
 
@@ -4009,6 +5420,41 @@ function WireBoardControls(boardEl, prevState) {
         // Пересобираем gPinnedNpcs на случай изменений
         gPinnedNpcs = ResolveActivePins();
 
+        // Determine "other" pins — pinned in other chats/cards but NOT in current context
+        const allPins = ResolveAllPins();
+        // Set of NPC names active in current context (for ↷ disabled check)
+        const currentSet = new Set(gPinnedNpcs.map(n => NormalizeName(n)));
+        // Filter pins that are NOT from the current context (show pins from other chats/characters)
+        const currentCharKey = GetCurrentCharKey();
+        const currentChatId = GetChatId();
+        const otherPins = allPins.filter(p => {
+            // Skip pins that belong to the current context
+            if (p.level === "perChat" && p.chatId === currentChatId) return false;
+            if (p.level === "perChar" && p.charKey === currentCharKey) return false;
+            if (p.level === "global") return false; // global is always current context
+            return true;
+        });
+
+        const makeTierRadio = (name, currentLevel, radioLevel) => {
+            const isActive = currentLevel === radioLevel;
+            const activeCls = isActive ? "ib-tier-radio-active" : "";
+            const tierVar = radioLevel === "perChat" ? "1" : radioLevel === "perChar" ? "2" : "3";
+            const storedLevel = (currentLevel !== GetPinLevel(name)) ? `data-ib-pin-current-level="${EscapeHtml(currentLevel)}"` : "";
+            return `<span class="ib-tier-radio ${activeCls} ${isActive ? `ib-tier-radio-tier-${tierVar}` : ''}" 
+                data-ib-pin-name="${EscapeHtml(name)}" 
+                data-ib-pin-level="${radioLevel}"
+                ${storedLevel}
+                title="${EscapeHtml(radioLevel === "perChat" ? T("pinTierChat") : radioLevel === "perChar" ? T("pinTierChar") : T("pinTierGlobal"))}">${isActive ? "●" : "○"}</span>`;
+        };
+
+        // Read-only version for "other" pins — no data attributes, no interaction
+        const makeTierRadioReadOnly = (currentLevel, radioLevel) => {
+            const isActive = currentLevel === radioLevel;
+            const activeCls = isActive ? "ib-tier-radio-active" : "";
+            const tierVar = radioLevel === "perChat" ? "1" : radioLevel === "perChar" ? "2" : "3";
+            return `<span class="ib-tier-radio ib-pins-radio-disabled ${activeCls} ${isActive ? `ib-tier-radio-tier-${tierVar}` : ''}">${isActive ? "●" : "○"}</span>`;
+        };
+
         let content = `<div class="ib-pins-header">${EscapeHtml(T("pinnedList"))}</div>`;
 
         if (gPinnedNpcs.length === 0) {
@@ -4016,7 +5462,7 @@ function WireBoardControls(boardEl, prevState) {
         } else {
             content += `<div class="ib-pins-table">`;
             content += `<div class="ib-pins-table-header">
-                <span class="ib-pins-th-name"></span>
+                <span></span><span class="ib-pins-th-name"></span>
                 <span class="ib-pins-th-tier" title="${EscapeHtml(T("pinTierChat"))}">${EscapeHtml(T("pinTierChat"))}</span>
                 <span class="ib-pins-th-tier" title="${EscapeHtml(T("pinTierChar"))}">${EscapeHtml(T("pinTierChar"))}</span>
                 <span class="ib-pins-th-tier" title="${EscapeHtml(T("pinTierGlobal"))}">${EscapeHtml(T("pinTierGlobal"))}</span>
@@ -4024,29 +5470,55 @@ function WireBoardControls(boardEl, prevState) {
 
             SortPinsByName(gPinnedNpcs).forEach(name => {
                 const currentLevel = GetPinLevel(name);
-                const makeRadio = (level) => {
-                    const isActive = currentLevel === level;
-                    const activeCls = isActive ? "ib-tier-radio-active" : "";
-                    const tierVar = level === "perChat" ? "1" : level === "perChar" ? "2" : "3";
-                    return `<span class="ib-tier-radio ${activeCls} ${isActive ? `ib-tier-radio-tier-${tierVar}` : ''}" 
-                        data-ib-pin-name="${EscapeHtml(name)}" 
-                        data-ib-pin-level="${level}"
-                        title="${EscapeHtml(level === "perChat" ? T("pinTierChat") : level === "perChar" ? T("pinTierChar") : T("pinTierGlobal"))}">${isActive ? "●" : "○"}</span>`;
-                };
-                content += `<div class="ib-pins-row" style="display:grid;grid-template-columns:1fr 28px 28px 28px;gap:4px;align-items:center"><span class="ib-pins-name">${EscapeHtml(name)}</span>${makeRadio("perChat")}${makeRadio("perChar")}${makeRadio("global")}</div>`;
+                const normName = NormalizeName(name);
+                const snap = gPinRegistry?.pinSnapshots?.[normName];
+                const icon = snap?.icon ? EscapeHtml(snap.icon) : "📌";
+                content += `<div class="ib-pins-row"><span class="ib-pins-icon">${icon}</span><span class="ib-pins-name">${EscapeHtml(name)}</span>${makeTierRadio(name, currentLevel, "perChat")}${makeTierRadio(name, currentLevel, "perChar")}${makeTierRadio(name, currentLevel, "global")}</div>`;
             });
+            content += `</div>`;
+        }
+
+        // Expandable "other pins" section
+        if (otherPins.length > 0) {
+            content += `<div class="ib-pins-other-section">`;
+            content += `<div class="ib-pins-expand-btn" title="${EscapeHtml(T("pinsExpandOther"))}">`;
+            content += `<span class="ib-pins-expand-label">${EscapeHtml(T("pinsExpandOther"))}</span>`;
+            content += `<span class="ib-pins-expand-arrow">▾</span>`;
+            content += `</div>`;
+            content += `<div class="ib-pins-other-list">`;
+            otherPins.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), undefined, { sensitivity: "base" })).forEach(pinInfo => {
+                const { name, level } = pinInfo;
+                const normalized = NormalizeName(name);
+                const snap = gPinRegistry?.pinSnapshots?.[normalized];
+                const alreadyActive = currentSet.has(NormalizeName(name));
+                const pinhereCls = alreadyActive ? "ib-pins-other-pinhere ib-pins-radio-disabled" : "ib-pins-other-pinhere";
+                const pinhereTitle = alreadyActive ? EscapeHtml(T("pinHereAlready")) : EscapeHtml(T("pinHere"));
+
+                content += `<div class="ib-pins-other-row" data-ib-ap-name="${EscapeHtml(name)}" data-ib-ap-level="${pinInfo.level || ""}" data-ib-ap-charkey="${EscapeHtml(pinInfo.charKey || "")}" data-ib-ap-chatid="${EscapeHtml(pinInfo.chatId || "")}">`;
+                const navigateTitle = EscapeHtml(T("allPinsNavigate", { source: name }));
+                content += `<span class="ib-pins-other-goto" data-ib-ap-name="${EscapeHtml(name)}" data-ib-ap-charkey="${EscapeHtml(pinInfo.charKey || "")}" title="${navigateTitle}">↗</span>`;
+                content += `<span class="ib-pins-other-icon">${snap?.icon ? EscapeHtml(snap.icon) : "📌"}</span>`;
+                content += `<span class="ib-pins-other-name">${EscapeHtml(name)}</span>`;
+                content += makeTierRadioReadOnly(level, "perChat");
+                content += makeTierRadioReadOnly(level, "perChar");
+                content += makeTierRadioReadOnly(level, "global");
+                content += `<span class="${pinhereCls}" data-ib-ap-name="${EscapeHtml(name)}" title="${pinhereTitle}">↷</span>`;
+                content += `<span class="ib-pins-other-unpin" data-ib-ap-name="${EscapeHtml(name)}" data-ib-ap-level="${pinInfo.level || ""}" data-ib-ap-charkey="${EscapeHtml(pinInfo.charKey || "")}" data-ib-ap-chatid="${EscapeHtml(pinInfo.chatId || "")}" title="${EscapeHtml(T("allPinsUnpin"))}">✕</span>`;
+                content += `</div>`;
+            });
+            content += `</div>`;
             content += `</div>`;
         }
 
         popup.innerHTML = content;
 
-        // Перевешиваем обработчики на новые элементы
-        popup.querySelectorAll(".ib-tier-radio").forEach(radio => {
+        // Tier radio handlers (only active radios — .ib-pins-radio-disabled are skipped)
+        popup.querySelectorAll(".ib-tier-radio:not(.ib-pins-radio-disabled)").forEach(radio => {
             radio.addEventListener("click", (ev) => {
                 ev.stopPropagation();
                 const name = radio.dataset.ibPinName;
                 const level = radio.dataset.ibPinLevel;
-                const currentLevel = GetPinLevel(name);
+                const currentLevel = radio.dataset.ibPinCurrentLevel || GetPinLevel(name);
 
                 if (currentLevel === level) {
                     SetPinLevel(name, null);
@@ -4056,6 +5528,69 @@ function WireBoardControls(boardEl, prevState) {
                     SetPinLevel(name, level);
                     ReprocessChat();
                     RefreshPinsPopup();
+                }
+            });
+        });
+
+        // Expand/collapse button
+        const expandBtn = popup.querySelector(".ib-pins-expand-btn");
+        const otherList = popup.querySelector(".ib-pins-other-list");
+        if (expandBtn && otherList) {
+            expandBtn.addEventListener("click", (ev) => {
+                ev.stopPropagation();
+                const isExpanded = otherList.classList.toggle("ib-pins-other-list-expanded");
+                expandBtn.classList.toggle("ib-pins-expand-btn-expanded", isExpanded);
+                popup.classList.toggle("ib-pins-expanded", isExpanded);
+                const arrow = expandBtn.querySelector(".ib-pins-expand-arrow");
+                const label = expandBtn.querySelector(".ib-pins-expand-label");
+                if (isExpanded) {
+                    if (arrow) arrow.textContent = "▴";
+                    if (label) label.textContent = T("pinsCollapseOther");
+                } else {
+                    if (arrow) arrow.textContent = "▾";
+                    if (label) label.textContent = T("pinsExpandOther");
+                }
+            });
+        }
+
+        // Unpin buttons in "other" section — remove from the specific context, not all
+        popup.querySelectorAll(".ib-pins-other-unpin").forEach(btn => {
+            btn.addEventListener("click", (ev) => {
+                ev.stopPropagation();
+                const name = btn.dataset.ibApName;
+                const level = btn.dataset.ibApLevel || null;
+                const charKey = btn.dataset.ibApCharkey || null;
+                const chatId = btn.dataset.ibApChatid || null;
+                RemoveFromSpecificContext(name, level, charKey, chatId);
+                ReprocessChat();
+                RefreshPinsPopup();
+            });
+        });
+
+        // ↷ "Pin here" buttons in "other" section
+        popup.querySelectorAll(".ib-pins-other-pinhere:not(.ib-pins-radio-disabled)").forEach(btn => {
+            btn.addEventListener("click", (ev) => {
+                ev.stopPropagation();
+                const name = btn.dataset.ibApName;
+                const added = PinHere(name);
+                if (added) {
+                    ShowToast("📌", T("pinHereDone"), "info");
+                }
+                ReprocessChat();
+                RefreshPinsPopup();
+            });
+        });
+
+        // Goto navigation — resolve charKey from live registry at click time
+        popup.querySelectorAll(".ib-pins-other-goto").forEach(gotoBtn => {
+            gotoBtn.addEventListener("click", (ev) => {
+                ev.stopPropagation();
+                const charKey = gotoBtn.dataset.ibApCharkey;
+
+                if (charKey) {
+                    NavigateToCharacterCard(charKey);
+                } else {
+                    ShowToast("📍", T("pinNavNotFound"), "warning");
                 }
             });
         });
@@ -4078,8 +5613,8 @@ function WireBoardControls(boardEl, prevState) {
             const existingPopup = document.querySelector(".ib-pins-popup");
 
             // Всегда чистим старые попапы перед действием
+            CloseOtherPopups(".ib-pins-popup");
             document.querySelectorAll(".ib-pins-popup").forEach(p => p.remove());
-            document.querySelectorAll(".ib-notifications-popup").forEach(p => p.remove());
 
             // Если попап УЖЕ БЫЛ открыт, то мы его только что удалили выше.
             // Выходим, чтобы не создавать его заново (Toggle OFF).
@@ -4089,17 +5624,51 @@ function WireBoardControls(boardEl, prevState) {
 
             // Если попапа не было, создаем новый (Toggle ON)
             const popup = document.createElement("div");
-            popup.className = "ib-pins-popup ib-popup-fixed";
+            popup.className = `ib-pins-popup ib-popup-fixed ${GetThemeClassStr()}`;
+
+            // Determine "other" pins — pinned in other chats/cards but NOT in current context
+            const allPins = ResolveAllPins();
+            // Set of NPC names active in current context (for ↷ disabled check)
+            const currentSet = new Set(gPinnedNpcs.map(n => NormalizeName(n)));
+            // Filter pins that are NOT from the current context (show pins from other chats/characters)
+            const currentCharKey = GetCurrentCharKey();
+            const currentChatId = GetChatId();
+            const otherPins = allPins.filter(p => {
+                // Skip pins that belong to the current context
+                if (p.level === "perChat" && p.chatId === currentChatId) return false;
+                if (p.level === "perChar" && p.charKey === currentCharKey) return false;
+                if (p.level === "global") return false; // global is always current context
+                return true;
+            });
+
+            const makeTierRadio = (name, currentLevel, radioLevel) => {
+                const isActive = currentLevel === radioLevel;
+                const activeCls = isActive ? "ib-tier-radio-active" : "";
+                const tierVar = radioLevel === "perChat" ? "1" : radioLevel === "perChar" ? "2" : "3";
+                const storedLevel = (currentLevel !== GetPinLevel(name)) ? `data-ib-pin-current-level="${EscapeHtml(currentLevel)}"` : "";
+                return `<span class="ib-tier-radio ${activeCls} ${isActive ? `ib-tier-radio-tier-${tierVar}` : ''}" 
+                    data-ib-pin-name="${EscapeHtml(name)}" 
+                    data-ib-pin-level="${radioLevel}"
+                    ${storedLevel}
+                    title="${EscapeHtml(radioLevel === "perChat" ? T("pinTierChat") : radioLevel === "perChar" ? T("pinTierChar") : T("pinTierGlobal"))}">${isActive ? "●" : "○"}</span>`;
+            };
+
+            // Read-only version for "other" pins — no data attributes, no interaction
+            const makeTierRadioReadOnly = (currentLevel, radioLevel) => {
+                const isActive = currentLevel === radioLevel;
+                const activeCls = isActive ? "ib-tier-radio-active" : "";
+                const tierVar = radioLevel === "perChat" ? "1" : radioLevel === "perChar" ? "2" : "3";
+                return `<span class="ib-tier-radio ib-pins-radio-disabled ${activeCls} ${isActive ? `ib-tier-radio-tier-${tierVar}` : ''}">${isActive ? "●" : "○"}</span>`;
+            };
 
             let content = `<div class="ib-pins-header">${EscapeHtml(T("pinnedList"))}</div>`;
 
             if (gPinnedNpcs.length === 0) {
                 content += `<div class="ib-pins-empty">${EscapeHtml(T("noPinned"))}</div>`;
             } else {
-                // Table header: Name | Ч | К | Г
                 content += `<div class="ib-pins-table">`;
                 content += `<div class="ib-pins-table-header">
-                    <span class="ib-pins-th-name"></span>
+                    <span></span><span class="ib-pins-th-name"></span>
                     <span class="ib-pins-th-tier" title="${EscapeHtml(T("pinTierChat"))}">${EscapeHtml(T("pinTierChat"))}</span>
                     <span class="ib-pins-th-tier" title="${EscapeHtml(T("pinTierChar"))}">${EscapeHtml(T("pinTierChar"))}</span>
                     <span class="ib-pins-th-tier" title="${EscapeHtml(T("pinTierGlobal"))}">${EscapeHtml(T("pinTierGlobal"))}</span>
@@ -4107,17 +5676,43 @@ function WireBoardControls(boardEl, prevState) {
 
                 SortPinsByName(gPinnedNpcs).forEach(name => {
                     const currentLevel = GetPinLevel(name);
-                    const makeRadio = (level) => {
-                        const isActive = currentLevel === level;
-                        const activeCls = isActive ? "ib-tier-radio-active" : "";
-                        const tierVar = level === "perChat" ? "1" : level === "perChar" ? "2" : "3";
-                        return `<span class="ib-tier-radio ${activeCls} ${isActive ? `ib-tier-radio-tier-${tierVar}` : ''}" 
-                            data-ib-pin-name="${EscapeHtml(name)}" 
-                            data-ib-pin-level="${level}"
-                            title="${EscapeHtml(level === "perChat" ? T("pinTierChat") : level === "perChar" ? T("pinTierChar") : T("pinTierGlobal"))}">${isActive ? "●" : "○"}</span>`;
-                    };
-                    content += `<div class="ib-pins-row" style="display:grid;grid-template-columns:1fr 28px 28px 28px;gap:4px;align-items:center"><span class="ib-pins-name">${EscapeHtml(name)}</span>${makeRadio("perChat")}${makeRadio("perChar")}${makeRadio("global")}</div>`;
+                    const normName = NormalizeName(name);
+                    const snap = gPinRegistry?.pinSnapshots?.[normName];
+                    const icon = snap?.icon ? EscapeHtml(snap.icon) : "📌";
+                    content += `<div class="ib-pins-row"><span class="ib-pins-icon">${icon}</span><span class="ib-pins-name">${EscapeHtml(name)}</span>${makeTierRadio(name, currentLevel, "perChat")}${makeTierRadio(name, currentLevel, "perChar")}${makeTierRadio(name, currentLevel, "global")}</div>`;
                 });
+                content += `</div>`;
+            }
+
+            // Expandable "other pins" section
+            if (otherPins.length > 0) {
+                content += `<div class="ib-pins-other-section">`;
+                content += `<div class="ib-pins-expand-btn" title="${EscapeHtml(T("pinsExpandOther"))}">`;
+                content += `<span class="ib-pins-expand-label">${EscapeHtml(T("pinsExpandOther"))}</span>`;
+                content += `<span class="ib-pins-expand-arrow">▾</span>`;
+                content += `</div>`;
+                content += `<div class="ib-pins-other-list">`;
+                otherPins.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), undefined, { sensitivity: "base" })).forEach(pinInfo => {
+                    const { name, level } = pinInfo;
+                    const normalized = NormalizeName(name);
+                    const snap = gPinRegistry?.pinSnapshots?.[normalized];
+                    const alreadyActive = currentSet.has(NormalizeName(name));
+                    const pinhereCls = alreadyActive ? "ib-pins-other-pinhere ib-pins-radio-disabled" : "ib-pins-other-pinhere";
+                    const pinhereTitle = alreadyActive ? EscapeHtml(T("pinHereAlready")) : EscapeHtml(T("pinHere"));
+
+                    content += `<div class="ib-pins-other-row" data-ib-ap-name="${EscapeHtml(name)}" data-ib-ap-level="${pinInfo.level || ""}" data-ib-ap-charkey="${EscapeHtml(pinInfo.charKey || "")}" data-ib-ap-chatid="${EscapeHtml(pinInfo.chatId || "")}">`;
+                    const navigateTitle = EscapeHtml(T("allPinsNavigate", { source: name }));
+                    content += `<span class="ib-pins-other-goto" data-ib-ap-name="${EscapeHtml(name)}" data-ib-ap-charkey="${EscapeHtml(pinInfo.charKey || "")}" title="${navigateTitle}">↗</span>`;
+                    content += `<span class="ib-pins-other-icon">${snap?.icon ? EscapeHtml(snap.icon) : "📌"}</span>`;
+                    content += `<span class="ib-pins-other-name">${EscapeHtml(name)}</span>`;
+                    content += makeTierRadioReadOnly(level, "perChat");
+                    content += makeTierRadioReadOnly(level, "perChar");
+                    content += makeTierRadioReadOnly(level, "global");
+                    content += `<span class="${pinhereCls}" data-ib-ap-name="${EscapeHtml(name)}" title="${pinhereTitle}">↷</span>`;
+                    content += `<span class="ib-pins-other-unpin" data-ib-ap-name="${EscapeHtml(name)}" data-ib-ap-level="${pinInfo.level || ""}" data-ib-ap-charkey="${EscapeHtml(pinInfo.charKey || "")}" data-ib-ap-chatid="${EscapeHtml(pinInfo.chatId || "")}" title="${EscapeHtml(T("allPinsUnpin"))}">✕</span>`;
+                    content += `</div>`;
+                });
+                content += `</div>`;
                 content += `</div>`;
             }
 
@@ -4126,24 +5721,85 @@ function WireBoardControls(boardEl, prevState) {
 
             PositionPopupNearButton(popup, btn);
 
-            // Обработка клика по tier-радио внутри списка
-            popup.querySelectorAll(".ib-tier-radio").forEach(radio => {
+            // Tier radio handlers (only active radios — .ib-pins-radio-disabled are skipped)
+            popup.querySelectorAll(".ib-tier-radio:not(.ib-pins-radio-disabled)").forEach(radio => {
                 radio.addEventListener("click", (ev) => {
                     ev.stopPropagation();
                     const name = radio.dataset.ibPinName;
                     const level = radio.dataset.ibPinLevel;
-                    const currentLevel = GetPinLevel(name);
+                    const currentLevel = radio.dataset.ibPinCurrentLevel || GetPinLevel(name);
 
                     if (currentLevel === level) {
-                        // Клик на активную галочку → открепить
                         SetPinLevel(name, null);
                         ReprocessChat();
                         RefreshPinsPopup();
                     } else {
-                        // Клик на неактивную → переместить на этот уровень
                         SetPinLevel(name, level);
                         ReprocessChat();
                         RefreshPinsPopup();
+                    }
+                });
+            });
+
+            // Expand/collapse button
+            const expandBtn = popup.querySelector(".ib-pins-expand-btn");
+            const otherList = popup.querySelector(".ib-pins-other-list");
+            if (expandBtn && otherList) {
+                expandBtn.addEventListener("click", (ev) => {
+                    ev.stopPropagation();
+                    const isExpanded = otherList.classList.toggle("ib-pins-other-list-expanded");
+                    expandBtn.classList.toggle("ib-pins-expand-btn-expanded", isExpanded);
+                    popup.classList.toggle("ib-pins-expanded", isExpanded);
+                    const arrow = expandBtn.querySelector(".ib-pins-expand-arrow");
+                    const label = expandBtn.querySelector(".ib-pins-expand-label");
+                    if (isExpanded) {
+                        if (arrow) arrow.textContent = "▴";
+                        if (label) label.textContent = T("pinsCollapseOther");
+                    } else {
+                        if (arrow) arrow.textContent = "▾";
+                        if (label) label.textContent = T("pinsExpandOther");
+                    }
+                });
+            }
+
+            // Unpin buttons in "other" section — remove from the specific context, not all
+            popup.querySelectorAll(".ib-pins-other-unpin").forEach(unpinBtn => {
+                unpinBtn.addEventListener("click", (ev) => {
+                    ev.stopPropagation();
+                    const name = unpinBtn.dataset.ibApName;
+                    const level = unpinBtn.dataset.ibApLevel || null;
+                    const charKey = unpinBtn.dataset.ibApCharkey || null;
+                    const chatId = unpinBtn.dataset.ibApChatid || null;
+                    RemoveFromSpecificContext(name, level, charKey, chatId);
+                    ReprocessChat();
+                    RefreshPinsPopup();
+                });
+            });
+
+            // ↷ "Pin here" buttons in "other" section
+            popup.querySelectorAll(".ib-pins-other-pinhere:not(.ib-pins-radio-disabled)").forEach(btn => {
+                btn.addEventListener("click", (ev) => {
+                    ev.stopPropagation();
+                    const name = btn.dataset.ibApName;
+                    const added = PinHere(name);
+                    if (added) {
+                        ShowToast("📌", T("pinHereDone"), "info");
+                    }
+                    ReprocessChat();
+                    RefreshPinsPopup();
+                });
+            });
+
+            // Goto navigation — resolve charKey from live registry at click time
+            popup.querySelectorAll(".ib-pins-other-goto").forEach(gotoBtn => {
+                gotoBtn.addEventListener("click", (ev) => {
+                    ev.stopPropagation();
+                    const charKey = gotoBtn.dataset.ibApCharkey;
+
+                    if (charKey) {
+                        NavigateToCharacterCard(charKey);
+                    } else {
+                        ShowToast("📍", T("pinNavNotFound"), "warning");
                     }
                 });
             });
@@ -4177,12 +5833,12 @@ function WireBoardControls(boardEl, prevState) {
             e.stopPropagation();
 
             const existingPopup = document.querySelector(".ib-notifications-popup");
+            CloseOtherPopups(".ib-notifications-popup");
             document.querySelectorAll(".ib-notifications-popup").forEach(p => p.remove());
-            document.querySelectorAll(".ib-pins-popup").forEach(p => p.remove());
             if (existingPopup) return;
 
             const popup = document.createElement("div");
-            popup.className = "ib-notifications-popup ib-popup-fixed";
+            popup.className = `ib-notifications-popup ib-popup-fixed ${GetThemeClassStr()}`;
 
             const notifLabel = T("notifications");
             const noNotifLabel = T("noSignificantChanges");
@@ -4401,7 +6057,7 @@ host.dataset.rawXml = gLastRawXml || "";
                 </div>
             </div>
             <div class="ib-floating-body">
-                ${RenderBoard(gState, false, null, "floating")}
+                ${RenderBoard(GetMergedStateForRendering(), false, null, "floating")}
             </div>
         </div>
     `;
@@ -4494,6 +6150,7 @@ function MakeFloatingDraggable(host) {
     let startY = 0;
     let startLeft = 0;
     let startTop = 0;
+    let hostW = 0;
     let activePointerId = null;
 
     const onPointerDown = (e) => {
@@ -4509,11 +6166,16 @@ function MakeFloatingDraggable(host) {
         startY = e.clientY;
         startLeft = rect.left;
         startTop = rect.top;
+        hostW = rect.width;
 
         host.style.left = `${rect.left}px`;
         host.style.top = `${rect.top}px`;
         host.style.right = "auto";
         host.style.bottom = "auto";
+
+        // GPU promotion for smooth drag
+        host.style.willChange = 'left, top';
+        host.classList.add("ib-floating-dragging");
 
         document.body.classList.add("ib-floating-dragging");
 
@@ -4535,12 +6197,10 @@ function MakeFloatingDraggable(host) {
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
 
-        const rect = host.getBoundingClientRect();
-
         const nextLeft = Clamp(
             startLeft + dx,
             0,
-            Math.max(0, window.innerWidth - rect.width)
+            Math.max(0, window.innerWidth - hostW)
         );
 
         const nextTop = Clamp(
@@ -4551,8 +6211,6 @@ function MakeFloatingDraggable(host) {
 
         host.style.left = `${nextLeft}px`;
         host.style.top = `${nextTop}px`;
-        host.style.right = "auto";
-        host.style.bottom = "auto";
     };
 
     const onPointerUp = (e) => {
@@ -4560,6 +6218,10 @@ function MakeFloatingDraggable(host) {
 
         dragging = false;
         activePointerId = null;
+
+        // Clean up GPU promotion
+        host.style.willChange = '';
+        host.classList.remove("ib-floating-dragging");
 
         document.body.classList.remove("ib-floating-dragging");
 
@@ -4598,12 +6260,20 @@ function WatchFloatingResize(host) {
     }
 
     let timer = null;
+    let isResizing = false;
 
     const observer = new ResizeObserver(() => {
+        // Disable backdrop-filter during resize for smoothness
+        if (!isResizing) {
+            isResizing = true;
+            host.classList.add("ib-floating-resizing");
+        }
         clearTimeout(timer);
         timer = setTimeout(() => {
+            isResizing = false;
+            host.classList.remove("ib-floating-resizing");
             SaveFloatingLayout(host);
-        }, 250);
+        }, 200);
     });
 
     observer.observe(host);
@@ -4952,14 +6622,15 @@ function UpdateSettingsText() {
     $('label[for="ib_inject_depth"]').html(`<b>${T("injectDepth")}</b>`);
     $("#ib_inject_depth_help").text(T("injectDepthHelp"));
     $("#ib_state_label").text(T("currentState"));
-    $("#ib_reset_state").text(T("resetState"));
-    $("#ib_reprocess_chat").text(T("reprocess"));
-    $("#ib_export_state").text(T("exportState"));
-    $("#ib_import_state").text(T("importState"));
+    $("#ib_reset_state").text("🗑 " + T("resetState"));
+    $("#ib_reprocess_chat").text("🔄 " + T("reprocess"));
+    $("#ib_export_state").text("📤 " + T("exportState"));
+    $("#ib_import_state").text("📥 " + T("importState"));
     $("#ib_custom_css_label").text(T("customCssLabel"));
     $("#ib_custom_css_help").text(T("customCssHelp"));
-    $("#ib_save_custom_css").text(T("saveCustomCss"));
-    $("#ib_clear_custom_css").text(T("clearCustomCss"));
+    $("#ib_save_custom_css").text("💾 " + T("saveCustomCss"));
+    $("#ib_clear_custom_css").text("🧹 " + T("clearCustomCss"));
+    $("#ib_clean_orphan_snapshots").text("🧹 " + T("cleanOrphanSnapshots"));
     $("#ib_compact_mode option[value='top3']").text(T("compactTop3"));
 $("#ib_compact_mode option[value='top1']").text(T("compactTop1"));
 $("#ib_compact_mode option[value='changed']").text(T("compactChanged"));
@@ -5061,21 +6732,37 @@ function PatchPinnedData(parsed, prevState) {
                     presence: { key: "offscreen", cls: "ib-presence-offscreen" } 
                 });
             } else {
-                // Fallback: try to find the NPC in the current global state (gState)
-                // This preserves imported data (icon, age, tags, mood) that would otherwise be lost
-                const gStateChar = gState.chars?.find(ch => NormalizeName(ch.name) === normPin);
-                if (gStateChar) {
-                    const restoredTags = [...(gStateChar.tags || [])];
+                // Try pin snapshot first — preserves real data across chat switches
+                const snapshot = gPinRegistry?.pinSnapshots?.[normPin];
+                if (snapshot) {
+                    const restoredTags = [...(snapshot.tags || [])];
                     if (!restoredTags.includes(offscreenTag)) {
                         restoredTags.push(offscreenTag);
                     }
                     finalChars.push({
-                        ...gStateChar,
+                        icon: snapshot.icon || "•",
+                        name: snapshot.name,
+                        age: snapshot.age || "",
                         tags: restoredTags,
+                        mood: snapshot.mood || "",
                         presence: { key: "offscreen", cls: "ib-presence-offscreen" }
                     });
                 } else {
-                    finalChars.push({
+                    // Fallback: try to find the NPC in the current global state (gState)
+                    // This preserves imported data (icon, age, tags, mood) that would otherwise be lost
+                    const gStateChar = gState.chars?.find(ch => NormalizeName(ch.name) === normPin);
+                    if (gStateChar) {
+                        const restoredTags = [...(gStateChar.tags || [])];
+                        if (!restoredTags.includes(offscreenTag)) {
+                            restoredTags.push(offscreenTag);
+                        }
+                        finalChars.push({
+                            ...gStateChar,
+                            tags: restoredTags,
+                            presence: { key: "offscreen", cls: "ib-presence-offscreen" }
+                        });
+                    } else {
+                        finalChars.push({
                         name: pinName,
                         icon: "📌",
                         age: "",
@@ -5084,6 +6771,7 @@ function PatchPinnedData(parsed, prevState) {
                         presence: { key: "offscreen", cls: "ib-presence-offscreen" }
                     });
                 }
+            }
             }
         }
     });
@@ -5109,18 +6797,24 @@ function PatchPinnedData(parsed, prevState) {
             if (oldRel) {
                 finalRels.push(oldRel);
             } else {
-                // Fallback: try to find the relation in the current global state (gState)
-                // This preserves imported data (status, relationship values) that would otherwise be lost
-                const gStateRel = gState.rels?.find(rel => NormalizeName(rel.source) === normPin);
-                if (gStateRel) {
-                    finalRels.push(gStateRel);
+                // Try pin snapshot first — preserves real relation data across chat switches
+                const snapshot = gPinRegistry?.pinSnapshots?.[normPin];
+                if (snapshot?.rel) {
+                    finalRels.push({ ...snapshot.rel });
                 } else {
-                    finalRels.push({
-                        source: pinName,
-                        target: GetUserName(),
-                        a: 0, ac: 0, tr: 0, tc: 0, l: 0, lc: 0,
-                        status: T("noStatus")
-                    });
+                    // Fallback: try to find the relation in the current global state (gState)
+                    // This preserves imported data (status, relationship values) that would otherwise be lost
+                    const gStateRel = gState.rels?.find(rel => NormalizeName(rel.source) === normPin);
+                    if (gStateRel) {
+                        finalRels.push(gStateRel);
+                    } else {
+                        finalRels.push({
+                            source: pinName,
+                            target: GetUserName(),
+                            a: 0, ac: 0, tr: 0, tc: 0, l: 0, lc: 0,
+                            status: T("noStatus")
+                        });
+                    }
                 }
             }
         }
@@ -5139,9 +6833,15 @@ function PatchPinnedData(parsed, prevState) {
             if (oldThought) {
                 finalThoughts.push(oldThought);
             } else {
-                // Fallback: try to find the thought in the current global state (gState)
-                const gStateThought = gState.thoughts?.find(t => NormalizeName(t.name) === normPin);
-                if (gStateThought) finalThoughts.push(gStateThought);
+                // Try pin snapshot first — preserves real thought data across chat switches
+                const snapshot = gPinRegistry?.pinSnapshots?.[normPin];
+                if (snapshot?.thought) {
+                    finalThoughts.push({ ...snapshot.thought });
+                } else {
+                    // Fallback: try to find the thought in the current global state (gState)
+                    const gStateThought = gState.thoughts?.find(t => NormalizeName(t.name) === normPin);
+                    if (gStateThought) finalThoughts.push(gStateThought);
+                }
             }
         }
     });
@@ -5250,7 +6950,15 @@ function RenderBoardIntoMessage(mesTextEl, parsed, isFresh, prevState) {
 
 function ReprocessChat() {
     const stContext = SillyTavern.getContext();
-    if (!stContext.chat) return;
+    if (!stContext.chat) {
+        // Even without an active chat (e.g. new empty chat), still refresh the UI
+        // so that pin level changes and snapshot-based NPCs appear correctly.
+        UpdateStatusDisplay();
+        UpdateLastUpdateDisplay();
+        RenderFloatingBoard();
+        RenderPanelBoard();
+        return;
+    }
 
     // Save previous rels for notification comparison
     const prevRels = JSON.parse(JSON.stringify(gState.rels || []));
@@ -5409,7 +7117,7 @@ async function OnChatChanged() {
     gPreSwipeState = null; // Clear pre-swipe state on chat change
     LoadState();
     LoadTimeline();
-    LoadPinnedNpcs();
+    LoadPinnedNpcs(true);  // force reload from localStorage to recover from init-time corruption
     MigrateOldPinsToRegistry();
     CleanPinRegistry();
     UpdateSettingsText();
@@ -5427,11 +7135,13 @@ function UpdateStatusDisplay() {
 
     if (gEnabled) {
         $status.html(`<span style="color:#7fb68a">${EscapeHtml(T("active"))}</span>`);
+        // Use merged state to show pinned NPCs from snapshots too
+        const merged = GetMergedStateForRendering();
         $summary.html(
             `${EscapeHtml(gState.time)} | ${EscapeHtml(gState.date)}<br>` +
             `${EscapeHtml(gState.weather)}<br>` +
             `📍 ${EscapeHtml(gState.loc)}<br>` +
-            `${EscapeHtml(T("stateNpcLabel"))}: ${gState.chars.map(c => EscapeHtml(c.name)).join(", ") || "—"}`
+            `${EscapeHtml(T("stateNpcLabel"))}: ${merged.chars.map(c => EscapeHtml(c.name)).join(", ") || "—"}`
         );
     } else {
         $status.html(`<span style="color:#888">${EscapeHtml(T("inactive"))}</span>`);
@@ -5665,6 +7375,17 @@ function RegisterFallbackPromptInjection(stContext) {
     } else {
         console.warn("[IB] GENERATION_STARTED event not available — prompt injection disabled");
     }
+}
+
+function OnDisplayModeChange() {
+    // Update board visibility based on checkboxes
+    if (!gDisplayFloating) RemoveFloatingBoard();
+    if (!gDisplayPanel) RemovePanelMode();
+    if (gDisplayFloating) RenderFloatingBoard();
+    if (gDisplayPanel) RenderPanelBoard();
+
+    UpdateBoardModeVisibility();
+    ReprocessChat();
 }
 
 jQuery(async () => {
@@ -6201,6 +7922,12 @@ jQuery(async () => {
         ReprocessChat();
     });
 
+    $("#ib_clean_orphan_snapshots").on("click", function () {
+        if (!confirm(T("cleanOrphanSnapshotsConfirm"))) return;
+        CleanPinRegistry();
+        ReprocessChat();
+    });
+
     $("#ib_reset_state").on("click", function () {
         if (confirm(T("resetConfirm"))) {
             gState = JSON.parse(JSON.stringify(kDefaultState));
@@ -6210,17 +7937,6 @@ jQuery(async () => {
             ReprocessChat();
         }
     });
-
-    function OnDisplayModeChange() {
-        // Update board visibility based on checkboxes
-        if (!gDisplayFloating) RemoveFloatingBoard();
-        if (!gDisplayPanel) RemovePanelMode();
-        if (gDisplayFloating) RenderFloatingBoard();
-        if (gDisplayPanel) RenderPanelBoard();
-
-        UpdateBoardModeVisibility();
-        ReprocessChat();
-    }
 
     $(document).on("change", "#ib_display_inline", function () {
         gDisplayInline = $(this).is(":checked");
