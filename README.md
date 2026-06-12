@@ -1,6 +1,6 @@
 # Infoboard for SillyTavern — Extended
 
-**v2.3.0**
+**v2.4.0**
 
 A state-aware XML infoboard extension for **SillyTavern**.
 
@@ -8,7 +8,7 @@ It injects a prompt, parses structured scene data from assistant replies, stores
 
 Built for roleplay, long scenes, and NPC-heavy chats.
 
-**Requires SillyTavern 1.12+.**
+**⚠️ Requires SillyTavern 1.12+. ⚠️**
 
 ---
 
@@ -60,7 +60,9 @@ Built for roleplay, long scenes, and NPC-heavy chats.
 
 ## v2.3 Features
 
-- **configurable inline board count** — choose how many inline infoboards (1–99) are rendered in chat, with ± stepper buttons in both sidebar and settings popup; older boards beyond the limit are cleaned up but not rendered, reducing DOM weight in long chats
+- **configurable inline board count** — choose how many inline infoboards (1–99) are rendered in chat, with ± stepper buttons in both sidebar and settings popup
+- - older boards beyond the limit are cleaned up but not rendered, reducing DOM weight in long chats;
+- - ✓/✗ confirm/cancel controls prevent `ReprocessChat` lag on every keystroke or button click
 - **panel flip-side button** — a `⇄` button on the panel edge that instantly moves the panel to the opposite side of the screen; auto-fades after 1.5 s of inactivity and reappears on hover/touch
 - **two-phase chunked rendering** — state computation and DOM manipulation are separated into distinct phases; cleanup runs as a single synchronous batch before any boards are rendered, eliminating cumulative layout shifts; inline boards render in reverse order (newest first) via `requestAnimationFrame` chunks for immediate visual feedback
 - **fallback thought-leak cleanup for broken XML** — leaked `<thk>` content is caught even when the main XML parser fails, using simple text matching as a fallback
