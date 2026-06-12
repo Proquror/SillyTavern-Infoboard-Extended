@@ -134,14 +134,25 @@
                     <div class="ib-setting-row">
                         <input type="checkbox" id="ib_display_inline" />
                         <label for="ib_display_inline" id="ib_display_inline_label">Inline</label>
-                    </div>
-                    <div class="ib-board-mode-subrow" id="ib_subrow_inline">
-                        <label for="ib_board_mode_inline" id="ib_board_mode_inline_label">Default:</label>
-                        <select id="ib_board_mode_inline">
-                            <option value="full">Full</option>
-                            <option value="compact">Compact</option>
-                            <option value="collapsed">Collapsed</option>
-                        </select>
+                        <span class="ib-inline-count-wrap" id="ib_inline_board_count_row" style="display:none">
+                            <div class="ib-depth-input-wrap ib-depth-input-compact">
+                                <button type="button" class="ib-depth-btn ib-depth-btn-compact ib-depth-minus" id="ib_board_count_minus">−</button>
+                                <input type="number" id="ib_inline_board_count" min="1" max="99" value="5" class="ib-depth-field ib-depth-field-compact" />
+                                <button type="button" class="ib-depth-btn ib-depth-btn-compact ib-depth-plus" id="ib_board_count_plus">+</button>
+                            </div>
+                            <span class="ib-count-confirm" id="ib_count_confirm" style="display:none">
+                                <button type="button" class="ib-count-confirm-btn ib-count-ok" id="ib_count_ok">✓</button>
+                                <button type="button" class="ib-count-confirm-btn ib-count-cancel" id="ib_count_cancel">✗</button>
+                            </span>
+                        </span>
+                        <span class="ib-inline-mode-wrap" id="ib_subrow_inline" style="display:none">
+                            <label for="ib_board_mode_inline" id="ib_board_mode_inline_label">Default:</label>
+                            <select id="ib_board_mode_inline">
+                                <option value="full">Full</option>
+                                <option value="compact">Compact</option>
+                                <option value="collapsed">Collapsed</option>
+                            </select>
+                        </span>
                     </div>
                 </div>
 

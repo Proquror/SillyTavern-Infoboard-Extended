@@ -58,6 +58,7 @@ const kDefaultBoardModePanelKey = "IB_DefaultBoardMode_Panel";
 const kUseMacroKey = "IB_UseMacro";
 const kInjectPositionKey = "IB_InjectPosition";
 const kInjectDepthKey = "IB_InjectDepth";
+const kInlineBoardCountKey = "IB_InlineBoardCount";
 
 let gEnabled = false;
 let gTheme = "nocturne";
@@ -90,6 +91,47 @@ let gDefaultBoardModePanel = "full";
 let gUseMacro = false; // false = auto-inject (default), true = macro mode {{InfoBoard}}
 let gInjectPosition = 1;  // 0=after story string, 1=in-chat, 2=before story string
 let gInjectDepth = 0;     // depth for IN_CHAT position (0 = last message)
+let gInlineBoardCount = 5; // how many inline boards to render in chat
+let gInlineBoardCountSaved = 5; // last confirmed value for confirm/cancel pattern
+
+// --- Singleton DOMParser (reused across all ParseInfoboard calls, per W3C spec it's stateless) ---
+const gDomParser = new DOMParser();
+
+// --- Presence attribute map (immutable, shared across all ParseInfoboard calls) ---
+const PRESENCE_ATTR_MAP = {
+    "focus":      { key: "focus",      cls: "ib-presence-focus" },
+    "active":     { key: "activeHere", cls: "ib-presence-active" },
+    "near":       { key: "nearby",     cls: "ib-presence-near" },
+    "nearby":     { key: "nearby",     cls: "ib-presence-near" },
+    "watching":   { key: "watching",   cls: "ib-presence-watch" },
+    "background": { key: "background", cls: "ib-presence-background" },
+    "offscreen":  { key: "offscreen",  cls: "ib-presence-offscreen" },
+    "left":       { key: "leftScene",  cls: "ib-presence-left" }
+};
+
+// --- Presence tag sets (O(1) lookup instead of Array.includes) ---
+const PRESENCE_SET_FOCUS      = new Set(["focus", "в фокусе", "главный", "active focus"]);
+const PRESENCE_SET_ACTIVE     = new Set(["active", "активен", "говорит", "ведёт сцену"]);
+const PRESENCE_SET_NEAR       = new Set(["near", "рядом", "nearby", "close"]);
+const PRESENCE_SET_WATCH      = new Set(["watching", "наблюдает", "смотрит", "следит"]);
+const PRESENCE_SET_OFFSCREEN  = new Set(["offscreen", "за кадром", "вне сцены", "not present"]);
+const PRESENCE_SET_BACKGROUND = new Set(["background", "на периферии", "в фоне", "пассивен"]);
+const PRESENCE_SET_LEFT       = new Set(["left", "вышел", "ушёл", "out"]);
+
+/** Union of all presence sets — built once at module load for IsPresenceTag */
+const ALL_PRESENCE_TAGS = new Set([
+    ...PRESENCE_SET_FOCUS, ...PRESENCE_SET_ACTIVE, ...PRESENCE_SET_NEAR,
+    ...PRESENCE_SET_WATCH, ...PRESENCE_SET_OFFSCREEN, ...PRESENCE_SET_BACKGROUND,
+    ...PRESENCE_SET_LEFT
+]);
+
+// --- Alias cache for GetNameAliases (invalidated on chat change) ---
+const gAliasCache = new Map();
+
+/** Invalidate alias cache — call when chat changes or characters reload */
+function InvalidateAliasCache() {
+    gAliasCache.clear();
+}
 
 function GetThemeClassStr(theme) {
     theme = theme || gTheme;
@@ -500,6 +542,7 @@ panelLeft: "Слева",
 panelRight: "Справа",
 panelOpen: "Открыть",
 panelClose: "Закрыть",
+panelFlipSide: "Переместить на другую сторону",
 displayBoth: "Оба",
 floatingTitle: "Infoboard",
         copyXml: "Копировать XML",
@@ -559,6 +602,7 @@ unpinNpc: "Открепить NPC",
         injectPosBefore: "Перед Story String",
         injectDepth: "Глубина",
         injectDepthHelp: "0 = последнее сообщение в контексте. Чем больше число, тем выше в истории чата.",
+        inlineBoardCount: "Кол-во борд",
     },
     en: {
         enable: "Enable Infoboard",
@@ -664,6 +708,7 @@ panelLeft: "Left",
 panelRight: "Right",
 panelOpen: "Open",
 panelClose: "Close",
+panelFlipSide: "Move to other side",
 displayBoth: "Both",
 floatingTitle: "Infoboard",
         copyXml: "Copy XML",
@@ -723,6 +768,7 @@ unpinNpc: "Unpin NPC",
         injectPosBefore: "Before Story String",
         injectDepth: "Depth",
         injectDepthHelp: "0 = last message in context. Higher values inject further up in chat history.",
+        inlineBoardCount: "Board count",
     }
 };
 
@@ -925,7 +971,7 @@ const kDefaultState = {
     nsfw: null
 };
 
-let gState = JSON.parse(JSON.stringify(kDefaultState));
+let gState = structuredClone(kDefaultState);
 
 /**
  * Returns a merged state object that includes pinned NPCs from snapshots
@@ -933,7 +979,7 @@ let gState = JSON.parse(JSON.stringify(kDefaultState));
  * Used for panel/floating board rendering so globally pinned NPCs remain visible.
  */
 function GetMergedStateForRendering() {
-    const merged = JSON.parse(JSON.stringify(gState));
+    const merged = structuredClone(gState);
 
     if (!gPinRegistry?.pinSnapshots || !gPinnedNpcs.length) return merged;
 
@@ -1248,7 +1294,7 @@ function RebuildTimelineFromChat() {
             };
 
             const last = gTimeline[gTimeline.length - 1];
-            const same = last && JSON.stringify(last.rels) === JSON.stringify(entry.rels);
+            const same = last && RelsEqual(last.rels, entry.rels);
             if (!same) {
                 gTimeline.push(entry);
             }
@@ -1277,7 +1323,7 @@ function AddTimelineEntry(rels) {
     // Only add if something changed compared to last entry
     const last = gTimeline[gTimeline.length - 1];
     if (last) {
-        const same = JSON.stringify(last.rels) === JSON.stringify(entry.rels);
+        const same = RelsEqual(last.rels, entry.rels);
         if (same) return;
     }
     gTimeline.push(entry);
@@ -1298,12 +1344,18 @@ function CloseOtherPopups(exceptSelector) {
 
 function RenderThemePopup(btn) {
     let existing = document.querySelector(".ib-theme-popup");
-    CloseOtherPopups(".ib-theme-popup");
-    document.querySelectorAll(".ib-theme-popup").forEach(p => p.remove());
-    if (existing) return;
+    if (existing) {
+        const sameBtn = existing.__sourceBtn === btn;
+        CloseOtherPopups(".ib-theme-popup");
+        existing.remove();
+        if (sameBtn) return;
+    } else {
+        CloseOtherPopups(".ib-theme-popup");
+    }
 
     const popup = document.createElement("div");
     popup.className = `ib-theme-popup ib-popup-fixed ${GetThemeClassStr()}`;
+    popup.__sourceBtn = btn;
 
     let content = `<div class="ib-theme-popup-grid">`;
 
@@ -1598,7 +1650,7 @@ function RenderTimelinePopup(preselectNpc) {
         // Milestone list
         let milestoneHtml = '';
         if (milestones.length) {
-            milestoneHtml = `<div class="ib-tl-milestones">${milestones.map(m => {
+            milestoneHtml = `<div class="ib-tl-milestones">${milestones.slice().reverse().map(m => {
                 const e = npcEntries[m.index];
                 if (!e) return '';
                 const gameTimeStr = e.gameTime || e.gameDate ? `${[e.gameDate, e.gameTime].filter(Boolean).join(' ')}` : '';
@@ -2143,17 +2195,32 @@ function TogglePanel(open) {
     }
 }
 
+function FlipPanelSide() {
+    gPanelPosition = gPanelPosition === "right" ? "left" : "right";
+    localStorage.setItem(kPanelPositionKey, gPanelPosition);
+    // Sync settings dropdown if open
+    const sel = document.getElementById("ib_panel_position");
+    if (sel) sel.value = gPanelPosition;
+    // Re-render panel on the new side
+    if (gDisplayPanel) RenderPanelBoard();
+}
+
 // Mobile idle behavior: toggle button auto-hides on narrow screens
 let _panelToggleIdleTimer = null;
 function SchedulePanelToggleIdle() {
     const host = document.getElementById("ib_panel_host");
     if (!host) return;
     const toggle = host.querySelector(".ib-panel-toggle");
+    const flip = host.querySelector(".ib-panel-flip");
     if (!toggle) return;
     if (_panelToggleIdleTimer) clearTimeout(_panelToggleIdleTimer);
     toggle.classList.remove("ib-toggle-idle");
+    if (flip) flip.classList.remove("ib-toggle-idle");
     if (window.innerWidth <= 760 && !gPanelOpen) {
-        _panelToggleIdleTimer = setTimeout(() => toggle.classList.add("ib-toggle-idle"), 1500);
+        _panelToggleIdleTimer = setTimeout(() => {
+            toggle.classList.add("ib-toggle-idle");
+            if (flip) flip.classList.add("ib-toggle-idle");
+        }, 1500);
     }
 }
 
@@ -2189,6 +2256,22 @@ function EnsurePanelContainer() {
     });
 
     host.appendChild(toggleBtn);
+
+    // Flip side button — sits below the toggle, swaps panel to the other side
+    const flipBtn = document.createElement("button");
+    flipBtn.type = "button";
+    flipBtn.className = `ib-panel-flip ib-flip-${gPanelPosition}`;
+    flipBtn.title = T("panelFlipSide");
+    flipBtn.innerHTML = `<span class="ib-flip-icon">⇄</span>`;
+    flipBtn.addEventListener("click", () => FlipPanelSide());
+
+    // Wire idle behavior for flip button too
+    ['pointerdown', 'touchstart', 'mouseenter', 'focus'].forEach(ev => {
+        flipBtn.addEventListener(ev, SchedulePanelToggleIdle);
+    });
+
+    host.appendChild(flipBtn);
+
     document.body.appendChild(host);
 
     SchedulePanelToggleIdle();
@@ -2252,6 +2335,13 @@ function RenderPanelBoard() {
         if (label) label.textContent = T("floatingTitle");
     }
 
+    // Update flip button position class
+    const flip = host.querySelector(".ib-panel-flip");
+    if (flip) {
+        flip.classList.toggle("ib-flip-right", gPanelPosition !== "left");
+        flip.classList.toggle("ib-flip-left", gPanelPosition === "left");
+    }
+
     host.dataset.rawXml = gLastRawXml || '';
 
     // Panel inner shell (only rendered when panel exists)
@@ -2281,11 +2371,15 @@ function RenderPanelBoard() {
     }
 
     // Resize handle
-    const handle = shell.querySelector('.ib-panel-resize-handle');
-    if (handle) {
-        let startX, startW;
-        const onMove = (e) => {
-            const dx = e.clientX - startX;
+const handle = shell.querySelector('.ib-panel-resize-handle');
+if (handle) {
+    let startX, startW, lastClientX, rAFScheduled = false;
+    const onMove = (e) => {
+        lastClientX = e.clientX;
+        if (rAFScheduled) return;
+        rAFScheduled = true;
+        requestAnimationFrame(() => {
+            const dx = lastClientX - startX;
             let newW;
             if (gPanelPosition === "right") {
                 newW = Clamp(startW - dx, 280, 600);
@@ -2294,16 +2388,20 @@ function RenderPanelBoard() {
             }
             host.style.width = newW + 'px';
             gPanelWidth = newW;
-            document.body.style.setProperty('--ib-panel-width', newW + 'px');
-        };
+            rAFScheduled = false;
+        });
+    };
         const onUp = () => {
             document.removeEventListener('pointermove', onMove);
             document.removeEventListener('pointerup', onUp);
             document.body.style.userSelect = '';
             document.body.style.webkitUserSelect = '';
+			host.classList.remove("ib-panel-resizing");
+			document.body.style.setProperty('--ib-panel-width', gPanelWidth + 'px');
             localStorage.setItem(kPanelWidthKey, String(gPanelWidth));
         };
         handle.addEventListener('pointerdown', (e) => {
+			host.classList.add("ib-panel-resizing");
             e.preventDefault();
             startX = e.clientX;
             startW = host.offsetWidth;
@@ -2345,12 +2443,31 @@ function LoadState() {
     } catch (e) {
         console.error("[IB] LoadState failed:", e);
     }
-    gState = JSON.parse(JSON.stringify(kDefaultState));
+    gState = structuredClone(kDefaultState);
     return false;
 }
 
 function Clamp(num, min, max) {
     return Math.max(min, Math.min(num, max));
+}
+
+/** Direct field-by-field comparison of two rel arrays (timeline format).
+ *  Each rel has exactly: { source, a, tr, l, status }.
+ *  Returns true if arrays are identical in length and all fields match.
+ *  NOTE: If new fields are added to timeline rels, update this function. */
+function RelsEqual(a, b) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+        const ra = a[i], rb = b[i];
+        if (ra.source !== rb.source ||
+            ra.a !== rb.a ||
+            ra.tr !== rb.tr ||
+            ra.l !== rb.l ||
+            ra.status !== rb.status) {
+            return false;
+        }
+    }
+    return true;
 }
 
 function HexToRgb(hex) {
@@ -2469,6 +2586,9 @@ function GetNameAliases(name) {
     const raw = String(name ?? "").trim();
     if (!raw) return [];
 
+    const cacheKey = raw.toLowerCase();
+    if (gAliasCache.has(cacheKey)) return gAliasCache.get(cacheKey);
+
     const clean = StripNameDecorators(raw);
     const lower = clean.toLowerCase();
     const parts = clean.split(/\s+/).filter(Boolean);
@@ -2485,7 +2605,9 @@ function GetNameAliases(name) {
     const noPunct = lower.replace(/[^\p{L}\p{N}\s-]/gu, "").trim();
     if (noPunct) aliases.add(noPunct);
 
-    return [...aliases].filter(Boolean);
+    const result = [...aliases].filter(Boolean);
+    gAliasCache.set(cacheKey, result);
+    return result;
 }
 
 function NamesLikelyMatch(a, b) {
@@ -2624,78 +2746,21 @@ return {
  *  Kept for backward compat with older LLM outputs that put presence info in tags.
  *  ParseInfoboard prefers the `presence` attribute and falls back to this only when absent. */
 function ParseFocusState(tags = []) {
-    const t = tags.map(x => NormalizeName(x));
-
-    if (t.some(x => ["focus", "в фокусе", "главный", "active focus"].includes(x))) {
-        return { key: "focus", cls: "ib-presence-focus" };
+    for (const raw of tags) {
+        const t = NormalizeName(raw);
+        if (PRESENCE_SET_FOCUS.has(t))      return { key: "focus",      cls: "ib-presence-focus" };
+        if (PRESENCE_SET_ACTIVE.has(t))     return { key: "activeHere", cls: "ib-presence-active" };
+        if (PRESENCE_SET_NEAR.has(t))       return { key: "nearby",     cls: "ib-presence-near" };
+        if (PRESENCE_SET_WATCH.has(t))      return { key: "watching",   cls: "ib-presence-watch" };
+        if (PRESENCE_SET_OFFSCREEN.has(t))  return { key: "offscreen",  cls: "ib-presence-offscreen" };
+        if (PRESENCE_SET_BACKGROUND.has(t)) return { key: "background", cls: "ib-presence-background" };
+        if (PRESENCE_SET_LEFT.has(t))       return { key: "leftScene",  cls: "ib-presence-left" };
     }
-
-    if (t.some(x => ["active", "активен", "говорит", "ведёт сцену"].includes(x))) {
-        return { key: "activeHere", cls: "ib-presence-active" };
-    }
-
-    if (t.some(x => ["near", "рядом", "nearby", "close"].includes(x))) {
-        return { key: "nearby", cls: "ib-presence-near" };
-    }
-
-    if (t.some(x => ["watching", "наблюдает", "смотрит", "следит"].includes(x))) {
-        return { key: "watching", cls: "ib-presence-watch" };
-    }
-
-    if (t.some(x => ["offscreen", "за кадром", "вне сцены", "not present"].includes(x))) {
-        return { key: "offscreen", cls: "ib-presence-offscreen" };
-    }
-
-    if (t.some(x => ["background", "на периферии", "в фоне", "пассивен"].includes(x))) {
-        return { key: "background", cls: "ib-presence-background" };
-    }
-
-    if (t.some(x => ["left", "вышел", "ушёл", "out"].includes(x))) {
-        return { key: "leftScene", cls: "ib-presence-left" };
-    }
-
     return null;
 }
 
 function IsPresenceTag(tag) {
-    const t = NormalizeName(tag);
-
-    return [
-        "focus",
-        "в фокусе",
-        "главный",
-        "active focus",
-
-        "active",
-        "активен",
-        "говорит",
-        "ведёт сцену",
-
-        "near",
-        "рядом",
-        "nearby",
-        "close",
-
-        "watching",
-        "наблюдает",
-        "смотрит",
-        "следит",
-
-        "background",
-        "на периферии",
-        "в фоне",
-        "пассивен",
-
-                "offscreen",
-        "за кадром",
-        "вне сцены",
-        "not present",
-
-        "left",
-        "вышел",
-        "ушёл",
-        "out"
-    ].includes(t);
+    return ALL_PRESENCE_TAGS.has(NormalizeName(tag));
 }
 
 function NormalizeThoughtOwners(result) {
@@ -2791,7 +2856,97 @@ function RepairInfoboardXml(xml) {
         "&amp;"
     );
 
+    // Fix unclosed attribute values: LLM sometimes forgets a closing quote
+    // e.g. age="55 tags="..." → age="55" tags="..."
+    // Matches ="value (without closing quote) followed by space+nextAttribute=
+    // Normal properly-quoted attributes won't match because " ends [^"]*
+    fixed = fixed.replace(/="([^"]*?)(?=\s[a-zA-Z_]+=)/g, '="$1"');
+
     return fixed;
+}
+
+/** Extract raw thought text lines from a message whose XML couldn't be parsed.
+ *  Used as a fallback so thought leaks are still removed even when ParseInfoboard fails. */
+function ExtractRawThoughts(text) {
+    const src = String(text || "");
+    // Try to find <thk>...</thk> content
+    const thkMatch = src.match(/<thk[^>]*>([\s\S]*?)<\/thk>/i);
+    if (!thkMatch) return null;
+
+    const lines = thkMatch[1]
+        .replace(/\r/g, "\n")
+        .split("\n")
+        .map(l => l.trim())
+        .filter(Boolean);
+
+    return lines.length ? lines : null;
+}
+
+/** Remove leaked thought text from DOM when XML parsing failed.
+ *  Uses simple text matching — less precise than RemoveThoughtLeaksInContainer,
+ *  but catches the most common case of exact thought text appearing in the message. */
+function RemoveLeakedThoughtsFromBrokenXml(messageTextEl, rawThoughts) {
+    if (!messageTextEl || !rawThoughts?.length) return;
+
+    // Normalize thoughts for comparison
+    const normalizedThoughts = rawThoughts
+        .map(t => NormalizeThoughtText(t))
+        .filter(t => t.length >= 5);
+
+    if (!normalizedThoughts.length) return;
+
+    const thoughtSet = new Set(normalizedThoughts);
+
+    // Walk text nodes and remove lines that match known thoughts
+    const walker = document.createTreeWalker(
+        messageTextEl,
+        NodeFilter.SHOW_TEXT,
+        {
+            acceptNode(node) {
+                if (!node?.parentElement) return NodeFilter.FILTER_REJECT;
+                if (node.parentElement.closest(".ib-board-host, .ib-board")) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                const raw = node.textContent || "";
+                if (!raw.trim()) return NodeFilter.FILTER_SKIP;
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        }
+    );
+
+    const targets = [];
+    let current = walker.nextNode();
+    while (current) {
+        targets.push(current);
+        current = walker.nextNode();
+    }
+
+    for (const node of targets) {
+        const raw = node.textContent || "";
+        const lines = raw.split(/\r?\n/);
+
+        const kept = lines.filter(line => {
+            const soft = NormalizeThoughtText(line);
+            if (soft.length < 5) return true;
+            return !thoughtSet.has(soft);
+        });
+
+        const next = kept.join("\n").replace(/\n{3,}/g, "\n\n");
+        if (next.trim() !== raw.trim()) {
+            node.textContent = next;
+        }
+    }
+
+    // Also remove block elements that only contain a leaked thought
+    messageTextEl.querySelectorAll("p, div, li").forEach(el => {
+        if (el.closest(".ib-board-host, .ib-board")) return;
+        const text = (el.textContent || "").trim();
+        if (!text) return;
+        const soft = NormalizeThoughtText(text);
+        if (soft.length >= 5 && thoughtSet.has(soft)) {
+            el.remove();
+        }
+    });
 }
 
 function ParseInfoboard(text) {
@@ -2801,8 +2956,7 @@ function ParseInfoboard(text) {
 const xmlBlock = boardMatch[0];
 const xmlForParsing = RepairInfoboardXml(xmlBlock);
 
-const parser = new DOMParser();
-const doc = parser.parseFromString(xmlForParsing, "text/xml");
+const doc = gDomParser.parseFromString(xmlForParsing, "text/xml");
 
     if (doc.querySelector("parsererror")) {
         console.warn("[IB] XML parser error");
@@ -2845,22 +2999,10 @@ rawXml: xmlBlock
     // If the dedicated `presence` attribute is present, parse it (preferred path)
     if (rawPresence) {
         const p = NormalizeName(rawPresence);
-        
-        // Карта соответствия: значение атрибута -> {ключ перевода, CSS класс}
-        // Классы взяты из вашей функции ParseFocusState для совместимости
-        const presenceMap = {
-            "focus":      { key: "focus",      cls: "ib-presence-focus" },
-            "active":     { key: "activeHere", cls: "ib-presence-active" },
-            "near":       { key: "nearby",     cls: "ib-presence-near" },
-            "nearby":     { key: "nearby",     cls: "ib-presence-near" },
-            "watching":   { key: "watching",   cls: "ib-presence-watch" },
-            "background": { key: "background", cls: "ib-presence-background" },
-            "offscreen":  { key: "offscreen",  cls: "ib-presence-offscreen" },
-            "left":       { key: "leftScene",  cls: "ib-presence-left" }
-        };
 
-        if (presenceMap[p]) {
-            presence = presenceMap[p];
+        // Карта соответствия вынесена в модульную константу PRESENCE_ATTR_MAP
+        if (PRESENCE_ATTR_MAP[p]) {
+            presence = PRESENCE_ATTR_MAP[p];
         }
     }
 
@@ -2935,9 +3077,9 @@ const pushRel = (rel) => {
 
     NormalizeThoughtOwners(result);
 
-    const tailText = String(text || "").slice(String(text || "").indexOf(xmlBlock) + xmlBlock.length);
-    const nsfwParser = new DOMParser();
-    const nsfwDoc = nsfwParser.parseFromString(`<root>${tailText}</root>`, "text/xml");
+    const src = String(text || "");
+    const tailText = src.slice(src.indexOf(xmlBlock) + xmlBlock.length);
+    const nsfwDoc = gDomParser.parseFromString(`<root>${tailText}</root>`, "text/xml");
     const nsfwNode = nsfwDoc.querySelector("nsfw");
 
     if (nsfwNode) {
@@ -2946,7 +3088,7 @@ const pushRel = (rel) => {
             p: nsfwNode.getAttribute("p") || ""
         };
     } else {
-        const nsfwMatch = String(text || "").match(/<nsfw\s+f="(.*?)"\s+p="(.*?)"\s*\/?>/i);
+        const nsfwMatch = src.match(/<nsfw\s+f="(.*?)"\s+p="(.*?)"\s*\/?>/i);
         if (nsfwMatch) {
             result.nsfw = {
                 f: nsfwMatch[1] || "",
@@ -2964,7 +3106,7 @@ const pushRel = (rel) => {
  */
 function CalculateStateUpToMessage(maxMsgId) {
     const stContext = SillyTavern.getContext();
-    let rollingState = JSON.parse(JSON.stringify(kDefaultState));
+    let rollingState = structuredClone(kDefaultState);
 
     const mesNodes = document.querySelectorAll(".mes");
     for (const node of mesNodes) {
@@ -3596,7 +3738,7 @@ function ResolveAllPins() {
                 entry.forEach(n => result.push({ name: n, level: "perChat", charKey: charKey, chatId: chatId }));
             } else if (entry?.pins) {
                 // New format: chatId -> { charKey, pins: [names] }
-                entry.pins.forEach(n => result.push({ name: n, level: "perChat", charKey: entry.charKey || null, chatId: chatId }));
+                entry.pins.forEach(n => result.push({ name: n, level: "perChat", charKey: entry.charKey || GetCharKeyForChatId(chatId) || null, chatId: chatId }));
             }
         }
     }
@@ -3617,6 +3759,25 @@ function GetCurrentCharName() {
         return char?.name || "Unknown";
     } catch {}
     return "Unknown";
+}
+
+/**
+ * Resolve a character's display name from an avatar key (e.g. "Komac.png").
+ * Returns null if not found.
+ */
+function GetCharNameByKey(charKey) {
+    if (!charKey) return null;
+    try {
+        const ctx = SillyTavern.getContext();
+        const chars = ctx.characters || [];
+        // Standard path: match by avatar filename
+        const byAvatar = chars.find(c => c.avatar === charKey);
+        if (byAvatar?.name) return byAvatar.name;
+        // Fallback: match by name (if charKey is a name, not a .png)
+        const byName = chars.find(c => NamesLikelyMatch(c.name, charKey));
+        if (byName?.name) return byName.name;
+    } catch {}
+    return null;
 }
 
 function IsPinnedNpc(name) {
@@ -3823,7 +3984,7 @@ function SetPinLevel(name, level) {
     // Preserve existing snapshot BEFORE removing — for safety during level-change.
     const normalized = NormalizeName(name);
     const savedSnapshot = gPinRegistry.pinSnapshots?.[normalized]
-        ? JSON.parse(JSON.stringify(gPinRegistry.pinSnapshots[normalized]))
+        ? structuredClone(gPinRegistry.pinSnapshots[normalized])
         : null;
 
     // Remove from CURRENT context only (not from all contexts like RemovePinCompletely).
@@ -4752,12 +4913,18 @@ function PositionPopupNearButton(popup, btn) {
 function RenderSettingsPopup(btn) {
     // Close any existing settings popup (toggle)
     const existing = document.querySelector(".ib-settings-popup");
-    CloseOtherPopups(".ib-settings-popup");
-    document.querySelectorAll(".ib-settings-popup").forEach(p => p.remove());
-    if (existing) return; // Toggle OFF
+    if (existing) {
+        const sameBtn = existing.__sourceBtn === btn;
+        CloseOtherPopups(".ib-settings-popup");
+        existing.remove();
+        if (sameBtn) return;
+    } else {
+        CloseOtherPopups(".ib-settings-popup");
+    }
 
     const popup = document.createElement("div");
     popup.className = `ib-settings-popup ib-popup-fixed ${GetThemeClassStr()}`;
+    popup.__sourceBtn = btn;
 
     // Theme options list (same as settings.html)
     const themeOptions = [
@@ -4859,7 +5026,18 @@ function RenderSettingsPopup(btn) {
             <div class="ib-sp-row">
                 <input${chk("ib_sp_display_inline", gDisplayInline)} />
                 <label for="ib_sp_display_inline">${T("displayInline")}</label>
-                <select id="ib_sp_board_mode_inline" class="ib-sp-inline-select">${sel(boardModes, gDefaultBoardModeInline)}</select>
+                <span class="ib-inline-count-wrap" id="ib_sp_inline_board_count_row" style="display:${gDisplayInline?'':'none'}">
+                    <div class="ib-depth-input-wrap ib-depth-input-compact">
+                        <button type="button" class="ib-depth-btn ib-depth-btn-compact ib-depth-minus" id="ib_sp_board_count_minus">−</button>
+                        <input type="number" id="ib_sp_inline_board_count" min="1" max="99" value="${gInlineBoardCount}" class="ib-depth-field ib-depth-field-compact" />
+                        <button type="button" class="ib-depth-btn ib-depth-btn-compact ib-depth-plus" id="ib_sp_board_count_plus">+</button>
+                    </div>
+                    <span class="ib-count-confirm" id="ib_sp_count_confirm" style="display:none">
+                        <button type="button" class="ib-count-confirm-btn ib-count-ok" id="ib_sp_count_ok">✓</button>
+                        <button type="button" class="ib-count-confirm-btn ib-count-cancel" id="ib_sp_count_cancel">✗</button>
+                    </span>
+                </span>
+                <select id="ib_sp_board_mode_inline" class="ib-sp-inline-select" style="display:${gDisplayInline?'':'none'}">${sel(boardModes, gDefaultBoardModeInline)}</select>
             </div>
             <div class="ib-sp-row">
                 <input${chk("ib_sp_display_floating", gDisplayFloating)} />
@@ -4967,6 +5145,10 @@ function RenderSettingsPopup(btn) {
         if (sb("ib_display_floating")) $(sb("ib_display_floating")).prop("checked", gDisplayFloating);
         if (sb("ib_display_panel")) $(sb("ib_display_panel")).prop("checked", gDisplayPanel);
         if (sb("ib_board_mode_inline")) $(sb("ib_board_mode_inline")).val(gDefaultBoardModeInline);
+        if (sb("ib_inline_board_count")) $(sb("ib_inline_board_count")).val(gInlineBoardCount);
+        const countConfirm = sb("ib_count_confirm");
+        if (countConfirm) countConfirm.style.display = "none";
+        gInlineBoardCountSaved = gInlineBoardCount;
         if (sb("ib_board_mode_floating")) $(sb("ib_board_mode_floating")).val(gDefaultBoardModeFloating);
         if (sb("ib_board_mode_panel")) $(sb("ib_board_mode_panel")).val(gDefaultBoardModePanel);
         if (sb("ib_panel_position")) $(sb("ib_panel_position")).val(gPanelPosition);
@@ -5065,7 +5247,10 @@ function RenderSettingsPopup(btn) {
 
     // Display modes
     popup.querySelector("#ib_sp_display_inline").addEventListener("change", function() {
-        gDisplayInline = this.checked; localStorage.setItem(kDisplayInlineKey, String(gDisplayInline)); OnDisplayModeChange(); syncSidebar();
+        gDisplayInline = this.checked; localStorage.setItem(kDisplayInlineKey, String(gDisplayInline));
+        popup.querySelector("#ib_sp_inline_board_count_row").style.display = gDisplayInline ? "" : "none";
+        popup.querySelector("#ib_sp_board_mode_inline").style.display = gDisplayInline ? "" : "none";
+        OnDisplayModeChange(); syncSidebar();
     });
     popup.querySelector("#ib_sp_display_floating").addEventListener("change", function() {
         gDisplayFloating = this.checked; localStorage.setItem(kDisplayFloatingKey, String(gDisplayFloating)); OnDisplayModeChange(); syncSidebar();
@@ -5076,6 +5261,47 @@ function RenderSettingsPopup(btn) {
     popup.querySelector("#ib_sp_board_mode_inline").addEventListener("change", function() {
         gDefaultBoardModeInline = this.value; gCurrentBoardModeInline = gDefaultBoardModeInline; localStorage.setItem(kDefaultBoardModeInlineKey, gDefaultBoardModeInline); ReprocessChat(); syncSidebar();
     });
+    // Inline board count — confirm/cancel pattern (avoids lag from ReprocessChat on every keystroke)
+    const spCountField = popup.querySelector("#ib_sp_inline_board_count");
+    const spCountConfirm = popup.querySelector("#ib_sp_count_confirm");
+    let spCountSaved = gInlineBoardCount; // last applied value
+
+    function spCountShowConfirm() {
+        spCountConfirm.style.display = "inline-flex";
+    }
+    function spCountHideConfirm() {
+        spCountConfirm.style.display = "none";
+        spCountField.value = spCountSaved;
+    }
+    function spCountApply() {
+        let v = parseInt(spCountField.value);
+        if (isNaN(v) || v < 1) v = 1;
+        if (v > 99) v = 99;
+        spCountField.value = v;
+        gInlineBoardCount = v;
+        gInlineBoardCountSaved = v;
+        spCountSaved = v;
+        localStorage.setItem(kInlineBoardCountKey, String(gInlineBoardCount));
+        spCountConfirm.style.display = "none";
+        ReprocessChat(); syncSidebar();
+    }
+
+    spCountField.addEventListener("input", function() { spCountShowConfirm(); });
+    spCountField.addEventListener("change", function() { spCountShowConfirm(); });
+    popup.querySelector("#ib_sp_board_count_minus").addEventListener("click", function() {
+        let v = parseInt(spCountField.value) || 1;
+        if (v > 1) v--;
+        spCountField.value = v;
+        spCountShowConfirm();
+    });
+    popup.querySelector("#ib_sp_board_count_plus").addEventListener("click", function() {
+        let v = parseInt(spCountField.value) || 1;
+        if (v < 99) v++;
+        spCountField.value = v;
+        spCountShowConfirm();
+    });
+    popup.querySelector("#ib_sp_count_ok").addEventListener("click", function() { spCountApply(); });
+    popup.querySelector("#ib_sp_count_cancel").addEventListener("click", function() { spCountHideConfirm(); });
     popup.querySelector("#ib_sp_board_mode_floating").addEventListener("change", function() {
         gDefaultBoardModeFloating = this.value; gCurrentBoardModeFloating = gDefaultBoardModeFloating; localStorage.setItem(kDefaultBoardModeFloatingKey, gDefaultBoardModeFloating); ReprocessChat(); syncSidebar();
     });
@@ -5129,7 +5355,7 @@ function RenderSettingsPopup(btn) {
     // Actions
     popup.querySelector("#ib_sp_reset_state").addEventListener("click", function() {
         if (confirm(T("resetConfirm"))) {
-            gState = JSON.parse(JSON.stringify(kDefaultState));
+            gState = structuredClone(kDefaultState);
             SaveState();
             ReprocessChat();
         }
@@ -5220,7 +5446,17 @@ function WireBoardControls(boardEl, prevState) {
         btn.addEventListener("click", () => {
             const host = boardEl.closest(".ib-board-host, #ib_floating_host, #ib_panel_host");
             const raw = host?.dataset?.rawXml || gLastRawXml || "";
-            const msgIndex = gLastRawXmlMsgIndex;
+
+            // For inline boards: derive msgIndex from the message element in DOM.
+            // For floating/panel: use the global last message index.
+            let msgIndex;
+            const mesNode = host?.closest(".mes");
+            if (mesNode) {
+                msgIndex = Number(mesNode.getAttribute("mesid"));
+                if (isNaN(msgIndex)) msgIndex = gLastRawXmlMsgIndex;
+            } else {
+                msgIndex = gLastRawXmlMsgIndex;
+            }
 
             let debugWrap = host.querySelector(".ib-debug-wrap");
 
@@ -5314,16 +5550,15 @@ function WireBoardControls(boardEl, prevState) {
                     const msg = stContext.chat?.[msgIndex];
                     if (!msg) throw new Error("Message not found");
 
-                    // Заменяем старый XML-блок в тексте сообщения на новый
-                    const newMes = msg.mes.replace(gLastRawXml, newXml);
+                    // Replace the specific XML block that belongs to this board.
+                    // Use 'raw' (from host.dataset.rawXml) — the original XML of THIS board,
+                    // not gLastRawXml which always points to the latest message.
+                    const newMes = msg.mes.replace(raw, newXml);
 
                     if (newMes === msg.mes) {
-                        // Пробуем через regex если точное совпадение не найдено
-                        const xmlRegex = /<infoboard[\s\S]*?<\/infoboard>/i;
-                        msg.mes = msg.mes.replace(xmlRegex, newXml);
-                    } else {
-                        msg.mes = newMes;
+                        throw new Error("XML not found in message — data out of sync");
                     }
+                    msg.mes = newMes;
 
                     // Сохраняем чат через SillyTavern API
                     if (typeof stContext.saveChat === "function") {
@@ -5351,8 +5586,11 @@ function WireBoardControls(boardEl, prevState) {
                     saveBtn.style.display = "none";
                     cancelBtn.style.display = "none";
 
-                    // Обновляем gLastRawXml и запускаем репроцесс
-                    gLastRawXml = newXml;
+                    // Only update global gLastRawXml if we edited the latest board.
+                    // For old inline boards, gLastRawXml must keep pointing to the latest message's XML.
+                    if (msgIndex === gLastRawXmlMsgIndex) {
+                        gLastRawXml = newXml;
+                    }
                     host.dataset.rawXml = newXml;
 
                     saveBtn.textContent = T("xmlSaved") || "Saved!";
@@ -5416,6 +5654,9 @@ function WireBoardControls(boardEl, prevState) {
     const RefreshPinsPopup = () => {
         const popup = document.querySelector(".ib-pins-popup");
         if (!popup) return;
+
+        // Сохраняем состояние развёрнутости секции «other» до перестроения HTML
+        const wasExpanded = popup.classList.contains("ib-pins-expanded");
 
         // Пересобираем gPinnedNpcs на случай изменений
         gPinnedNpcs = ResolveActivePins();
@@ -5495,7 +5736,12 @@ function WireBoardControls(boardEl, prevState) {
                 const pinhereTitle = alreadyActive ? EscapeHtml(T("pinHereAlready")) : EscapeHtml(T("pinHere"));
 
                 content += `<div class="ib-pins-other-row" data-ib-ap-name="${EscapeHtml(name)}" data-ib-ap-level="${pinInfo.level || ""}" data-ib-ap-charkey="${EscapeHtml(pinInfo.charKey || "")}" data-ib-ap-chatid="${EscapeHtml(pinInfo.chatId || "")}">`;
-                const navigateTitle = EscapeHtml(T("allPinsNavigate", { source: name }));
+                const sourceName = pinInfo.level === "perChat"
+                    ? pinInfo.chatId
+                    : pinInfo.level === "perChar"
+                        ? (GetCharNameByKey(pinInfo.charKey) || pinInfo.charKey || name)
+                        : name;
+                const navigateTitle = EscapeHtml(T("allPinsNavigate", { source: sourceName }));
                 content += `<span class="ib-pins-other-goto" data-ib-ap-name="${EscapeHtml(name)}" data-ib-ap-charkey="${EscapeHtml(pinInfo.charKey || "")}" title="${navigateTitle}">↗</span>`;
                 content += `<span class="ib-pins-other-icon">${snap?.icon ? EscapeHtml(snap.icon) : "📌"}</span>`;
                 content += `<span class="ib-pins-other-name">${EscapeHtml(name)}</span>`;
@@ -5511,6 +5757,22 @@ function WireBoardControls(boardEl, prevState) {
         }
 
         popup.innerHTML = content;
+
+        // Восстанавливаем развёрнутое состояние секции «other», если она была открыта
+        // и в ней всё ещё есть персонажи после обновления
+        if (wasExpanded) {
+            const newExpandBtn = popup.querySelector(".ib-pins-expand-btn");
+            const newOtherList = popup.querySelector(".ib-pins-other-list");
+            if (newExpandBtn && newOtherList && newOtherList.children.length > 0) {
+                newOtherList.classList.add("ib-pins-other-list-expanded");
+                newExpandBtn.classList.add("ib-pins-expand-btn-expanded");
+                popup.classList.add("ib-pins-expanded");
+                const arrow = newExpandBtn.querySelector(".ib-pins-expand-arrow");
+                const label = newExpandBtn.querySelector(".ib-pins-expand-label");
+                if (arrow) arrow.textContent = "▴";
+                if (label) label.textContent = T("pinsCollapseOther");
+            }
+        }
 
         // Tier radio handlers (only active radios — .ib-pins-radio-disabled are skipped)
         popup.querySelectorAll(".ib-tier-radio:not(.ib-pins-radio-disabled)").forEach(radio => {
@@ -5611,20 +5873,18 @@ function WireBoardControls(boardEl, prevState) {
 
             // Проверяем, открыт ли уже попап
             const existingPopup = document.querySelector(".ib-pins-popup");
-
-            // Всегда чистим старые попапы перед действием
-            CloseOtherPopups(".ib-pins-popup");
-            document.querySelectorAll(".ib-pins-popup").forEach(p => p.remove());
-
-            // Если попап УЖЕ БЫЛ открыт, то мы его только что удалили выше.
-            // Выходим, чтобы не создавать его заново (Toggle OFF).
             if (existingPopup) {
-                return;
+                const sameBtn = existingPopup.__sourceBtn === btn;
+                CloseOtherPopups(".ib-pins-popup");
+                existingPopup.remove();
+                if (sameBtn) return;
+            } else {
+                CloseOtherPopups(".ib-pins-popup");
             }
 
-            // Если попапа не было, создаем новый (Toggle ON)
             const popup = document.createElement("div");
             popup.className = `ib-pins-popup ib-popup-fixed ${GetThemeClassStr()}`;
+            popup.__sourceBtn = btn;
 
             // Determine "other" pins — pinned in other chats/cards but NOT in current context
             const allPins = ResolveAllPins();
@@ -5701,7 +5961,12 @@ function WireBoardControls(boardEl, prevState) {
                     const pinhereTitle = alreadyActive ? EscapeHtml(T("pinHereAlready")) : EscapeHtml(T("pinHere"));
 
                     content += `<div class="ib-pins-other-row" data-ib-ap-name="${EscapeHtml(name)}" data-ib-ap-level="${pinInfo.level || ""}" data-ib-ap-charkey="${EscapeHtml(pinInfo.charKey || "")}" data-ib-ap-chatid="${EscapeHtml(pinInfo.chatId || "")}">`;
-                    const navigateTitle = EscapeHtml(T("allPinsNavigate", { source: name }));
+                    const sourceName = pinInfo.level === "perChat"
+                        ? pinInfo.chatId
+                        : pinInfo.level === "perChar"
+                            ? (GetCharNameByKey(pinInfo.charKey) || pinInfo.charKey || name)
+                            : name;
+                    const navigateTitle = EscapeHtml(T("allPinsNavigate", { source: sourceName }));
                     content += `<span class="ib-pins-other-goto" data-ib-ap-name="${EscapeHtml(name)}" data-ib-ap-charkey="${EscapeHtml(pinInfo.charKey || "")}" title="${navigateTitle}">↗</span>`;
                     content += `<span class="ib-pins-other-icon">${snap?.icon ? EscapeHtml(snap.icon) : "📌"}</span>`;
                     content += `<span class="ib-pins-other-name">${EscapeHtml(name)}</span>`;
@@ -5833,12 +6098,18 @@ function WireBoardControls(boardEl, prevState) {
             e.stopPropagation();
 
             const existingPopup = document.querySelector(".ib-notifications-popup");
-            CloseOtherPopups(".ib-notifications-popup");
-            document.querySelectorAll(".ib-notifications-popup").forEach(p => p.remove());
-            if (existingPopup) return;
+            if (existingPopup) {
+                const sameBtn = existingPopup.__sourceBtn === btn;
+                CloseOtherPopups(".ib-notifications-popup");
+                existingPopup.remove();
+                if (sameBtn) return;
+            } else {
+                CloseOtherPopups(".ib-notifications-popup");
+            }
 
             const popup = document.createElement("div");
             popup.className = `ib-notifications-popup ib-popup-fixed ${GetThemeClassStr()}`;
+            popup.__sourceBtn = btn;
 
             const notifLabel = T("notifications");
             const noNotifLabel = T("noSignificantChanges");
@@ -6073,6 +6344,10 @@ host.dataset.rawXml = gLastRawXml || "";
     if (closeBtn) {
         closeBtn.addEventListener("click", () => {
             SaveFloatingLayout(host);
+            if (host._ibResizeObserver) {
+                host._ibResizeObserver.disconnect();
+                host._ibResizeObserver = null;
+            }
             host.remove();
             EnsureFloatingTab();
         });
@@ -6441,6 +6716,11 @@ function RemoveThoughtLeaksInContainer(messageTextEl, parsed) {
 
     if (!thoughtEntries.length) return;
 
+    // Pre-build Sets for O(1) exact-match lookup (most common case)
+    // Avoids O(n) .some() scan when the thought text matches exactly
+    const softTextSet = new Set(thoughtEntries.map(t => t.softText));
+    const fullSoftSet = new Set(thoughtEntries.map(t => t.fullSoft));
+
     function IsLeakedThoughtLine(line) {
         const raw = String(line || "").trim();
         if (!raw) return false;
@@ -6450,15 +6730,33 @@ function RemoveThoughtLeaksInContainer(messageTextEl, parsed) {
         if (parsedLine && parsedLine.name && parsedLine.text && NormalizeName(parsedLine.name) !== "__unassigned__") {
             const lineName = parsedLine.name;
             const lineTextSoft = NormalizeThoughtText(parsedLine.text);
-            const lineFullSoft = NormalizeThoughtText(`${parsedLine.name}: ${parsedLine.text}`);
 
             if (lineTextSoft.length >= 5) {
+                // Fast path: O(1) exact match on softText (most common case)
+                if (softTextSet.has(lineTextSoft)) {
+                    // Verify owner matches an NPC
+                    const ownerMatches = thoughtEntries.some(t =>
+                        t.softText === lineTextSoft && ThoughtOwnerMatchesNpc(lineName, t.name, npcNames)
+                    );
+                    if (ownerMatches) return true;
+                }
+
+                // Fast path: O(1) exact match on fullSoft "Name: thought"
+                const lineFullSoft = NormalizeThoughtText(`${parsedLine.name}: ${parsedLine.text}`);
+                if (fullSoftSet.has(lineFullSoft)) {
+                    const ownerMatches = thoughtEntries.some(t =>
+                        t.fullSoft === lineFullSoft && ThoughtOwnerMatchesNpc(lineName, t.name, npcNames)
+                    );
+                    if (ownerMatches) return true;
+                }
+
+                // Slow path: fuzzy substring match (rare)
                 const match = thoughtEntries.some(t => {
                     const ownerMatches = ThoughtOwnerMatchesNpc(lineName, t.name, npcNames);
                     if (!ownerMatches) return false;
 
-                    if (lineTextSoft === t.softText) return true;
-                    if (lineFullSoft === t.fullSoft) return true;
+                    // Already checked exact matches above, skip them
+                    if (lineTextSoft === t.softText || lineFullSoft === t.fullSoft) return true;
 
                     const minLen = Math.min(lineTextSoft.length, t.softText.length);
                     const maxLen = Math.max(lineTextSoft.length, t.softText.length);
@@ -6476,8 +6774,11 @@ function RemoveThoughtLeaksInContainer(messageTextEl, parsed) {
         }
 
         // Also check standalone fragments (no "Name:" prefix, just the thought text)
-        // This catches cases where SillyTavern strips <thk> tags but keeps content,
-        // or where the AI writes thoughts as italicized/bold text without a name prefix
+        // Fast path: O(1) exact match first
+        const standaloneSoft = NormalizeThoughtText(raw);
+        if (standaloneSoft.length >= 12 && softTextSet.has(standaloneSoft)) return true;
+
+        // Slow path: fuzzy standalone match
         if (LooksLikeStandaloneThoughtFragment(raw, thoughtEntries)) {
             return true;
         }
@@ -6485,7 +6786,7 @@ function RemoveThoughtLeaksInContainer(messageTextEl, parsed) {
         return false;
     }
 
-    // Pass 1: Remove leaked thought lines from text nodes
+    // Collect all target text nodes via TreeWalker (single DOM pass)
     const walker = document.createTreeWalker(
         messageTextEl,
         NodeFilter.SHOW_TEXT,
@@ -6507,15 +6808,15 @@ function RemoveThoughtLeaksInContainer(messageTextEl, parsed) {
         }
     );
 
-    const targets = [];
+    const textTargets = [];
     let current = walker.nextNode();
 
     while (current) {
-        targets.push(current);
+        textTargets.push(current);
         current = walker.nextNode();
     }
 
-    for (const node of targets) {
+    for (const node of textTargets) {
         const raw = node.textContent || "";
         const lines = raw.split(/\r?\n/);
 
@@ -6527,8 +6828,7 @@ function RemoveThoughtLeaksInContainer(messageTextEl, parsed) {
 
     // Pass 2: Remove entire block-level elements that only contain a leaked thought
     // This catches <p>, <div>, <li> elements where SillyTavern wrapped the thought
-    const blockSelectors = "p, div, li";
-    messageTextEl.querySelectorAll(blockSelectors).forEach(el => {
+    messageTextEl.querySelectorAll("p, div, li").forEach(el => {
         if (el.closest(".ib-board-host, .ib-board")) return;
 
         const text = (el.textContent || "").trim();
@@ -6552,6 +6852,11 @@ function UpdateBoardModeVisibility() {
         if (subrow) {
             subrow.style.display = checked ? "" : "none";
         }
+    }
+    // Inline board count (on same row as inline checkbox)
+    const boardCountWrap = document.getElementById("ib_inline_board_count_row");
+    if (boardCountWrap) {
+        boardCountWrap.style.display = gDisplayInline ? "" : "none";
     }
     // Panel position subrow
     const posSubrow = document.getElementById("ib_subrow_panel_position");
@@ -6872,8 +7177,8 @@ function ApplyParsedToState(parsed, msgIndex) {
     }
     
     // Сохраняем предыдущие отношения для уведомлений
-    const prevRels = JSON.parse(JSON.stringify(gState.rels || []));
-    
+    const prevRels = structuredClone(gState.rels || []);
+
     // Применяем патч закрепленных персонажей (используем gState как предыдущее состояние)
     const patched = PatchPinnedData(parsed, gState);
 
@@ -6908,26 +7213,30 @@ function ForceRepaint(el) {
     });
 }
 
-function RenderBoardIntoMessage(mesTextEl, parsed, isFresh, prevState) {
+function RenderBoardIntoMessage(mesTextEl, parsed, isFresh, prevState, skipCleanup = false) {
     if (!mesTextEl || !parsed) return;
 
-    CleanupRawInfoboardDom(mesTextEl);
-    RemoveRawXmlFromText(mesTextEl);
-    CleanupRawInfoboardDom(mesTextEl);
+    // When called from _chunkedBoardRender (skipCleanup=true), cleanup is already done
+    // in Phase 2a. When called from other code paths, we do a single cleanup pass here.
+    if (!skipCleanup) {
+        CleanupRawInfoboardDom(mesTextEl);
+        RemoveRawXmlFromText(mesTextEl);
 
-    if (gHideThoughtLeaks) {
-        RemoveThoughtLeaksInContainer(mesTextEl, parsed);
+        if (gHideThoughtLeaks) {
+            RemoveThoughtLeaksInContainer(mesTextEl, parsed);
+        }
+
+        CleanupEmptyMessageNodes(mesTextEl);
     }
-
-    CleanupRawInfoboardDom(mesTextEl);
-    CleanupEmptyMessageNodes(mesTextEl);
 
     if (!ShouldRenderInlineBoard()) {
         const existingHost = mesTextEl.querySelector(".ib-board-host");
         if (existingHost) existingHost.remove();
 
-        CleanupBoardHosts(mesTextEl);
-        CleanupEmptyMessageNodes(mesTextEl);
+        if (!skipCleanup) {
+            CleanupBoardHosts(mesTextEl);
+            CleanupEmptyMessageNodes(mesTextEl);
+        }
         return;
     }
 
@@ -6949,6 +7258,7 @@ function RenderBoardIntoMessage(mesTextEl, parsed, isFresh, prevState) {
 }
 
 function ReprocessChat() {
+    InvalidateAliasCache();
     const stContext = SillyTavern.getContext();
     if (!stContext.chat) {
         // Even without an active chat (e.g. new empty chat), still refresh the UI
@@ -6961,12 +7271,17 @@ function ReprocessChat() {
     }
 
     // Save previous rels for notification comparison
-    const prevRels = JSON.parse(JSON.stringify(gState.rels || []));
+    const prevRels = structuredClone(gState.rels || []);
 
-    let rollingState = JSON.parse(JSON.stringify(kDefaultState));
+    let rollingState = structuredClone(kDefaultState);
 
     // Clear timeline and rebuild from chat history
     gTimeline = [];
+
+    // ═══ Phase 1: Compute state (sync, no DOM writes) ═══
+    // Parse all messages and compute rolling state without touching the DOM.
+    // This is fast — the heavy work is DOM manipulation in Phase 2.
+    const renderQueue = [];
 
     document.querySelectorAll(".mes").forEach(node => {
         const msgId = Number(node.getAttribute("mesid"));
@@ -6979,44 +7294,21 @@ function ReprocessChat() {
         const mesTextEl = node.querySelector(".mes_text");
         if (!mesTextEl) return;
 
-        CleanupRawInfoboardDom(mesTextEl);
-        RemoveRawXmlFromText(mesTextEl);
-        CleanupRawInfoboardDom(mesTextEl);
-
         if (!parsed) {
-            const host = mesTextEl.querySelector(".ib-board-host");
-            if (host) host.remove();
-            CleanupEmptyMessageNodes(mesTextEl);
+            // Try to extract raw thought lines from broken XML for leak cleanup
+            const rawThoughts = ExtractRawThoughts(stMsg.mes || "");
+            renderQueue.push({ type: "noBoard", mesTextEl, rawThoughts });
             return;
         }
 
-        // --- ИСПОЛЬЗУЕМ PREVSTATE И ПАТЧИНГ ---
-        // Сохраняем состояние ДО этого сообщения
-        const prevState = JSON.parse(JSON.stringify(rollingState));
-
-        // Патчим данные текущего сообщения, чтобы показать закрепленных
-        // (передаем rollingState, так как это контекст предыдущих сообщений)
+        const prevState = structuredClone(rollingState);
         const patchedParsed = PatchPinnedData(parsed, rollingState);
-
-        // Remove thought leaks from visible narrative text
-        // (AI sometimes outputs thoughts in both <thk> and visible text)
-        // Use patchedParsed which includes pinned NPC thoughts
-        if (gHideThoughtLeaks) {
-            RemoveThoughtLeaksInContainer(mesTextEl, patchedParsed);
-        }
-
-        CleanupRawInfoboardDom(mesTextEl);
-        CleanupEmptyMessageNodes(mesTextEl);
 
         if (parsed.rawXml) {
             gLastRawXml = parsed.rawXml;
             gLastRawXmlMsgIndex = msgId;
         }
 
-        // Рендерим инлайн-доску под сообщением (если режим inline/both)
-        RenderBoardIntoMessage(mesTextEl, patchedParsed, true, prevState);
-
-        // Обновляем "катящееся" состояние для следующих сообщений
         UpdateRollingState(rollingState, patchedParsed);
 
         // Add timeline entry for each parsed infoboard block
@@ -7034,28 +7326,129 @@ function ReprocessChat() {
             };
             // Only add if something changed compared to last entry
             const last = gTimeline[gTimeline.length - 1];
-            const same = last && JSON.stringify(last.rels) === JSON.stringify(entry.rels);
+            const same = last && RelsEqual(last.rels, entry.rels);
             if (!same) {
                 gTimeline.push(entry);
             }
         }
 
+        renderQueue.push({ type: "board", mesTextEl, parsed, patchedParsed, prevState });
     });
 
-    // Keep max 200 entries
+    // Finalize state (sync — gState is now correct even before DOM renders)
     if (gTimeline.length > 200) gTimeline = gTimeline.slice(-200);
     SaveTimeline();
 
     gState = rollingState;
     SaveState();
 
-    // Check for significant relationship changes after reprocessing
+    // Update non-DOM displays immediately (these don't need DOM rendering)
     CheckAndNotifyChanges(prevRels, gState.rels);
-
     UpdateStatusDisplay();
     UpdateLastUpdateDisplay();
+
+    // ═══ Phase 2a: Synchronous cleanup of ALL messages ═══
+    // Removes raw XML, thought leaks, and stale board hosts in one batch.
+    // Browser performs a single layout recalc after — eliminates CLS from
+    // "raw XML visible → removed" per-chunk shifts.
+    _syncCleanupAll(renderQueue);
+
+    // ═══ Phase 2b: Floating & Panel boards (immediate) ═══
+    // These are single-board renders — always update first so the user
+    // sees the latest state right away, without waiting for inline chunks.
     RenderFloatingBoard();
     RenderPanelBoard();
+
+    // ═══ Phase 2c: Chunked inline board render (reverse order) ═══
+    // Only render inline boards when inline mode is enabled.
+    // Reverse order ensures the visible last message is rendered first,
+    // minimizing perceived lag and CLS for on-screen content.
+    // Old boards use unpinned data (parsed), only the latest board shows pinned NPCs.
+    // Only the last MAX_INLINE_BOARDS boards are rendered — older ones just get cleanup.
+    if (ShouldRenderInlineBoard()) {
+        const MAX_INLINE_BOARDS = gInlineBoardCount;
+        const allBoardItems = renderQueue.filter(q => q.type === "board");
+        // Take only the last N boards (most recent messages)
+        const boardItems = allBoardItems.slice(-MAX_INLINE_BOARDS);
+        // Mark the latest board (last in forward order = first after reverse)
+        if (boardItems.length > 0) {
+            boardItems[boardItems.length - 1].isLatest = true;
+        }
+        boardItems.reverse();
+        _chunkedBoardRender(boardItems);
+    }
+}
+
+/**
+ * Phase 2a: Synchronous cleanup of ALL messages in the render queue.
+ * Removes raw XML, thought leaks, and stale board hosts.
+ * Runs as a single synchronous batch — browser performs ONE layout recalc after.
+ */
+function _syncCleanupAll(queue) {
+    for (const item of queue) {
+        // 1. Remove custom XML elements (infoboard, chars, rels, c, rel, thk, nsfw)
+        CleanupRawInfoboardDom(item.mesTextEl);
+
+        // 2. Remove raw XML from text nodes
+        RemoveRawXmlFromText(item.mesTextEl);
+
+        // 3. Remove thought leaks
+        if (item.type === "noBoard") {
+            // Broken XML — use simple text matching fallback
+            if (gHideThoughtLeaks && item.rawThoughts) {
+                RemoveLeakedThoughtsFromBrokenXml(item.mesTextEl, item.rawThoughts);
+            }
+        } else {
+            // Valid infoboard — use parsed data for precise matching
+            if (gHideThoughtLeaks) {
+                RemoveThoughtLeaksInContainer(item.mesTextEl, item.patchedParsed);
+            }
+        }
+
+        // 4. Remove stale board host — will be re-created by RenderBoardIntoMessage
+        //    if inline mode is on, otherwise stays removed
+        const host = item.mesTextEl.querySelector(".ib-board-host");
+        if (host) host.remove();
+
+        // 5. Remove orphaned empty text nodes
+        CleanupEmptyMessageNodes(item.mesTextEl);
+    }
+}
+
+// --- Chunked board renderer for ReprocessChat Phase 2b ---
+// Only renders inline boards. Cleanup is already done in Phase 2a.
+// Processes messages in reverse order (last message first) so the
+// visible area updates before off-screen messages.
+const RENDER_CHUNK_SIZE = 8;
+let _renderQueueId = 0;
+
+function _chunkedBoardRender(boardItems) {
+    const queueId = ++_renderQueueId;
+    let i = 0;
+
+    function processChunk() {
+        // If a newer ReprocessChat started, abandon this render queue
+        if (queueId !== _renderQueueId) return;
+
+        const end = Math.min(i + RENDER_CHUNK_SIZE, boardItems.length);
+
+        for (; i < end; i++) {
+            const item = boardItems[i];
+            // Latest board shows pinned NPCs (patchedParsed), old boards show only
+            // what the AI originally returned (parsed) — no pinned data injected
+            const displayParsed = item.isLatest ? item.patchedParsed : item.parsed;
+            // skipCleanup=true — Phase 2a already cleaned up this message
+            RenderBoardIntoMessage(item.mesTextEl, displayParsed, true, item.prevState, true);
+        }
+
+        if (i < boardItems.length) {
+            // More messages to render — yield to browser for input handling & painting
+            requestAnimationFrame(processChunk);
+        }
+    }
+
+    // Process first chunk synchronously (for immediate visual feedback)
+    processChunk();
 }
 
 function Debounce(fn, delay = 250) {
@@ -7070,9 +7463,10 @@ function Debounce(fn, delay = 250) {
 const ScheduleReprocessChat = Debounce(() => ReprocessChat(), 250);
 
 function RebuildStateFromCurrentChat() {
+    InvalidateAliasCache();
     const stContext = SillyTavern.getContext();
 
-    let rollingState = JSON.parse(JSON.stringify(kDefaultState));
+    let rollingState = structuredClone(kDefaultState);
     let lastRawXml = "";
     let lastRawXmlMsgIndex = -1;
 
@@ -7174,7 +7568,8 @@ function ExportState() {
                 panelPosition: gPanelPosition,
                 defaultBoardModeInline: gDefaultBoardModeInline,
                 defaultBoardModeFloating: gDefaultBoardModeFloating,
-                defaultBoardModePanel: gDefaultBoardModePanel
+                defaultBoardModePanel: gDefaultBoardModePanel,
+                inlineBoardCount: gInlineBoardCount
             },
             timeline: gTimeline,
             pinnedNpcs: gPinnedNpcs,
@@ -7215,7 +7610,7 @@ async function ImportStateFromFile(file) {
             // Full backup restore
             if (parsed.state) {
                 gState = {
-                    ...JSON.parse(JSON.stringify(kDefaultState)),
+                    ...structuredClone(kDefaultState),
                     ...parsed.state,
                     chars: Array.isArray(parsed.state.chars) ? parsed.state.chars : [],
                     rels: Array.isArray(parsed.state.rels) ? parsed.state.rels : [],
@@ -7264,6 +7659,7 @@ async function ImportStateFromFile(file) {
                 if (s.defaultBoardModeInline !== undefined) { gDefaultBoardModeInline = s.defaultBoardModeInline; gCurrentBoardModeInline = gDefaultBoardModeInline; localStorage.setItem(kDefaultBoardModeInlineKey, gDefaultBoardModeInline); }
                 if (s.defaultBoardModeFloating !== undefined) { gDefaultBoardModeFloating = s.defaultBoardModeFloating; gCurrentBoardModeFloating = gDefaultBoardModeFloating; localStorage.setItem(kDefaultBoardModeFloatingKey, gDefaultBoardModeFloating); }
                 if (s.defaultBoardModePanel !== undefined) { gDefaultBoardModePanel = s.defaultBoardModePanel; gCurrentBoardModePanel = gDefaultBoardModePanel; localStorage.setItem(kDefaultBoardModePanelKey, gDefaultBoardModePanel); }
+                if (s.inlineBoardCount !== undefined) { gInlineBoardCount = Math.max(1, Math.min(99, parseInt(s.inlineBoardCount) || 5)); localStorage.setItem(kInlineBoardCountKey, String(gInlineBoardCount)); gInlineBoardCountSaved = gInlineBoardCount; }
 
                 // Update UI controls
                 $("#ib_theme").val(gTheme);
@@ -7279,6 +7675,7 @@ async function ImportStateFromFile(file) {
                 $("#ib_display_floating").prop("checked", gDisplayFloating);
                 $("#ib_display_panel").prop("checked", gDisplayPanel);
                 $("#ib_board_mode_inline").val(gDefaultBoardModeInline);
+                $("#ib_inline_board_count").val(gInlineBoardCount);
                 $("#ib_board_mode_floating").val(gDefaultBoardModeFloating);
                 $("#ib_board_mode_panel").val(gDefaultBoardModePanel);
                 $("#ib_panel_position").val(gPanelPosition);
@@ -7315,7 +7712,7 @@ async function ImportStateFromFile(file) {
         } else {
             // Legacy v1/v2 format: just state data
             gState = {
-                ...JSON.parse(JSON.stringify(kDefaultState)),
+                ...structuredClone(kDefaultState),
                 ...parsed,
                 chars: Array.isArray(parsed.chars) ? parsed.chars : [],
                 rels: Array.isArray(parsed.rels) ? parsed.rels : [],
@@ -7511,14 +7908,21 @@ jQuery(async () => {
                     <div class="ib-setting-row">
                         <input type="checkbox" id="ib_display_inline" />
                         <label for="ib_display_inline" id="ib_display_inline_label">Inline</label>
-                    </div>
-                    <div class="ib-board-mode-subrow" id="ib_subrow_inline">
-                        <label for="ib_board_mode_inline" id="ib_board_mode_inline_label">Default:</label>
-                        <select id="ib_board_mode_inline">
-                            <option value="full">Full</option>
-                            <option value="compact">Compact</option>
-                            <option value="collapsed">Collapsed</option>
-                        </select>
+                        <span class="ib-inline-count-wrap" id="ib_inline_board_count_row" style="display:none">
+                            <div class="ib-depth-input-wrap ib-depth-input-compact">
+                                <button type="button" class="ib-depth-btn ib-depth-btn-compact ib-depth-minus" id="ib_board_count_minus">−</button>
+                                <input type="number" id="ib_inline_board_count" min="1" max="99" value="5" class="ib-depth-field ib-depth-field-compact" />
+                                <button type="button" class="ib-depth-btn ib-depth-btn-compact ib-depth-plus" id="ib_board_count_plus">+</button>
+                            </div>
+                        </span>
+                        <span class="ib-inline-mode-wrap" id="ib_subrow_inline" style="display:none">
+                            <label for="ib_board_mode_inline" id="ib_board_mode_inline_label">Default:</label>
+                            <select id="ib_board_mode_inline">
+                                <option value="full">Full</option>
+                                <option value="compact">Compact</option>
+                                <option value="collapsed">Collapsed</option>
+                            </select>
+                        </span>
                     </div>
                 </div>
                 <div class="ib-display-mode-item" data-mode="floating">
@@ -7637,6 +8041,10 @@ jQuery(async () => {
     if (isNaN(gInjectPosition) || ![0, 1, 2].includes(gInjectPosition)) gInjectPosition = 1;
     gInjectDepth = parseInt(localStorage.getItem(kInjectDepthKey));
     if (isNaN(gInjectDepth) || gInjectDepth < 0) gInjectDepth = 0;
+    gInlineBoardCount = parseInt(localStorage.getItem(kInlineBoardCountKey));
+    if (isNaN(gInlineBoardCount) || gInlineBoardCount < 1) gInlineBoardCount = 5;
+    if (gInlineBoardCount > 99) gInlineBoardCount = 99;
+    gInlineBoardCountSaved = gInlineBoardCount;
     gPanelWidth = parseInt(localStorage.getItem(kPanelWidthKey)) || 380;
     gDefaultBoardModeInline = localStorage.getItem(kDefaultBoardModeInlineKey) || "full";
     gDefaultBoardModeFloating = localStorage.getItem(kDefaultBoardModeFloatingKey) || "full";
@@ -7689,14 +8097,21 @@ jQuery(async () => {
                     <div class="ib-setting-row">
                         <input type="checkbox" id="ib_display_inline" />
                         <label for="ib_display_inline" id="ib_display_inline_label">${T("displayInline")}</label>
-                    </div>
-                    <div class="ib-board-mode-subrow" id="ib_subrow_inline">
-                        <label for="ib_board_mode_inline" id="ib_board_mode_inline_label">${T("defaultBoardMode")}:</label>
-                        <select id="ib_board_mode_inline">
-                            <option value="full">${T("boardModeFull")}</option>
-                            <option value="compact">${T("boardModeCompact")}</option>
-                            <option value="collapsed">${T("boardModeCollapsed")}</option>
-                        </select>
+                        <span class="ib-inline-count-wrap" id="ib_inline_board_count_row" style="display:none">
+                            <div class="ib-depth-input-wrap ib-depth-input-compact">
+                                <button type="button" class="ib-depth-btn ib-depth-btn-compact ib-depth-minus" id="ib_board_count_minus">−</button>
+                                <input type="number" id="ib_inline_board_count" min="1" max="99" value="${gInlineBoardCount}" class="ib-depth-field ib-depth-field-compact" />
+                                <button type="button" class="ib-depth-btn ib-depth-btn-compact ib-depth-plus" id="ib_board_count_plus">+</button>
+                            </div>
+                        </span>
+                        <span class="ib-inline-mode-wrap" id="ib_subrow_inline" style="display:none">
+                            <label for="ib_board_mode_inline" id="ib_board_mode_inline_label">${T("defaultBoardMode")}:</label>
+                            <select id="ib_board_mode_inline">
+                                <option value="full">${T("boardModeFull")}</option>
+                                <option value="compact">${T("boardModeCompact")}</option>
+                                <option value="collapsed">${T("boardModeCollapsed")}</option>
+                            </select>
+                        </span>
                     </div>
                 </div>
                 <div class="ib-display-mode-item" data-mode="floating">
@@ -7772,6 +8187,7 @@ jQuery(async () => {
     $("#ib_display_floating").prop("checked", gDisplayFloating);
     $("#ib_display_panel").prop("checked", gDisplayPanel);
     $("#ib_board_mode_inline").val(gDefaultBoardModeInline);
+    $("#ib_inline_board_count").val(gInlineBoardCount);
     $("#ib_board_mode_floating").val(gDefaultBoardModeFloating);
     $("#ib_board_mode_panel").val(gDefaultBoardModePanel);
     $("#ib_panel_position").val(gPanelPosition);
@@ -7930,7 +8346,7 @@ jQuery(async () => {
 
     $("#ib_reset_state").on("click", function () {
         if (confirm(T("resetConfirm"))) {
-            gState = JSON.parse(JSON.stringify(kDefaultState));
+            gState = structuredClone(kDefaultState);
             SaveState();
             UpdateStatusDisplay();
             UpdateLastUpdateDisplay();
@@ -7962,6 +8378,50 @@ jQuery(async () => {
         localStorage.setItem(kDefaultBoardModeInlineKey, gDefaultBoardModeInline);
         ReprocessChat();
     });
+
+    // Inline board count sidebar handlers — confirm/cancel pattern
+    function sidebarCountShowConfirm() {
+        const el = document.getElementById("ib_count_confirm");
+        if (el) el.style.display = "inline-flex";
+    }
+    function sidebarCountHideConfirm() {
+        const el = document.getElementById("ib_count_confirm");
+        if (el) el.style.display = "none";
+        const field = document.getElementById("ib_inline_board_count");
+        if (field) field.value = gInlineBoardCountSaved;
+    }
+    function sidebarCountApply() {
+        const field = document.getElementById("ib_inline_board_count");
+        let v = parseInt($(field).val());
+        if (isNaN(v) || v < 1) v = 1;
+        if (v > 99) v = 99;
+        $(field).val(v);
+        gInlineBoardCount = v;
+        gInlineBoardCountSaved = v;
+        localStorage.setItem(kInlineBoardCountKey, String(gInlineBoardCount));
+        const el = document.getElementById("ib_count_confirm");
+        if (el) el.style.display = "none";
+        ReprocessChat();
+    }
+
+    $(document).on("input", "#ib_inline_board_count", function () { sidebarCountShowConfirm(); });
+    $(document).on("change", "#ib_inline_board_count", function () { sidebarCountShowConfirm(); });
+    $(document).on("click", "#ib_board_count_minus", function () {
+        const field = document.getElementById("ib_inline_board_count");
+        let v = parseInt($(field).val()) || 1;
+        if (v > 1) v--;
+        $(field).val(v);
+        sidebarCountShowConfirm();
+    });
+    $(document).on("click", "#ib_board_count_plus", function () {
+        const field = document.getElementById("ib_inline_board_count");
+        let v = parseInt($(field).val()) || 1;
+        if (v < 99) v++;
+        $(field).val(v);
+        sidebarCountShowConfirm();
+    });
+    $(document).on("click", "#ib_count_ok", function () { sidebarCountApply(); });
+    $(document).on("click", "#ib_count_cancel", function () { sidebarCountHideConfirm(); });
     $(document).on("change", "#ib_board_mode_floating", function () {
         gDefaultBoardModeFloating = $(this).val();
         gCurrentBoardModeFloating = gDefaultBoardModeFloating;

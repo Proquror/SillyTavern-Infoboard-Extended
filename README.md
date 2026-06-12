@@ -1,6 +1,6 @@
 # Infoboard for SillyTavern — Extended
 
-**v2.2.0**
+**v2.3.0**
 
 A state-aware XML infoboard extension for **SillyTavern**.
 
@@ -40,23 +40,35 @@ Built for roleplay, long scenes, and NPC-heavy chats.
 
 ## Extended Features
 
-- amount of rendered inline infoboards can be chaged in options
 - structured `<infoboard_rules>` prompt with 7 presence levels
 - NPC age attribute
 - 6 tags per NPC (up from 4)
 - strict anti-user-action and anti-echo directives
 - three-tier pin system (Per-Chat / Per-Character / Global) with snapshots
-- - expandable pins popup with `Pin Here` transfer option and `go to` navigation arrow
+- expandable pins popup with `Pin Here` transfer option and `go to` navigation arrow
 - additional status classifications (Positive / Neutral)
 - relationship timeline with zoom, milestones, and persistence
 - toast notifications for relationship changes and pin actions
 - inline settings popup from the board toolbar
 - resizable side panel mode (left or right)
+- amount of rendered `inline` infoboards can be chaged manually in options (default 5)
 - macro prompt injection (`{{InfoBoard}}` / `{{IB}}`)
 - configurable injection position and depth for autoinject
-- themes and options are now accessible via toolbar buttons
+- themes and options accessible via toolbar buttons
 - debug XML editor
 - improved export / import
+
+## v2.3 Features
+
+- **configurable inline board count** — choose how many inline infoboards (1–99) are rendered in chat, with ± stepper buttons in both sidebar and settings popup; older boards beyond the limit are cleaned up but not rendered, reducing DOM weight in long chats
+- **panel flip-side button** — a `⇄` button on the panel edge that instantly moves the panel to the opposite side of the screen; auto-fades after 1.5 s of inactivity and reappears on hover/touch
+- **two-phase chunked rendering** — state computation and DOM manipulation are separated into distinct phases; cleanup runs as a single synchronous batch before any boards are rendered, eliminating cumulative layout shifts; inline boards render in reverse order (newest first) via `requestAnimationFrame` chunks for immediate visual feedback
+- **fallback thought-leak cleanup for broken XML** — leaked `<thk>` content is caught even when the main XML parser fails, using simple text matching as a fallback
+- **character name resolution in pins popup** — per-character pins display the character's display name instead of the raw avatar filename
+- **pins popup state preservation** — the "other pins" expand/collapse state is preserved across popup re-renders
+- **performance optimizations** — `structuredClone` for deep cloning, O(1) `Set`-based presence detection, singleton `DOMParser`, alias name caching, and `Set`-based thought-leak fast paths
+- **XML parser robustness** — unclosed attribute values (e.g. `age="55 tags="...`) are auto-fixed before parsing
+- **improved raw XML hiding** — matches both raw and HTML-entity-encoded XML patterns for reliable removal across SillyTavern rendering contexts
 
 ---
 
@@ -124,6 +136,12 @@ Each context has an independent board mode:
 | **Compact** | Short stat chips for quick overview |
 | **Collapsed** | Minimal placeholder — click to expand |
 
+### Inline Board Count
+
+When inline mode is active, the number of rendered inline infoboards can be configured (1–99). The ± stepper appears next to the Inline checkbox in both the sidebar and the settings popup. Only the most recent N messages receive a rendered board; older messages are cleaned up but left without a board to reduce DOM weight.
+
+Only the latest inline board shows pinned NPCs (patched data); older boards display only what the AI originally returned, avoiding anachronistic state injection.
+
 ---
 
 ## Prompt
@@ -180,7 +198,7 @@ The pins popup (📌 button) shows all currently active pins in a structured gri
 
 - **Pin Here** — pin an NPC directly into the current chat context. If the NPC is already pinned at any level, the operation is rejected to prevent duplicates.
 - **Navigate to Character Card** — jump to the source character card of a pinned NPC.
-- **Expanded view** — an expandable section shows pins from other chats and character cards that are not in the current context, with navigation and pin-here actions for each entry.
+- **Expanded view** — an expandable section shows pins from other chats and character cards that are not in the current context, with navigation and pin-here actions for each entry. Per-character pins display the character's display name (e.g. "Komac") instead of the avatar filename. The expand/collapse state is preserved across popup re-renders.
 
 ### Pin Snapshots
 
@@ -279,6 +297,7 @@ Settings are available in two places:
 - bar style selector
 - relationship filter (Top 1 / Top 3 / Changed only / All)
 - display modes (inline / floating / panel) — independent toggles
+- inline board count (1–99) — appears next to the Inline checkbox
 - per-mode board mode defaults
 - panel position (left / right)
 - stat hover effects toggle
@@ -349,6 +368,21 @@ You can override the design without editing extension files.
   --ib-st-neutral: ;
 }
 ```
+
+### Key CSS variables for panel flip button
+
+```css
+.ib-panel-flip {
+    /* position: absolute; top: calc(50% + 65px); */
+    /* Inherits theme colors via var(--ib-bg-2), var(--ib-border), etc. */
+}
+```
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for a detailed history of changes.
 
 ---
 
