@@ -12,6 +12,35 @@
             </div>
 
             <div class="ib-setting-row">
+                <input type="checkbox" id="ib_use_macro" />
+                <label for="ib_use_macro" id="ib_use_macro_label"><b>Macro mode {{InfoBoard}}</b></label>
+            </div>
+            <div class="ib-custom-css-help" id="ib_use_macro_help" style="margin-top: -6px; margin-bottom: 6px;">
+                When on: prompt is injected via {{InfoBoard}} macro, which you must manually place in your system prompt. When off (default): auto-inject like the original Infoboard.
+            </div>
+
+            <div class="ib-setting-row" id="ib_inject_position_row">
+                <label for="ib_inject_position"><b id="ib_inject_position_label">Inject position</b></label>
+                <select id="ib_inject_position">
+                    <option value="0" id="ib_inject_pos_after">After Story String</option>
+                    <option value="1" id="ib_inject_pos_chat" selected>In Chat (depth)</option>
+                    <option value="2" id="ib_inject_pos_before">Before Story String</option>
+                </select>
+            </div>
+
+            <div class="ib-setting-row" id="ib_inject_depth_row">
+                <label for="ib_inject_depth"><b id="ib_inject_depth_label">Depth</b></label>
+                <div class="ib-depth-input-wrap">
+                    <button type="button" class="ib-depth-btn ib-depth-minus" id="ib_depth_minus">−</button>
+                    <input type="number" id="ib_inject_depth" min="0" max="999" value="0" class="ib-depth-field" />
+                    <button type="button" class="ib-depth-btn ib-depth-plus" id="ib_depth_plus">+</button>
+                </div>
+            </div>
+            <div class="ib-custom-css-help" id="ib_inject_depth_help" style="margin-top: -6px; margin-bottom: 6px;">
+                0 = last message in context. Higher values inject further up in chat history.
+            </div>
+
+            <div class="ib-setting-row">
                 <label for="ib_lang"><b>Language</b></label>
                 <select id="ib_lang">
                     <option value="ru">Русский</option>
@@ -40,11 +69,9 @@
                     <option value="casefile">🕵️ Case File</option>
                     <option value="obsidianregistry">🗝 Obsidian Registry</option>
                     <option value="neonquest">🤖 Neon Quest</option>
-
                     <option value="shockwave">🟣 Shockwave</option>
-<option value="lockdown">🎯 Lockdown</option>
-<option value="hotrod">🔥 Hot Rod</option>
-
+                    <option value="lockdown">🎯 Lockdown</option>
+                    <option value="hotrod">🔥 Hot Rod</option>
                     <option value="gryffindor">🦁 Gryffindor</option>
                     <option value="slytherin">🐍 Slytherin</option>
                     <option value="ravenclaw">🦅 Ravenclaw</option>
@@ -78,35 +105,95 @@
                     <option value="prism">Prism Glass</option>
                     <option value="neon">Neon Rails</option>
                     <option value="terminal">Terminal Segments</option>
-<option value="hearts">Heart Meter</option>
+                    <option value="hearts">Heart Meter</option>
                     <option value="constellation">Constellation Stars</option>
                     <option value="vials">Vials</option>
                     <option value="evidence">Evidence Tape</option>
                     <option value="runic">Runic Shards</option>
-                                        <option value="sigil">Sigil Bands</option>
+                    <option value="sigil">Sigil Bands</option>
                     <option value="energon">Energon</option>
                 </select>
             </div>
 
-<div class="ib-setting-row">
-<label for="ib_compact_mode"><b>Relationship Filter</b></label>
-    <select id="ib_compact_mode">
-        <option value="top3">Top 3</option>
-        <option value="top1">Top 1</option>
-        <option value="changed">Changed only</option>
-        <option value="all">All</option>
-    </select>
-</div>
-
             <div class="ib-setting-row">
-    <label for="ib_display_mode"><b>Display Mode</b></label>
-    <select id="ib_display_mode">
-        <option value="inline">Inline</option>
-        <option value="floating">Floating</option>
-        <option value="both">Both</option>
-    </select>
-</div>
-            
+                <label for="ib_compact_mode"><b>Relationship Filter</b></label>
+                <select id="ib_compact_mode">
+                    <option value="top3">Top 3</option>
+                    <option value="top1">Top 1</option>
+                    <option value="changed">Changed only</option>
+                    <option value="all">All</option>
+                </select>
+            </div>
+
+            <div class="ib-display-modes-section">
+                <div class="ib-setting-row ib-section-label">
+                    <b id="ib_display_modes_label">Display Modes</b>
+                </div>
+
+                <div class="ib-display-mode-item" data-mode="inline">
+                    <div class="ib-setting-row">
+                        <input type="checkbox" id="ib_display_inline" />
+                        <label for="ib_display_inline" id="ib_display_inline_label">Inline</label>
+                        <span class="ib-inline-count-wrap" id="ib_inline_board_count_row" style="display:none">
+                            <div class="ib-depth-input-wrap ib-depth-input-compact">
+                                <button type="button" class="ib-depth-btn ib-depth-btn-compact ib-depth-minus" id="ib_board_count_minus">−</button>
+                                <input type="number" id="ib_inline_board_count" min="1" max="99" value="5" class="ib-depth-field ib-depth-field-compact" />
+                                <button type="button" class="ib-depth-btn ib-depth-btn-compact ib-depth-plus" id="ib_board_count_plus">+</button>
+                            </div>
+                            <span class="ib-count-confirm" id="ib_count_confirm" style="display:none">
+                                <button type="button" class="ib-count-confirm-btn ib-count-ok" id="ib_count_ok">✓</button>
+                                <button type="button" class="ib-count-confirm-btn ib-count-cancel" id="ib_count_cancel">✗</button>
+                            </span>
+                        </span>
+                        <span class="ib-inline-mode-wrap" id="ib_subrow_inline" style="display:none">
+                            <label for="ib_board_mode_inline" id="ib_board_mode_inline_label">Default:</label>
+                            <select id="ib_board_mode_inline">
+                                <option value="full">Full</option>
+                                <option value="compact">Compact</option>
+                                <option value="collapsed">Collapsed</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="ib-display-mode-item" data-mode="floating">
+                    <div class="ib-setting-row">
+                        <input type="checkbox" id="ib_display_floating" />
+                        <label for="ib_display_floating" id="ib_display_floating_label">Floating</label>
+                    </div>
+                    <div class="ib-board-mode-subrow" id="ib_subrow_floating">
+                        <label for="ib_board_mode_floating" id="ib_board_mode_floating_label">Default:</label>
+                        <select id="ib_board_mode_floating">
+                            <option value="full">Full</option>
+                            <option value="compact">Compact</option>
+                            <option value="collapsed">Collapsed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="ib-display-mode-item" data-mode="panel">
+                    <div class="ib-setting-row">
+                        <input type="checkbox" id="ib_display_panel" />
+                        <label for="ib_display_panel" id="ib_display_panel_label">Panel</label>
+                    </div>
+                    <div class="ib-board-mode-subrow" id="ib_subrow_panel">
+                        <label for="ib_board_mode_panel" id="ib_board_mode_panel_label">Default:</label>
+                        <select id="ib_board_mode_panel">
+                            <option value="full">Full</option>
+                            <option value="compact">Compact</option>
+                            <option value="collapsed">Collapsed</option>
+                        </select>
+                    </div>
+                    <div class="ib-board-mode-subrow" id="ib_subrow_panel_position">
+                        <label for="ib_panel_position" id="ib_panel_position_label">Side:</label>
+                        <select id="ib_panel_position">
+                            <option value="left">Left</option>
+                            <option value="right">Right</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <div class="ib-setting-row">
                 <input type="checkbox" id="ib_hover_fx" />
                 <label for="ib_hover_fx">Enable stat hover effects</label>
@@ -118,13 +205,31 @@
             </div>
 
             <div class="ib-setting-row">
-    <input type="checkbox" id="ib_hide_thought_leaks" />
-    <label for="ib_hide_thought_leaks">Hide leaked NPC thoughts from visible text</label>
-</div>
+                <input type="checkbox" id="ib_hide_thought_leaks" />
+                <label for="ib_hide_thought_leaks">Hide leaked NPC thoughts from visible text</label>
+            </div>
 
             <div class="ib-setting-row">
                 <input type="checkbox" id="ib_show_nsfw" />
                 <label for="ib_show_nsfw">Show NSFW section</label>
+            </div>
+
+            <!-- Notifications -->
+            <div class="ib-notification-settings">
+                <div class="ib-notif-title">🔔 <b id="ib_notif_title_text">Notifications</b></div>
+                <div class="ib-setting-row">
+                    <input type="checkbox" id="ib_notifications_enabled" />
+                    <label for="ib_notifications_enabled">Enable notifications</label>
+                </div>
+                <div class="ib-setting-row">
+                    <label for="ib_notification_threshold"><b>Threshold</b></label>
+                    <select id="ib_notification_threshold">
+                        <option value="3">3 (Sensitive)</option>
+                        <option value="5">5 (Default)</option>
+                        <option value="10">10 (Major only)</option>
+                        <option value="20">20 (Dramatic only)</option>
+                    </select>
+                </div>
             </div>
 
             <div id="ib_status" class="ib-status">
@@ -146,8 +251,12 @@
             </div>
 
             <div class="ib-button-row">
-                <div class="menu_button" id="ib_export_state">📤 Export State</div>
-                <div class="menu_button" id="ib_import_state">📥 Import State</div>
+                <div class="menu_button" id="ib_export_state">📤 Export All</div>
+                <div class="menu_button" id="ib_import_state">📥 Import All</div>
+            </div>
+
+            <div class="ib-button-row">
+                <div class="menu_button" id="ib_clean_orphan_snapshots">🧹 Clean Orphaned Snapshots</div>
             </div>
 
             <div class="ib-custom-css-wrap">
