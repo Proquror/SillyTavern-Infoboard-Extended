@@ -938,9 +938,31 @@
     white-space: nowrap;
     margin-left: 20px;
 }
+
+.ib-inline-mode-wrap {
+    min-width: 0;
+    width: 100%;
+}
+
 .ib-inline-mode-wrap select {
-    width: 350px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     font-size: 12px;
+}
+
+.ib-display-modes-section {
+    min-width: 0;
+}
+
+.ib-display-mode-item {
+    min-width: 0;
+}
+
+.ib-display-modes-section .ib-display-mode-item[data-mode="inline"] #ib_subrow_inline {
+    min-width: 0;
+    overflow: hidden;
 }
 
 .ib-settings select {
@@ -1270,6 +1292,11 @@
 .ib-sp-inline-select {
     width: 100px;
     min-width: unset;
+}
+
+#ib_sp_panel_position_row label {
+    padding-left: 24px;
+	padding-bottom: 8px;
 }
 
 .ib-sp-subhelp {
@@ -14589,6 +14616,7 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     gap: 8px;
     width: 100%;
     margin-left: 0;
+	min-width: 0;
 }
 
 .ib-display-modes-section .ib-display-mode-item[data-mode="inline"] #ib_subrow_inline label {
@@ -14596,7 +14624,8 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 }
 
 .ib-display-modes-section .ib-display-mode-item[data-mode="inline"] #ib_subrow_inline select {
-    width: 100%;
+    min-width: 0;
+	max-width: 100%
 }
 
 .ib-display-modes-section .ib-display-mode-item[data-mode="inline"] .ib-depth-input-compact {

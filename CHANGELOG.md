@@ -42,6 +42,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Panel resize jerkiness** — panel resize now uses `requestAnimationFrame` throttling (`lastClientX` + rAF flag) so `host.style.width` updates at most once per frame instead of on every `pointermove` event. A CSS class `ib-panel-resizing` is added during resize to disable `transition`, `backdrop-filter`, and promote the element with `will-change: width`. The CSS variable `--ib-panel-width` is only updated on `pointerup` (not during drag), eliminating expensive full-document style recalculation.
 - **Popup toggle cross-board bug** — clicking a toolbar button (⚙️ settings, 🎨 theme, 📍 pins, 🔔 notifications) on one board while its popup was open on another board would close the popup instead of reopening it on the new board. Popups now track their source button via `__sourceBtn`; clicking the same button toggles off, clicking a different board's button closes the old popup and opens a new one.
 - **Timeline milestones order** — milestones now display newest-first (reversed), matching the timeline event list order instead of showing oldest milestones at the top.
+- **Sidebar dropdown overflow** — `ib_board_mode_inline` dropdown no longer overflows or clips outside the `ib-display-modes-section` border. Removed `overflow: hidden` from the parent container and the select; added `min-width: 0` + `max-width: 100%` to keep the select inside its CSS grid cell.
+
+### Added
+
+- **Hide board mode dropdown during count confirm (popup)** — when ✓/✗ confirm/cancel buttons appear in the settings popup, the inline board mode dropdown is hidden to avoid visual clutter. It is restored on confirm or cancel.
 
 ---
 

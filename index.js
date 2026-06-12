@@ -5266,12 +5266,15 @@ function RenderSettingsPopup(btn) {
     const spCountConfirm = popup.querySelector("#ib_sp_count_confirm");
     let spCountSaved = gInlineBoardCount; // last applied value
 
+    const spBoardModeSelect = popup.querySelector("#ib_sp_board_mode_inline");
     function spCountShowConfirm() {
         spCountConfirm.style.display = "inline-flex";
+        if (spBoardModeSelect) spBoardModeSelect.style.display = "none";
     }
     function spCountHideConfirm() {
         spCountConfirm.style.display = "none";
         spCountField.value = spCountSaved;
+        if (spBoardModeSelect) spBoardModeSelect.style.display = gDisplayInline ? "" : "none";
     }
     function spCountApply() {
         let v = parseInt(spCountField.value);
@@ -5283,6 +5286,7 @@ function RenderSettingsPopup(btn) {
         spCountSaved = v;
         localStorage.setItem(kInlineBoardCountKey, String(gInlineBoardCount));
         spCountConfirm.style.display = "none";
+        if (spBoardModeSelect) spBoardModeSelect.style.display = gDisplayInline ? "" : "none";
         ReprocessChat(); syncSidebar();
     }
 
@@ -8645,4 +8649,4 @@ if (stContext.eventTypes.MESSAGE_EDITED) {
     // Log current mode at startup
     console.log(`[IB] Infoboard extension ready — mode: ${gUseMacro ? 'macro {{InfoBoard}}' : 'auto-inject'}`);
     // --- КОНЕЦ: Регистрация макроса и автоинжекта ---
-});
+});
