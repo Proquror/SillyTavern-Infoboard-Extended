@@ -1,6 +1,6 @@
 # Infoboard for SillyTavern — Extended
 
-**v2.4.0**
+**v2.5.0**
 
 A state-aware XML infoboard extension for **SillyTavern**.
 
