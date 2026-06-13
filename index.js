@@ -2470,27 +2470,6 @@ function RelsEqual(a, b) {
     return true;
 }
 
-function HexToRgb(hex) {
-    const m = String(hex || '').match(/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);
-    if (!m) return null;
-    return { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) };
-}
-
-function RgbToHex(r, g, b) {
-    return '#' + [r, g, b].map(c => Math.round(Clamp(c, 0, 255)).toString(16).padStart(2, '0')).join('');
-}
-
-function BlendColors(hex1, hex2, ratio) {
-    const c1 = HexToRgb(hex1);
-    const c2 = HexToRgb(hex2);
-    if (!c1) return hex2 || '#888888';
-    if (!c2) return hex1;
-    const r = Math.round(c1.r + (c2.r - c1.r) * ratio);
-    const g = Math.round(c1.g + (c2.g - c1.g) * ratio);
-    const b = Math.round(c1.b + (c2.b - c1.b) * ratio);
-    return RgbToHex(r, g, b);
-}
-
 function EscapeHtml(str) {
     return String(str ?? "")
         .replaceAll("&", "&amp;")
@@ -3537,56 +3516,6 @@ function NavigateToCharacterCard(avatarKey) {
 }
 
 /**
- * Get the avatar key (e.g. "Komac.png") for a pinned NPC at a given level.
- * Returns null if not found.
- */
-function GetPinCharKey(name) {
-    if (!gPinRegistry || !name) return null;
-    const normalized = NormalizeName(name);
-
-    // Check perChar — find which character has this pin
-    if (gPinRegistry.characters) {
-        for (const [key, entry] of Object.entries(gPinRegistry.characters)) {
-            const pins = Array.isArray(entry?.pins) ? entry.pins : (Array.isArray(entry) ? entry : []);
-            if (pins.some(n => NormalizeName(n) === normalized)) {
-                return key; // avatar key like "Komac.png"
-            }
-        }
-    }
-
-    // Check global — use snapshot to find the character card
-    if ((gPinRegistry.global || []).some(n => NormalizeName(n) === normalized)) {
-        // Try to find the character by NPC name in the character list
-        try {
-            const ctx = SillyTavern.getContext();
-            const chars = ctx.characters || [];
-            const match = chars.find(c => NamesLikelyMatch(c.name, name));
-            if (match?.avatar) return match.avatar;
-        } catch {}
-    }
-
-    return null;
-}
-
-/**
- * Get the chat ID where a pinned NPC is stored at perChat level.
- * Returns null if the NPC is not pinned per-chat.
- */
-function GetPinChatId(name) {
-    if (!gPinRegistry || !name) return null;
-    const normalized = NormalizeName(name);
-
-    if (gPinRegistry.chats) {
-        for (const [chatId, pins] of Object.entries(gPinRegistry.chats)) {
-            if (Array.isArray(pins) && pins.some(n => NormalizeName(n) === normalized)) {
-                return chatId;
-            }
-        }
-    }
-    return null;
-}
-
-/**
  * Get the avatar key for a chat ID by parsing the chat ID format.
  * SillyTavern chat IDs are like "Komac - 2025-06-03@16h52m23s410ms"
  * The avatar can be found by matching the character name prefix.
@@ -4594,52 +4523,12 @@ function RenderNsfw(nsfw) {
     </div>`;
 }
 
-function RenderUnifiedThoughts(thoughts) {
-    if (!Array.isArray(thoughts) || !thoughts.length) return "";
-
-    const thoughtsIcon = GetThemeRelationsIcon() === "🤍" ? "💭" : GetThemeRelationsIcon();
-    const thoughtsLabel = T("privateThoughts");
-
-    const items = thoughts.map(t => {
-        const name = EscapeHtml(t.name || "");
-        const text = EscapeHtml(t.text || "");
-        if (!text) return "";
-        // Show thoughts even if name is __UNASSIGNED__ - just label them differently
-        if (!name || name === "__UNASSIGNED__") {
-            return `<div class="ib-thought-item"><span class="ib-thought-name">💭</span> <span class="ib-thought-text">${text}</span></div>`;
-        }
-        return `<div class="ib-thought-item"><span class="ib-thought-name">${name}:</span> <span class="ib-thought-text">${text}</span></div>`;
-    }).filter(Boolean).join("");
-
-    if (!items) return "";
-
-    return `
-    <div class="ib-section ib-section-thoughts">
-        <div class="ib-section-title">💭 ${thoughtsLabel}</div>
-        <div class="ib-thoughts-list" data-ib-autoscroll="true">${items}</div>
-    </div>`;
-}
-
 function RelationHasDelta(r) {
     return (
         (parseInt(r.ac) || 0) !== 0 ||
         (parseInt(r.tc) || 0) !== 0 ||
         (parseInt(r.lc) || 0) !== 0
     );
-}
-
-function RenderCompactDeltaLine(r) {
-    const parts = [];
-
-    const ac = parseInt(r.ac) || 0;
-    const tc = parseInt(r.tc) || 0;
-    const lc = parseInt(r.lc) || 0;
-
-    if (ac !== 0) parts.push(`<span class="${ac > 0 ? "ib-delta-pos" : "ib-delta-neg"}">A ${EscapeHtml(SignedText(ac))}</span>`);
-    if (tc !== 0) parts.push(`<span class="${tc > 0 ? "ib-delta-pos" : "ib-delta-neg"}">T ${EscapeHtml(SignedText(tc))}</span>`);
-    if (lc !== 0) parts.push(`<span class="${lc > 0 ? "ib-delta-pos" : "ib-delta-neg"}">L ${EscapeHtml(SignedText(lc))}</span>`);
-
-    return parts.join(`<span class="ib-compact-dot">·</span>`);
 }
 
 function RenderCompactRelations(state, prevState = null) {
@@ -6248,20 +6137,6 @@ function ShouldRenderFloatingBoard() {
     return gDisplayFloating;
 }
 
-// TODO: use in RenderPanelBoard
-function ShouldRenderPanelBoard() {
-    return gDisplayPanel;
-}
-
-function GetDefaultBoardMode(renderContext) {
-    const mode = renderContext || "inline";
-    switch (mode) {
-        case "inline": return gDefaultBoardModeInline;
-        case "floating": return gDefaultBoardModeFloating;
-        case "panel": return gDefaultBoardModePanel;
-        default: return gDefaultBoardModeInline;
-    }
-}
 
 function RemoveFloatingBoard() {
     const host = document.getElementById("ib_floating_host");
@@ -6376,7 +6251,7 @@ function GetFloatingLayout() {
 }
 
 function SaveFloatingLayout(host) {
-    if (!host) return;
+    if (!host || !host.isConnected) return;
 
     const rect = host.getBoundingClientRect();
 
@@ -6539,20 +6414,12 @@ function WatchFloatingResize(host) {
     }
 
     let timer = null;
-    let isResizing = false;
 
     const observer = new ResizeObserver(() => {
-        // Disable backdrop-filter during resize for smoothness
-        if (!isResizing) {
-            isResizing = true;
-            host.classList.add("ib-floating-resizing");
-        }
         clearTimeout(timer);
         timer = setTimeout(() => {
-            isResizing = false;
-            host.classList.remove("ib-floating-resizing");
             SaveFloatingLayout(host);
-        }, 200);
+        }, 250);
     });
 
     observer.observe(host);
@@ -7243,27 +7110,6 @@ function UpdateRollingState(state, patched) {
     state.nsfw = patched.nsfw || null;
 }
 
-function ApplyParsedToState(parsed, msgIndex) {
-    if (parsed.rawXml) {
-        gLastRawXml = parsed.rawXml;
-        if (msgIndex !== undefined) gLastRawXmlMsgIndex = msgIndex;
-    }
-    
-    // Сохраняем предыдущие отношения для уведомлений
-    const prevRels = structuredClone(gState.rels || []);
-
-    // Применяем патч закрепленных персонажей (используем gState как предыдущее состояние)
-    const patched = PatchPinnedData(parsed, gState);
-
-    // Обновляем глобальное состояние
-    UpdateRollingState(gState, patched);
-    
-    // Добавляем запись в таймлайн
-    AddTimelineEntry(gState.rels);
-    
-    // Проверяем значимые изменения для уведомлений
-    CheckAndNotifyChanges(prevRels, gState.rels);
-}
 
 function AutoScrollThoughts(boardEl) {
     if (!boardEl) return;
@@ -7845,40 +7691,6 @@ async function ImportStateFromFile(file) {
     } catch (e) {
         console.error("[IB] Import failed:", e);
         alert(T("importFail"));
-    }
-}
-
-// ============== Fallback Prompt Injection ==============
-// Used when the macro system is unavailable (e.g. ST 1.13+ with changed API)
-function RegisterFallbackPromptInjection(stContext) {
-    if (!stContext?.eventSource || !stContext?.eventTypes) {
-        console.warn("[IB] No event system available for fallback injection");
-        return;
-    }
-
-    // Inject via GENERATION_STARTED event (legacy approach)
-    if (stContext.eventTypes.GENERATION_STARTED) {
-        stContext.eventSource.on(stContext.eventTypes.GENERATION_STARTED, () => {
-            if (!gEnabled) return;
-            try {
-                const systemPrompt = gLang === "en" ? kSystemPromptEn : kSystemPromptRu;
-                const stateBlock = BuildStateInjection();
-                const fullPrompt = `${systemPrompt}\n\n${stateBlock}`;
-
-                // Try to set the extension prompt via SillyTavern's setExtensionPrompt
-                if (typeof SillyTavern !== 'undefined' && SillyTavern.getContext) {
-                    const ctx = SillyTavern.getContext();
-                    if (ctx.setExtensionPrompt) {
-                        ctx.setExtensionPrompt('InfoBoard', fullPrompt, gInjectPosition, gInjectDepth, true);
-                    }
-                }
-            } catch (e) {
-                console.warn("[IB] Fallback prompt injection failed:", e?.message);
-            }
-        });
-        console.log("[IB] Registered fallback prompt injection via GENERATION_STARTED");
-    } else {
-        console.warn("[IB] GENERATION_STARTED event not available — prompt injection disabled");
     }
 }
 

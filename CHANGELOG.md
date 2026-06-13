@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] — 13 June 20206
+
+### Changed
+
+- **Removed 11 unused/dead functions** — codebase cleanup eliminating functions with zero callers or functionality absorbed elsewhere:
+  - `HexToRgb()`, `RgbToHex()`, `BlendColors()` — color utility functions never called outside `BlendColors` itself (no theme or rendering code uses programmatic color blending).
+  - `GetPinCharKey()`, `GetPinChatId()` — pin lookup helpers with zero callers; their resolution logic is inlined where needed.
+  - `RenderUnifiedThoughts()` — superseded by per-NPC `RenderThoughtForNpc()` since v2.2.0, which renders thoughts inside individual relation cards rather than as a separate unified section.
+  - `RenderCompactDeltaLine()` — unused compact delta renderer; compact mode uses `RenderCompactRelations()` directly.
+  - `ShouldRenderPanelBoard()` — marked with a TODO comment ("use in RenderPanelBoard") but never actually called; the panel rendering path checks `gDisplayPanel` directly.
+  - `GetDefaultBoardMode()` — never called; the default board mode selection logic is inlined at the call sites.
+  - `ApplyParsedToState()` — its logic (PatchPinnedData → UpdateRollingState → AddTimelineEntry → CheckAndNotifyChanges) has been absorbed directly into the caller sites (`ReprocessChat` and `RebuildStateFromCurrentChat`), where each step is applied inline with more granular control over the pipeline.
+  - `RegisterFallbackPromptInjection()` — legacy `GENERATION_STARTED` event handler that was superseded by the macro system and `setExtensionPrompt` auto-inject; no longer needed for SillyTavern 1.12+.
+
+- **Floating board ResizeObserver simplified** — removed the `isResizing` flag and `ib-floating-resizing` CSS class toggling that disabled `backdrop-filter` during resize. The observer now only performs a debounced `SaveFloatingLayout()` call (debounce increased from 200 ms to 250 ms), eliminating unnecessary DOM class manipulation during resize.
+
+- **`SaveFloatingLayout()` guard** — added `|| !host.isConnected` check to prevent saving layout data from a DOM element that has been detached from the document, which could produce invalid or zeroed coordinates.
+
+- **Panel resize: removed `will-change: width`** — the `will-change: width` property on `#ib_panel_host.ib-panel-resizing` promoted the element to its own compositor layer during resize, causing unnecessary GPU memory allocation. Removed since the existing `transition: none !important` rule already prevents layout thrashing.
+
+- **CSS whitespace normalization** — replaced tab characters with spaces in `#ib_sp_panel_position_row label`, `.ib-depth-input-compact`, and inline display mode selectors for consistent formatting.
+
+### Fixed
+
+- **Floating board resize visual glitch** — the `ib-floating-resizing` CSS class toggling could cause a visible flash when `backdrop-filter` was re-enabled after resize ended, particularly noticeable on themes with heavy blur. Removed the class toggling entirely; the simplified ResizeObserver avoids any visual side effects.
+
 ## [2.4.0] — 12 June 2026
 
 ### Added
@@ -271,6 +297,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`EscapeRegex()` removed** — no longer needed after the parsing overhaul.
 
+[2.5.0]: https://github.com/Proquror/SillyTavern-Infoboard-Extended/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/Proquror/SillyTavern-Infoboard-Extended/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/Proquror/SillyTavern-Infoboard-Extended/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/Proquror/SillyTavern-Infoboard-Extended/compare/v2.1.0...v2.2.0
