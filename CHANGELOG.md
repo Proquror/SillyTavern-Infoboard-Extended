@@ -31,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Floating board resize visual glitch** — the `ib-floating-resizing` CSS class toggling could cause a visible flash when `backdrop-filter` was re-enabled after resize ended, particularly noticeable on themes with heavy blur. Removed the class toggling entirely; the simplified ResizeObserver avoids any visual side effects.
 
+- **Pins expand arrow points wrong direction after expanding** — after clicking the "Other pins" expand button, the arrow remained pointing upward despite the section being expanded and the label reading "Collapse". The root cause was a double-flip: JS changed the character from `▾` to `▴` (inverting direction) while CSS simultaneously applied `rotate(180deg)` (inverting again), resulting in the arrow visually ending up in the same orientation it started. Removed the JS `textContent` mutation; CSS rotation now handles the flip alone.
+
+- **Settings popup `ib_sp_inject_depth` ignores manual input** — typing a depth value into the settings popup input field did not save it. `addEventListener("input change", fn)` is not valid native DOM API (space-separated events are a jQuery feature), so the listener was registered on a non-existent event name and never fired. Split into two separate `addEventListener` calls on `"input"` and `"change"`.
+
 ## [2.4.0] — 12 June 2026
 
 ### Added
