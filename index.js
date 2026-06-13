@@ -5072,15 +5072,17 @@ function RenderSettingsPopup(btn) {
         syncSidebar();
     });
 
-    // Depth input
-    popup.querySelector("#ib_sp_inject_depth").addEventListener("input change", function() {
+    // Depth input in setings popup
+    const spDepthHandler = function() {
         gInjectDepth = parseInt(this.value);
         if (isNaN(gInjectDepth) || gInjectDepth < 0) gInjectDepth = 0;
         if (gInjectDepth > 999) gInjectDepth = 999;
         this.value = gInjectDepth;
         localStorage.setItem(kInjectDepthKey, String(gInjectDepth));
         syncSidebar();
-    });
+    };
+    popup.querySelector("#ib_sp_inject_depth").addEventListener("input", spDepthHandler);
+    popup.querySelector("#ib_sp_inject_depth").addEventListener("change", spDepthHandler);
 
     // Depth ± buttons
     popup.querySelector("#ib_sp_depth_minus").addEventListener("click", function() {
@@ -5660,9 +5662,7 @@ function WireBoardControls(boardEl, prevState) {
                 newOtherList.classList.add("ib-pins-other-list-expanded");
                 newExpandBtn.classList.add("ib-pins-expand-btn-expanded");
                 popup.classList.add("ib-pins-expanded");
-                const arrow = newExpandBtn.querySelector(".ib-pins-expand-arrow");
                 const label = newExpandBtn.querySelector(".ib-pins-expand-label");
-                if (arrow) arrow.textContent = "▴";
                 if (label) label.textContent = T("pinsCollapseOther");
             }
         }
@@ -5696,13 +5696,10 @@ function WireBoardControls(boardEl, prevState) {
                 const isExpanded = otherList.classList.toggle("ib-pins-other-list-expanded");
                 expandBtn.classList.toggle("ib-pins-expand-btn-expanded", isExpanded);
                 popup.classList.toggle("ib-pins-expanded", isExpanded);
-                const arrow = expandBtn.querySelector(".ib-pins-expand-arrow");
                 const label = expandBtn.querySelector(".ib-pins-expand-label");
                 if (isExpanded) {
-                    if (arrow) arrow.textContent = "▴";
                     if (label) label.textContent = T("pinsCollapseOther");
                 } else {
-                    if (arrow) arrow.textContent = "▾";
                     if (label) label.textContent = T("pinsExpandOther");
                 }
             });
@@ -5908,13 +5905,10 @@ function WireBoardControls(boardEl, prevState) {
                     const isExpanded = otherList.classList.toggle("ib-pins-other-list-expanded");
                     expandBtn.classList.toggle("ib-pins-expand-btn-expanded", isExpanded);
                     popup.classList.toggle("ib-pins-expanded", isExpanded);
-                    const arrow = expandBtn.querySelector(".ib-pins-expand-arrow");
                     const label = expandBtn.querySelector(".ib-pins-expand-label");
                     if (isExpanded) {
-                        if (arrow) arrow.textContent = "▴";
                         if (label) label.textContent = T("pinsCollapseOther");
                     } else {
-                        if (arrow) arrow.textContent = "▾";
                         if (label) label.textContent = T("pinsExpandOther");
                     }
                 });
