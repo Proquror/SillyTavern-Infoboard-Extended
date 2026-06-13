@@ -2396,12 +2396,12 @@ if (handle) {
             document.removeEventListener('pointerup', onUp);
             document.body.style.userSelect = '';
             document.body.style.webkitUserSelect = '';
-			host.classList.remove("ib-panel-resizing");
-			document.body.style.setProperty('--ib-panel-width', gPanelWidth + 'px');
+                        host.classList.remove("ib-panel-resizing");
+                        document.body.style.setProperty('--ib-panel-width', gPanelWidth + 'px');
             localStorage.setItem(kPanelWidthKey, String(gPanelWidth));
         };
         handle.addEventListener('pointerdown', (e) => {
-			host.classList.add("ib-panel-resizing");
+                        host.classList.add("ib-panel-resizing");
             e.preventDefault();
             startX = e.clientX;
             startW = host.offsetWidth;
@@ -2468,27 +2468,6 @@ function RelsEqual(a, b) {
         }
     }
     return true;
-}
-
-function HexToRgb(hex) {
-    const m = String(hex || '').match(/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);
-    if (!m) return null;
-    return { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) };
-}
-
-function RgbToHex(r, g, b) {
-    return '#' + [r, g, b].map(c => Math.round(Clamp(c, 0, 255)).toString(16).padStart(2, '0')).join('');
-}
-
-function BlendColors(hex1, hex2, ratio) {
-    const c1 = HexToRgb(hex1);
-    const c2 = HexToRgb(hex2);
-    if (!c1) return hex2 || '#888888';
-    if (!c2) return hex1;
-    const r = Math.round(c1.r + (c2.r - c1.r) * ratio);
-    const g = Math.round(c1.g + (c2.g - c1.g) * ratio);
-    const b = Math.round(c1.b + (c2.b - c1.b) * ratio);
-    return RgbToHex(r, g, b);
 }
 
 function EscapeHtml(str) {
@@ -3537,56 +3516,6 @@ function NavigateToCharacterCard(avatarKey) {
 }
 
 /**
- * Get the avatar key (e.g. "Komac.png") for a pinned NPC at a given level.
- * Returns null if not found.
- */
-function GetPinCharKey(name) {
-    if (!gPinRegistry || !name) return null;
-    const normalized = NormalizeName(name);
-
-    // Check perChar — find which character has this pin
-    if (gPinRegistry.characters) {
-        for (const [key, entry] of Object.entries(gPinRegistry.characters)) {
-            const pins = Array.isArray(entry?.pins) ? entry.pins : (Array.isArray(entry) ? entry : []);
-            if (pins.some(n => NormalizeName(n) === normalized)) {
-                return key; // avatar key like "Komac.png"
-            }
-        }
-    }
-
-    // Check global — use snapshot to find the character card
-    if ((gPinRegistry.global || []).some(n => NormalizeName(n) === normalized)) {
-        // Try to find the character by NPC name in the character list
-        try {
-            const ctx = SillyTavern.getContext();
-            const chars = ctx.characters || [];
-            const match = chars.find(c => NamesLikelyMatch(c.name, name));
-            if (match?.avatar) return match.avatar;
-        } catch {}
-    }
-
-    return null;
-}
-
-/**
- * Get the chat ID where a pinned NPC is stored at perChat level.
- * Returns null if the NPC is not pinned per-chat.
- */
-function GetPinChatId(name) {
-    if (!gPinRegistry || !name) return null;
-    const normalized = NormalizeName(name);
-
-    if (gPinRegistry.chats) {
-        for (const [chatId, pins] of Object.entries(gPinRegistry.chats)) {
-            if (Array.isArray(pins) && pins.some(n => NormalizeName(n) === normalized)) {
-                return chatId;
-            }
-        }
-    }
-    return null;
-}
-
-/**
  * Get the avatar key for a chat ID by parsing the chat ID format.
  * SillyTavern chat IDs are like "Komac - 2025-06-03@16h52m23s410ms"
  * The avatar can be found by matching the character name prefix.
@@ -4594,52 +4523,12 @@ function RenderNsfw(nsfw) {
     </div>`;
 }
 
-function RenderUnifiedThoughts(thoughts) {
-    if (!Array.isArray(thoughts) || !thoughts.length) return "";
-
-    const thoughtsIcon = GetThemeRelationsIcon() === "🤍" ? "💭" : GetThemeRelationsIcon();
-    const thoughtsLabel = T("privateThoughts");
-
-    const items = thoughts.map(t => {
-        const name = EscapeHtml(t.name || "");
-        const text = EscapeHtml(t.text || "");
-        if (!text) return "";
-        // Show thoughts even if name is __UNASSIGNED__ - just label them differently
-        if (!name || name === "__UNASSIGNED__") {
-            return `<div class="ib-thought-item"><span class="ib-thought-name">💭</span> <span class="ib-thought-text">${text}</span></div>`;
-        }
-        return `<div class="ib-thought-item"><span class="ib-thought-name">${name}:</span> <span class="ib-thought-text">${text}</span></div>`;
-    }).filter(Boolean).join("");
-
-    if (!items) return "";
-
-    return `
-    <div class="ib-section ib-section-thoughts">
-        <div class="ib-section-title">💭 ${thoughtsLabel}</div>
-        <div class="ib-thoughts-list" data-ib-autoscroll="true">${items}</div>
-    </div>`;
-}
-
 function RelationHasDelta(r) {
     return (
         (parseInt(r.ac) || 0) !== 0 ||
         (parseInt(r.tc) || 0) !== 0 ||
         (parseInt(r.lc) || 0) !== 0
     );
-}
-
-function RenderCompactDeltaLine(r) {
-    const parts = [];
-
-    const ac = parseInt(r.ac) || 0;
-    const tc = parseInt(r.tc) || 0;
-    const lc = parseInt(r.lc) || 0;
-
-    if (ac !== 0) parts.push(`<span class="${ac > 0 ? "ib-delta-pos" : "ib-delta-neg"}">A ${EscapeHtml(SignedText(ac))}</span>`);
-    if (tc !== 0) parts.push(`<span class="${tc > 0 ? "ib-delta-pos" : "ib-delta-neg"}">T ${EscapeHtml(SignedText(tc))}</span>`);
-    if (lc !== 0) parts.push(`<span class="${lc > 0 ? "ib-delta-pos" : "ib-delta-neg"}">L ${EscapeHtml(SignedText(lc))}</span>`);
-
-    return parts.join(`<span class="ib-compact-dot">·</span>`);
 }
 
 function RenderCompactRelations(state, prevState = null) {
@@ -5266,12 +5155,15 @@ function RenderSettingsPopup(btn) {
     const spCountConfirm = popup.querySelector("#ib_sp_count_confirm");
     let spCountSaved = gInlineBoardCount; // last applied value
 
+    const spBoardModeSelect = popup.querySelector("#ib_sp_board_mode_inline");
     function spCountShowConfirm() {
         spCountConfirm.style.display = "inline-flex";
+        if (spBoardModeSelect) spBoardModeSelect.style.display = "none";
     }
     function spCountHideConfirm() {
         spCountConfirm.style.display = "none";
         spCountField.value = spCountSaved;
+        if (spBoardModeSelect) spBoardModeSelect.style.display = gDisplayInline ? "" : "none";
     }
     function spCountApply() {
         let v = parseInt(spCountField.value);
@@ -5283,6 +5175,7 @@ function RenderSettingsPopup(btn) {
         spCountSaved = v;
         localStorage.setItem(kInlineBoardCountKey, String(gInlineBoardCount));
         spCountConfirm.style.display = "none";
+        if (spBoardModeSelect) spBoardModeSelect.style.display = gDisplayInline ? "" : "none";
         ReprocessChat(); syncSidebar();
     }
 
@@ -6244,20 +6137,6 @@ function ShouldRenderFloatingBoard() {
     return gDisplayFloating;
 }
 
-// TODO: use in RenderPanelBoard
-function ShouldRenderPanelBoard() {
-    return gDisplayPanel;
-}
-
-function GetDefaultBoardMode(renderContext) {
-    const mode = renderContext || "inline";
-    switch (mode) {
-        case "inline": return gDefaultBoardModeInline;
-        case "floating": return gDefaultBoardModeFloating;
-        case "panel": return gDefaultBoardModePanel;
-        default: return gDefaultBoardModeInline;
-    }
-}
 
 function RemoveFloatingBoard() {
     const host = document.getElementById("ib_floating_host");
@@ -6372,7 +6251,7 @@ function GetFloatingLayout() {
 }
 
 function SaveFloatingLayout(host) {
-    if (!host) return;
+    if (!host || !host.isConnected) return;
 
     const rect = host.getBoundingClientRect();
 
@@ -6535,20 +6414,12 @@ function WatchFloatingResize(host) {
     }
 
     let timer = null;
-    let isResizing = false;
 
     const observer = new ResizeObserver(() => {
-        // Disable backdrop-filter during resize for smoothness
-        if (!isResizing) {
-            isResizing = true;
-            host.classList.add("ib-floating-resizing");
-        }
         clearTimeout(timer);
         timer = setTimeout(() => {
-            isResizing = false;
-            host.classList.remove("ib-floating-resizing");
             SaveFloatingLayout(host);
-        }, 200);
+        }, 250);
     });
 
     observer.observe(host);
@@ -6691,6 +6562,71 @@ function RemoveRawXmlFromText(messageTextEl) {
     }
 }
 
+/**
+ * Re-renders .mes_text content from the original msg.mes source.
+ *
+ * When hideRaw is true: strips <infoboard> and <nsfw> before rendering,
+ * so the browser never sees <thk> and thought leaks are impossible.
+ *
+ * When hideRaw is false: escapes <infoboard> and <nsfw> blocks so the
+ * browser renders XML tags as VISIBLE TEXT (e.g. "&lt;infoboard&gt;...")
+ * instead of creating invisible DOM elements that leave empty gaps.
+ * This lets the user see the raw XML the AI generated.
+ *
+ * msg.mes is NOT modified — only the DOM is affected.
+ * Returns true if re-render was performed, false if fallback needed.
+ */
+function RerenderMessageFromSource(messageTextEl, rawMes, hideRaw) {
+    if (!messageTextEl || !rawMes) return false;
+
+    // Only process messages that contain <infoboard>
+    if (!/<infoboard/i.test(rawMes)) return false;
+
+    // Determine what text to render
+    let textToRender;
+
+    if (hideRaw) {
+        // Strip <infoboard> block and standalone <nsfw> from raw message text.
+        // <nsfw> can appear outside <infoboard> and must also be hidden when gHideRaw is on.
+        const cleanMes = rawMes
+            .replace(/<infoboard[^>]*>[\s\S]*?<\/infoboard>/gi, "")
+            .replace(/<nsfw\b[^>]*\/?>/gi, "")
+            .trim();
+        // If nothing was stripped, no need to re-render
+        if (cleanMes === rawMes.trim()) return false;
+        textToRender = cleanMes;
+    } else {
+        // Escape <infoboard> and <nsfw> blocks so the browser shows XML
+        // tags as visible text instead of creating invisible DOM elements.
+        // Without this, the browser parses <infoboard>, <chars>, <c>, <thk>
+        // as unknown HTML elements — they become invisible but take up space,
+        // resulting in "empty indents" with only the text content visible.
+        textToRender = rawMes
+            .replace(/<infoboard[^>]*>[\s\S]*?<\/infoboard>/gi, match =>
+                match.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            )
+            .replace(/<nsfw\b[^>]*\/?>/gi, match =>
+                match.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            );
+    }
+
+    // Use ST's messageFormatting to render the text
+    try {
+        const stContext = SillyTavern.getContext();
+        if (typeof stContext.messageFormatting === "function") {
+            const name1 = stContext.name1 || "";
+            const name2 = stContext.name2 || "";
+            const rendered = stContext.messageFormatting(textToRender, name1, name2, false, -1);
+            messageTextEl.innerHTML = rendered;
+            return true;
+        }
+    } catch (e) {
+        console.warn("[Infoboard] messageFormatting not available, falling back to surgical cleanup", e);
+    }
+
+    return false;
+}
+
 function RemoveThoughtLeaksInContainer(messageTextEl, parsed) {
     if (!messageTextEl || !parsed?.thoughts?.length) return;
 
@@ -6786,7 +6722,12 @@ function RemoveThoughtLeaksInContainer(messageTextEl, parsed) {
         return false;
     }
 
-    // Collect all target text nodes via TreeWalker (single DOM pass)
+    // Collect all non-empty text nodes outside the board via TreeWalker.
+    // OPT-3: We do NOT call IsLeakedThoughtLine here — that's the most expensive
+    // function in this module (ParseThoughtLine + NormalizeThoughtText +
+    // ThoughtOwnerMatchesNpc + LooksLikeStandaloneThoughtFragment). Previously
+    // it ran in acceptNode AND again in the processing loop below = 2× cost.
+    // Now we accept all non-empty text nodes and filter once in the loop.
     const walker = document.createTreeWalker(
         messageTextEl,
         NodeFilter.SHOW_TEXT,
@@ -6796,14 +6737,9 @@ function RemoveThoughtLeaksInContainer(messageTextEl, parsed) {
                 if (node.parentElement.closest(".ib-board-host, .ib-board")) {
                     return NodeFilter.FILTER_REJECT;
                 }
-
-                const raw = node.textContent || "";
-                if (!raw.trim()) return NodeFilter.FILTER_SKIP;
-
-                const lines = raw.split(/\r?\n/);
-                const hasLeak = lines.some(IsLeakedThoughtLine);
-
-                return hasLeak ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+                return (node.textContent || "").trim()
+                    ? NodeFilter.FILTER_ACCEPT
+                    : NodeFilter.FILTER_SKIP;
             }
         }
     );
@@ -6816,6 +6752,7 @@ function RemoveThoughtLeaksInContainer(messageTextEl, parsed) {
         current = walker.nextNode();
     }
 
+    // Single pass: IsLeakedThoughtLine called exactly ONCE per line
     for (const node of textTargets) {
         const raw = node.textContent || "";
         const lines = raw.split(/\r?\n/);
@@ -6823,7 +6760,10 @@ function RemoveThoughtLeaksInContainer(messageTextEl, parsed) {
         const kept = lines.filter(line => !IsLeakedThoughtLine(line));
         const next = kept.join("\n").replace(/\n{3,}/g, "\n\n");
 
-        node.textContent = next;
+        // Skip DOM write if nothing changed (avoids unnecessary layout invalidation)
+        if (next !== raw) {
+            node.textContent = next;
+        }
     }
 
     // Pass 2: Remove entire block-level elements that only contain a leaked thought
@@ -7170,27 +7110,6 @@ function UpdateRollingState(state, patched) {
     state.nsfw = patched.nsfw || null;
 }
 
-function ApplyParsedToState(parsed, msgIndex) {
-    if (parsed.rawXml) {
-        gLastRawXml = parsed.rawXml;
-        if (msgIndex !== undefined) gLastRawXmlMsgIndex = msgIndex;
-    }
-    
-    // Сохраняем предыдущие отношения для уведомлений
-    const prevRels = structuredClone(gState.rels || []);
-
-    // Применяем патч закрепленных персонажей (используем gState как предыдущее состояние)
-    const patched = PatchPinnedData(parsed, gState);
-
-    // Обновляем глобальное состояние
-    UpdateRollingState(gState, patched);
-    
-    // Добавляем запись в таймлайн
-    AddTimelineEntry(gState.rels);
-    
-    // Проверяем значимые изменения для уведомлений
-    CheckAndNotifyChanges(prevRels, gState.rels);
-}
 
 function AutoScrollThoughts(boardEl) {
     if (!boardEl) return;
@@ -7297,7 +7216,7 @@ function ReprocessChat() {
         if (!parsed) {
             // Try to extract raw thought lines from broken XML for leak cleanup
             const rawThoughts = ExtractRawThoughts(stMsg.mes || "");
-            renderQueue.push({ type: "noBoard", mesTextEl, rawThoughts });
+            renderQueue.push({ type: "noBoard", mesTextEl, rawThoughts, rawMes: stMsg.mes || "" });
             return;
         }
 
@@ -7332,7 +7251,7 @@ function ReprocessChat() {
             }
         }
 
-        renderQueue.push({ type: "board", mesTextEl, parsed, patchedParsed, prevState });
+        renderQueue.push({ type: "board", mesTextEl, parsed, patchedParsed, prevState, rawMes: stMsg.mes || "" });
     });
 
     // Finalize state (sync — gState is now correct even before DOM renders)
@@ -7383,16 +7302,51 @@ function ReprocessChat() {
  * Phase 2a: Synchronous cleanup of ALL messages in the render queue.
  * Removes raw XML, thought leaks, and stale board hosts.
  * Runs as a single synchronous batch — browser performs ONE layout recalc after.
+ *
+ * Strategy: always re-render from msg.mes (source of truth) when available.
+ * - gHideRaw on:  strip <infoboard> before re-render → no <thk> in DOM → no leaks.
+ * - gHideRaw off: re-render from raw msg.mes → full DOM restored → surgical cleanup
+ *   can work correctly on real content, and user sees raw XML if they want.
+ *
+ * Falls back to surgical cleanup when:
+ * - message has no <infoboard>
+ * - messageFormatting is unavailable
  */
 function _syncCleanupAll(queue) {
     for (const item of queue) {
-        // 1. Remove custom XML elements (infoboard, chars, rels, c, rel, thk, nsfw)
+        // 1. Re-render from msg.mes (source of truth)
+        //    Always attempt this when rawMes is available, so that:
+        //    - gHideRaw=true:  <infoboard> stripped → no <thk> in DOM → no thought leaks
+        //    - gHideRaw=false: <infoboard> escaped → XML shows as visible text,
+        //      no invisible DOM elements → no empty gaps
+        if (item.rawMes) {
+            const rerendered = RerenderMessageFromSource(item.mesTextEl, item.rawMes, gHideRaw);
+            if (rerendered) {
+                // Re-render succeeded — no surgical cleanup needed.
+                // When gHideRaw=true: XML stripped, nothing to clean.
+                // When gHideRaw=false: XML escaped to text, no DOM elements to clean.
+                // Just remove stale board hosts and empty nodes.
+                const host = item.mesTextEl.querySelector(".ib-board-host");
+                if (host) host.remove();
+                CleanupEmptyMessageNodes(item.mesTextEl);
+                continue;
+            }
+        }
+
+        // 2. Fallback: surgical cleanup (re-render not available)
+        //    This path runs when rawMes is missing or messageFormatting failed.
+        //    CleanupRawInfoboardDom removes browser-parsed XML DOM elements.
+        //    It is gated by gHideRaw because when gHideRaw is off and we
+        //    couldn't re-render, the user sees ST's original DOM (with the
+        //    same empty-gap issue as the original KanonMama extension).
         CleanupRawInfoboardDom(item.mesTextEl);
 
-        // 2. Remove raw XML from text nodes
-        RemoveRawXmlFromText(item.mesTextEl);
+        // 3. Remove text-level XML patterns — only when user wants XML hidden.
+        if (gHideRaw) {
+            RemoveRawXmlFromText(item.mesTextEl);
+        }
 
-        // 3. Remove thought leaks
+        // 4. Remove thought leaks
         if (item.type === "noBoard") {
             // Broken XML — use simple text matching fallback
             if (gHideThoughtLeaks && item.rawThoughts) {
@@ -7405,12 +7359,12 @@ function _syncCleanupAll(queue) {
             }
         }
 
-        // 4. Remove stale board host — will be re-created by RenderBoardIntoMessage
+        // 5. Remove stale board host — will be re-created by RenderBoardIntoMessage
         //    if inline mode is on, otherwise stays removed
         const host = item.mesTextEl.querySelector(".ib-board-host");
         if (host) host.remove();
 
-        // 5. Remove orphaned empty text nodes
+        // 6. Remove orphaned empty text nodes
         CleanupEmptyMessageNodes(item.mesTextEl);
     }
 }
@@ -7737,40 +7691,6 @@ async function ImportStateFromFile(file) {
     } catch (e) {
         console.error("[IB] Import failed:", e);
         alert(T("importFail"));
-    }
-}
-
-// ============== Fallback Prompt Injection ==============
-// Used when the macro system is unavailable (e.g. ST 1.13+ with changed API)
-function RegisterFallbackPromptInjection(stContext) {
-    if (!stContext?.eventSource || !stContext?.eventTypes) {
-        console.warn("[IB] No event system available for fallback injection");
-        return;
-    }
-
-    // Inject via GENERATION_STARTED event (legacy approach)
-    if (stContext.eventTypes.GENERATION_STARTED) {
-        stContext.eventSource.on(stContext.eventTypes.GENERATION_STARTED, () => {
-            if (!gEnabled) return;
-            try {
-                const systemPrompt = gLang === "en" ? kSystemPromptEn : kSystemPromptRu;
-                const stateBlock = BuildStateInjection();
-                const fullPrompt = `${systemPrompt}\n\n${stateBlock}`;
-
-                // Try to set the extension prompt via SillyTavern's setExtensionPrompt
-                if (typeof SillyTavern !== 'undefined' && SillyTavern.getContext) {
-                    const ctx = SillyTavern.getContext();
-                    if (ctx.setExtensionPrompt) {
-                        ctx.setExtensionPrompt('InfoBoard', fullPrompt, gInjectPosition, gInjectDepth, true);
-                    }
-                }
-            } catch (e) {
-                console.warn("[IB] Fallback prompt injection failed:", e?.message);
-            }
-        });
-        console.log("[IB] Registered fallback prompt injection via GENERATION_STARTED");
-    } else {
-        console.warn("[IB] GENERATION_STARTED event not available — prompt injection disabled");
     }
 }
 

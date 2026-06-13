@@ -938,9 +938,31 @@
     white-space: nowrap;
     margin-left: 20px;
 }
+
+.ib-inline-mode-wrap {
+    min-width: 0;
+    width: 100%;
+}
+
 .ib-inline-mode-wrap select {
-    width: 350px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     font-size: 12px;
+}
+
+.ib-display-modes-section {
+    min-width: 0;
+}
+
+.ib-display-mode-item {
+    min-width: 0;
+}
+
+.ib-display-modes-section .ib-display-mode-item[data-mode="inline"] #ib_subrow_inline {
+    min-width: 0;
+    overflow: hidden;
 }
 
 .ib-settings select {
@@ -1270,6 +1292,11 @@
 .ib-sp-inline-select {
     width: 100px;
     min-width: unset;
+}
+
+#ib_sp_panel_position_row label {
+    padding-left: 24px;
+        padding-bottom: 8px;
 }
 
 .ib-sp-subhelp {
@@ -3980,14 +4007,7 @@
     -webkit-backdrop-filter: none !important;
 }
 
-/* Also disable backdrop during CSS resize */
-#ib_floating_host.ib-floating-resizing,
-#ib_floating_host.ib-floating-resizing .ib-floating-shell {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-}
-
-/* Also speed up resize — disable backdrop while resizing */
+/* No transition on floating host — avoid resize lag */
 #ib_floating_host {
     transition: none;
 }
@@ -13674,7 +13694,6 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 /* Disable transition + backdrop during panel resize */
 #ib_panel_host.ib-panel-resizing {
     transition: none !important;
-    will-change: width;
 }
 #ib_panel_host.ib-panel-resizing,
 #ib_panel_host.ib-panel-resizing * {
@@ -14589,6 +14608,7 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
     gap: 8px;
     width: 100%;
     margin-left: 0;
+        min-width: 0;
 }
 
 .ib-display-modes-section .ib-display-mode-item[data-mode="inline"] #ib_subrow_inline label {
@@ -14596,7 +14616,8 @@ content: "✦      ·\A   ✧      ·\A·       ✦" !important;
 }
 
 .ib-display-modes-section .ib-display-mode-item[data-mode="inline"] #ib_subrow_inline select {
-    width: 100%;
+    min-width: 0;
+        max-width: 100%
 }
 
 .ib-display-modes-section .ib-display-mode-item[data-mode="inline"] .ib-depth-input-compact {
