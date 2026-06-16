@@ -55,7 +55,6 @@ The following functionality comes from the original Infoboard project:
 - swipe / regeneration state preservation
 - chunked inline board rendering for long chats
 - debug XML editor
-
 - prompt encased in `<infoboard_rules>`
 - expanded prompt rules for user-action protection and narrative consistency
 - 7 presence levels exposed via a dedicated `presence=""` attribute (tag-based as fallback)
