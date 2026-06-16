@@ -45,7 +45,7 @@ The following functionality comes from the original Infoboard project:
 - 3-tier pin system (Per-Chat / Per-Character / Global) with snapshots
 - - expandable pins popup with `Pin Here` transfer option and `go to` navigation arrow
 - 2 `status` classifications (Positive / Neutral)
-- themes and options accessible via toolbar buttons
+- themes and settings accessible via toolbar buttons
 - - configurable inline infoboard count (default 5)
 - relationship timeline with zoom and milestones
 - toast notifications for relationship changes and pin actions
@@ -268,8 +268,6 @@ Toast-style notifications for relationship changes and pin actions:
 
 ## Toolbar
 
-The board includes a full **toolbar** with quick-access buttons:
-
 | Button | Action |
 |---|---|
 | 🎨 | Theme popup |
@@ -284,6 +282,8 @@ The board includes a full **toolbar** with quick-access buttons:
 ---
 
 ## Settings
+
+Quick-access floating popup (⚙️ button) has the same controls, available directly from the board. Changes sync bidirectionally. The popup inherits the current theme's color palette.
 
 Settings are available in two places:
 
@@ -308,10 +308,6 @@ Settings are available in two places:
 - reset state / reprocess chat
 - export / import full backup
 - custom CSS overrides
-
-### Board Toolbar Popup (⚙️ button)
-
-Quick-access floating popup with the same controls, available directly from the board. Changes sync bidirectionally. The popup inherits the current theme's color palette.
 
 ---
 
