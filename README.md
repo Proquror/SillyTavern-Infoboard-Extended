@@ -283,12 +283,6 @@ Toast-style notifications for relationship changes and pin actions:
 
 ## Settings
 
-Quick-access floating popup (⚙️ button) has the same controls, available directly from the board. Changes sync bidirectionally. The popup inherits the current theme's color palette.
-
-Settings are available in two places:
-
-### Extensions panel
-
 - enable / disable toggle
 - macro mode toggle with help text
 - inject position and depth
@@ -308,6 +302,8 @@ Settings are available in two places:
 - reset state / reprocess chat
 - export / import full backup
 - custom CSS overrides
+
+Quick-access floating popup (⚙️ button) has the same controls, available directly from the board. Changes sync bidirectionally. The popup inherits the current theme's color palette.
 
 ---
 
