@@ -213,25 +213,6 @@ Original board had a simple header. Extended has a full **toolbar** with buttons
 | 📥 | Import |
 | `</>` | Debug XML editor |
 
-### Themes (25, up from 18)
-
-Nocturne · Burgundy · Ash Rose · Cold Steel · Frostwhite · Pixel Arcade · Pink Bite · Violet Glass · Verdant Grove · Sandalwood · Gengar · System Log · Terminal · Oracle Moon · Blood Moon · Case File · Obsidian Registry · Neon Quest · **Shockwave** · **Lockdown** · **Hot Rod** · Gryffindor · Slytherin · Ravenclaw · Hufflepuff
-
-New themes: Shockwave (purple energy), Lockdown (sterile green), Hot Rod (orange/fire).
-
-Each theme now defines 7 additional properties: `green`, `dim`, `--ib-chip-text`, and full presence/status/mini-stat CSS variables.
-
-### Bar Styles (16, up from 13)
-
-Classic · Deep Neon · Glass Needle · Soft Matte · Pixel Blocks · Candy Gloss · Prism Glass · Neon Rails · Terminal Segments · **Heart Meter** · Constellation Stars · **Vials** · Evidence Tape · Runic Shards · **Sigil Bands** · **Energon**
-
-New bar styles: Heart Meter, Vials, Sigil Bands, Energon.
-
-Bar system now supports:
-- **Pattern fills** — repeating emoji/character patterns inside bar fills
-- **Emoji heads** — positioned at the fill tip
-- **Per-style height/radius/metric-method** configurations via `kBarStyleHeights`, `kBarStyleRadii`, `kBarStyleMetricMethod`, `kBarStyleColorSlots`
-
 ### CSS Architecture
 
 | Original | Extended |
