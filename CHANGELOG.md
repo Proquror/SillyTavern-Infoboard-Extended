@@ -203,7 +203,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `UpdateInjectDepthVisibility()` shows/hides the depth input depending on the selected position.
   - ± stepper buttons for depth adjustment in both sidebar and settings.
 
-- **New themes: Lockdown and Terminal** — two additional themes added to the existing 25-theme roster.
+- **New themes from upstream: Lockdown and Terminal.**
 
 - **Minimum SillyTavern version raised to 1.12.0** — `manifest.json` updated from `1.10.0` to `1.12.0`.
 
