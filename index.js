@@ -479,6 +479,16 @@ const kLang = {
         clearCustomCssConfirm: "Очистить пользовательский CSS?",
         cleanOrphanSnapshots: "Очистить осиротевшие снимки",
         cleanOrphanSnapshotsConfirm: "Удалить снимки данных закреплённых NPC, которые больше нигде не закреплены? Сами активные закрепы не затрагиваются.",
+        renameNpc: "Переименовать NPC",
+        renameNpcTitle: "Переименовать NPC",
+        renameNpcPromptSelect: "Выберите NPC для переименования:",
+        renameNpcPromptNew: "Новое имя (можно изменить регистр, опечатки, форму):",
+        renameNpcConfirm: "Применить переименование \"{old}\" → \"{new}\"?\n\nБудет обновлено:\n• Реестр закрепов и snapshot (если NPC закреплён)\n• XML name=«...» во всех сообщениях чата\n• Таймлайн и текущее состояние\n\nДействие необратимо.",
+        renameNpcNotFound: "NPC не найден",
+        renameNpcSameName: "Новое имя совпадает со старым",
+        renameNpcDone: "NPC переименован: {old} → {new}",
+        renameNpcFailed: "Не удалось переименовать NPC",
+        renameNpcNoneAvailable: "В чате пока нет ни одного NPC — отправьте сообщение с infoboard",
         pinEditor: "Редактор",
         allPins: "Все закрепы",
         allPinsUnpin: "Открепить",
@@ -645,6 +655,16 @@ unpinNpc: "Открепить NPC",
         clearCustomCssConfirm: "Clear custom CSS?",
         cleanOrphanSnapshots: "Clean Orphaned Snapshots",
         cleanOrphanSnapshotsConfirm: "Remove snapshot data for pinned NPCs that are no longer pinned anywhere? Active pins are not affected.",
+        renameNpc: "Rename NPC",
+        renameNpcTitle: "Rename NPC",
+        renameNpcPromptSelect: "Select NPC to rename:",
+        renameNpcPromptNew: "New name (you can fix case, typos, form):",
+        renameNpcConfirm: "Apply rename \"{old}\" → \"{new}\"?\n\nThis will update:\n• Pin registry and snapshots (if the NPC is pinned)\n• XML name=\"...\" in all chat messages\n• Timeline and current state\n\nThis action is irreversible.",
+        renameNpcNotFound: "NPC not found",
+        renameNpcSameName: "New name is identical to the old one",
+        renameNpcDone: "NPC renamed: {old} → {new}",
+        renameNpcFailed: "Failed to rename NPC",
+        renameNpcNoneAvailable: "No NPCs in the chat yet — send a message with an infoboard first",
         pinEditor: "Editor",
         allPins: "All Pins",
         allPinsUnpin: "Unpin",
@@ -4341,6 +4361,269 @@ function CleanPinRegistry() {
     }
 }
 
+/**
+ * Rename an NPC across the entire system:
+ *   1. (If pinned) gPinnedNpcs + gPinRegistry: global, characters[*].pins, chats[*].pins, pinSources
+ *   2. (If pinned) gPinRegistry.pinSnapshots — re-key from old normalized name to new
+ *   3. ctx.chat — rewrite XML attributes name="..." / source="..." in every
+ *      message that contains an <infoboard> block (this is what makes the rename
+ *      "stick" — ReprocessChat rebuilds gState/gTimeline from these messages)
+ *   4. gState, gTimeline — fully rebuilt via ReprocessChat
+ *
+ * Why rewrite the chat XML: a pure pin-registry rename would leave historical
+ * messages with the old name. ParseInfoboard would then return the old name
+ * for those messages, ReprocessChat would rebuild gState/gTimeline from them,
+ * and we'd be back to "ghosts" in the timeline.
+ *
+ * Works for ANY NPC — pinned or not. For non-pinned NPCs only steps 3-4 run.
+ *
+ * @param {string} oldName         - current display name as it appears in XML
+ * @param {string} newDisplayName  - desired final display name
+ */
+async function RenameNpc(oldName, newDisplayName) {
+    if (!oldName || !newDisplayName) throw new Error("Invalid arguments");
+    const oldNorm = NormalizeName(oldName);
+    const newNorm = NormalizeName(newDisplayName);
+    if (!oldNorm || !newNorm) throw new Error("Invalid name");
+    if (oldNorm === newNorm) return; // nothing to do
+
+    // --- Pin-registry migration (only if this NPC is actually pinned) ---
+    const isPinnedSomewhere =
+        (gPinnedNpcs.some(p => NormalizeName(p) === oldNorm)) ||
+        (gPinRegistry?.pinSnapshots?.[oldNorm] != null) ||
+        (gPinRegistry?.global || []).some(n => NormalizeName(n) === oldNorm) ||
+        Object.values(gPinRegistry?.characters || {}).some(e =>
+            (Array.isArray(e?.pins) ? e.pins : (Array.isArray(e) ? e : [])).some(n => NormalizeName(n) === oldNorm)
+        ) ||
+        Object.values(gPinRegistry?.chats || {}).some(e =>
+            (Array.isArray(e) ? e : (e?.pins || [])).some(n => NormalizeName(n) === oldNorm)
+        );
+
+    if (isPinnedSomewhere && gPinRegistry) {
+        // 1. Rename in gPinRegistry.global
+        if (Array.isArray(gPinRegistry.global)) {
+            gPinRegistry.global = gPinRegistry.global.map(n =>
+                NormalizeName(n) === oldNorm ? newDisplayName : n
+            );
+        }
+
+        // 2. Rename inside characters[*].pins
+        if (gPinRegistry.characters) {
+            for (const key of Object.keys(gPinRegistry.characters)) {
+                const entry = gPinRegistry.characters[key];
+                const pins = Array.isArray(entry?.pins) ? entry.pins : (Array.isArray(entry) ? entry : null);
+                if (!pins) continue;
+                for (let i = 0; i < pins.length; i++) {
+                    if (NormalizeName(pins[i]) === oldNorm) pins[i] = newDisplayName;
+                }
+            }
+        }
+
+        // 3. Rename inside chats[*].pins
+        if (gPinRegistry.chats) {
+            for (const key of Object.keys(gPinRegistry.chats)) {
+                const entry = gPinRegistry.chats[key];
+                const pins = Array.isArray(entry) ? entry : (entry?.pins || null);
+                if (!pins) continue;
+                for (let i = 0; i < pins.length; i++) {
+                    if (NormalizeName(pins[i]) === oldNorm) pins[i] = newDisplayName;
+                }
+            }
+        }
+
+        // 4. Re-key pinSnapshots — move snapshot from oldNorm to newNorm, update .name
+        if (gPinRegistry.pinSnapshots && gPinRegistry.pinSnapshots[oldNorm]) {
+            const snap = gPinRegistry.pinSnapshots[oldNorm];
+            snap.name = newDisplayName;
+            if (snap.rel?.source && NormalizeName(snap.rel.source) === oldNorm) {
+                snap.rel.source = newDisplayName;
+            }
+            if (snap.thought?.name && NormalizeName(snap.thought.name) === oldNorm) {
+                snap.thought.name = newDisplayName;
+            }
+            gPinRegistry.pinSnapshots[newNorm] = snap;
+            delete gPinRegistry.pinSnapshots[oldNorm];
+        }
+
+        // 5. Rename in pinSources (if present)
+        if (gPinRegistry.pinSources && gPinRegistry.pinSources[oldNorm]) {
+            gPinRegistry.pinSources[newNorm] = gPinRegistry.pinSources[oldNorm];
+            delete gPinRegistry.pinSources[oldNorm];
+        }
+
+        SavePinRegistry(gPinRegistry);
+
+        // Refresh in-memory pin list
+        gPinnedNpcs = ResolveActivePins();
+    }
+
+    // --- XML rewrite in chat (always — this is what makes the rename permanent) ---
+    // We replace the value of name="..." / source="..." attributes on <c>, <r>, <t>
+    // elements inside every <infoboard>...</infoboard> block when the value matches
+    // the old name. Fuzzy matching is intentionally NOT used here — we only replace
+    // exact (case-insensitive) matches so we don't accidentally rewrite similar-but-
+    // different NPCs.
+    const ctx = SillyTavern.getContext();
+    if (Array.isArray(ctx.chat)) {
+        let touchedMessages = 0;
+        for (let i = 0; i < ctx.chat.length; i++) {
+            const msg = ctx.chat[i];
+            if (!msg || msg.is_user) continue;
+            const mes = msg.mes || "";
+            if (!/<infoboard[\s>]/i.test(mes)) continue;
+
+            const newMes = mes.replace(
+                /(<infoboard[\s\S]*?<\/infoboard>)/gi,
+                (fullBlock) => fullBlock.replace(
+                    // Match <c ...>, <r ...>, <t ...> opening tags only
+                    /(<[crt]\b[^>]*>)/gi,
+                    (tag) => {
+                        // Replace name="OLD" → name="NEW" (case-insensitive value match)
+                        let out = tag.replace(
+                            /(\bname\s*=\s*")([^"]*)(")/gi,
+                            (m, prefix, val, suffix) => NormalizeName(val) === oldNorm
+                                ? `${prefix}${newDisplayName}${suffix}`
+                                : m
+                        );
+                        // Replace source="OLD" → source="NEW"
+                        out = out.replace(
+                            /(\bsource\s*=\s*")([^"]*)(")/gi,
+                            (m, prefix, val, suffix) => NormalizeName(val) === oldNorm
+                                ? `${prefix}${newDisplayName}${suffix}`
+                                : m
+                        );
+                        return out;
+                    }
+                )
+            );
+
+            if (newMes !== mes) {
+                msg.mes = newMes;
+                touchedMessages++;
+            }
+        }
+
+        if (touchedMessages > 0) {
+            if (typeof ctx.saveChat === "function") {
+                await ctx.saveChat();
+            } else if (typeof ctx.saveSettings === "function") {
+                await ctx.saveSettings();
+            }
+        }
+    }
+
+    // --- Rebuild state + timeline from scratch ---
+    ReprocessChat();
+}
+
+/**
+ * Shared click handler for "Rename NPC" buttons.
+ * Used by:
+ *   - Settings popup (#ib_sp_rename_npc)
+ *   - Settings HTML page (#ib_rename_npc)
+ *
+ * Builds a candidate list from every place NPC names can live (current state,
+ * pinned NPCs, snapshots, historical timeline entries), prompts the user for
+ * old → new name, and delegates to RenameNpc for the actual migration.
+ */
+async function handleRenameNpcClick() {
+    try {
+        // 1. Build the candidate list from every place NPC names can live:
+        //    - gState.chars / rels / thoughts (current state, current chat)
+        //    - gPinnedNpcs (active pins, possibly from another chat)
+        //    - gPinRegistry.pinSnapshots (saved snapshots — display name may differ from pin key)
+        //    - gTimeline (historical names that may have been since changed)
+        //    Dedupe by normalized name; keep the most "canonical" spelling we have.
+        const seenNorms = new Set();
+        const candidates = [];
+
+        const pushCandidate = (name) => {
+            if (!name) return;
+            const norm = NormalizeName(name);
+            if (!norm) return;
+            if (seenNorms.has(norm)) return;
+            if (IsUserLikeName(name)) return; // skip user/anonymous
+            seenNorms.add(norm);
+            candidates.push(name);
+        };
+
+        // Prefer snapshot.name over pin key when both exist (snapshot has the real display name)
+        for (const pinName of gPinnedNpcs) {
+            const snap = gPinRegistry?.pinSnapshots?.[NormalizeName(pinName)];
+            pushCandidate(snap?.name || pinName);
+        }
+        // Add snapshot names that aren't currently pinned (orphans, but still renamable)
+        if (gPinRegistry?.pinSnapshots) {
+            for (const key of Object.keys(gPinRegistry.pinSnapshots)) {
+                const snap = gPinRegistry.pinSnapshots[key];
+                pushCandidate(snap?.name || key);
+            }
+        }
+        // Current state
+        (gState.chars || []).forEach(c => pushCandidate(c.name));
+        (gState.rels || []).forEach(r => pushCandidate(r.source));
+        (gState.thoughts || []).forEach(t => pushCandidate(t.name));
+        // Historical timeline names (so the user can rename an NPC that has since left)
+        gTimeline.forEach(e => (e.rels || []).forEach(r => pushCandidate(r.source)));
+
+        // Sort alphabetically for stable ordering
+        candidates.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+
+        if (!candidates.length) {
+            alert(T("renameNpcNoneAvailable"));
+            return;
+        }
+
+        const oldName = prompt(
+            `${T("renameNpcPromptSelect")}\n\n` +
+            candidates.map((n, i) => `${i + 1}. ${n}`).join("\n")
+        );
+        if (!oldName) return;
+
+        // Resolve the typed answer against the candidate list (fuzzy match)
+        const trimmedInput = oldName.trim();
+        let resolvedOld = candidates.find(n => NormalizeName(n) === NormalizeName(trimmedInput));
+        if (!resolvedOld) {
+            // Try as 1-based index
+            const asNum = parseInt(trimmedInput, 10);
+            if (!isNaN(asNum) && asNum >= 1 && asNum <= candidates.length) {
+                resolvedOld = candidates[asNum - 1];
+            }
+        }
+        if (!resolvedOld) {
+            resolvedOld = candidates.find(n => NamesLikelyMatch(n, trimmedInput));
+        }
+        if (!resolvedOld) {
+            alert(T("renameNpcNotFound"));
+            return;
+        }
+
+        // 2. Ask new name
+        const newName = prompt(`${T("renameNpcPromptNew")}`, resolvedOld);
+        if (!newName || !newName.trim()) return;
+        const trimmedNew = newName.trim();
+        if (NormalizeName(trimmedNew) === NormalizeName(resolvedOld)) {
+            alert(T("renameNpcSameName"));
+            return;
+        }
+
+        // 3. Confirm
+        if (!confirm(T("renameNpcConfirm", { old: resolvedOld, new: trimmedNew }))) return;
+
+        // 4. Execute rename
+        await RenameNpc(resolvedOld, trimmedNew);
+
+        ShowNotification(
+            T("renameNpcDone", { old: resolvedOld, new: trimmedNew }),
+            resolvedOld + " → " + trimmedNew,
+            'success'
+        );
+    } catch (e) {
+        console.error("[IB] Rename NPC failed:", e);
+        alert(T("renameNpcFailed") + "\n" + (e?.message || ""));
+    }
+}
+
 function GetPresencePriority(c) {
     const key = c?.presence?.key || "";
 
@@ -5035,6 +5318,7 @@ function RenderSettingsPopup(btn) {
                 <div class="menu_button ib-sp-btn" id="ib_sp_reprocess">🔄 ${T("reprocess")}</div>
             </div>
             <div class="ib-sp-btn-row" style="margin-top:4px">
+                <div class="menu_button ib-sp-btn" id="ib_sp_rename_npc">✏️ ${T("renameNpc")}</div>
                 <div class="menu_button ib-sp-btn ib-sp-btn-danger" id="ib_sp_clean_orphan_snapshots">🧹 ${T("cleanOrphanSnapshots")}</div>
             </div>
         </div>
@@ -5296,6 +5580,11 @@ function RenderSettingsPopup(btn) {
     popup.querySelector("#ib_sp_reprocess").addEventListener("click", function() {
         ReprocessChat();
     });
+
+    // Rename NPC — rewrites XML name="..." across all chat messages.
+    // Works for ANY NPC that has appeared in the chat (not only pinned ones).
+    // If the NPC happens to be pinned, the pin registry + snapshots are migrated too.
+    popup.querySelector("#ib_sp_rename_npc").addEventListener("click", handleRenameNpcClick);
 
     // Clean orphaned snapshots
     popup.querySelector("#ib_sp_clean_orphan_snapshots").addEventListener("click", function() {
@@ -6908,6 +7197,7 @@ function UpdateSettingsText() {
     $("#ib_save_custom_css").text("💾 " + T("saveCustomCss"));
     $("#ib_clear_custom_css").text("🧹 " + T("clearCustomCss"));
     $("#ib_clean_orphan_snapshots").text("🧹 " + T("cleanOrphanSnapshots"));
+    $("#ib_rename_npc").text("✏️ " + T("renameNpc"));
     $("#ib_compact_mode option[value='top3']").text(T("compactTop3"));
 $("#ib_compact_mode option[value='top1']").text(T("compactTop1"));
 $("#ib_compact_mode option[value='changed']").text(T("compactChanged"));
@@ -8303,6 +8593,9 @@ jQuery(async () => {
         CleanPinRegistry();
         ReprocessChat();
     });
+
+    // Rename NPC — same handler as in the popup; shared logic in handleRenameNpcClick
+    $("#ib_rename_npc").on("click", handleRenameNpcClick);
 
     $("#ib_reset_state").on("click", function () {
         if (confirm(T("resetConfirm"))) {
