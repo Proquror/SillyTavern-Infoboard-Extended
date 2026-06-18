@@ -16,6 +16,8 @@ Huge thanks to KanonMama for creating the Infoboard extension and providing the 
 
 All original ideas, implementations, and contributions from the original project belong to their [respective author](https://github.com/KanonMama).
 
+This fork focuses on additional UI options, some new features, and a functional and architectural upgrades while building upon the foundation that was already created.
+
 ## Features
 The following functionality comes from the original Infoboard project:
 - built-in prompt injection
@@ -43,14 +45,14 @@ The following functionality comes from the original Infoboard project:
 - custom CSS overrides
 
 Additional changes introduced in this fork:
-- toolbar buttons to quickly access themes and settings
+- toolbar buttons to quickly access themes, settings, all pins, notifications and other
 - configurable injection position and depth for autoinject
 - macro prompt injection (`{{InfoBoard}}` / `{{IB}}`)
 - resizable side-panel mode
-- configurable inline infoboard count (default 5) with reverse chunked rendering
+- configurable inline infoboard count 1-99 (default 5) with reverse chunked rendering
 - toast notifications for relationship changes and pin actions
 - relationship timeline with zoom and milestones
-- 3-tier pin system (Per-Chat / Per-Character / Global) with snapshots
+- 3-tier pin system (Per-Chat / Per-Character / Global)
   - expandable pins popup with `Pin Here` transfer option and `go to` navigation arrow
   - pinned NPCs are tracked `offscreen` whel they left
 - presence levels exposed via a dedicated `presence=""` attribute (tag-based as fallback)
@@ -58,7 +60,6 @@ Additional changes introduced in this fork:
 - swipe / regeneration state preservation
 - rename NPC button in settings
 - debug XML edit fuction
-
 
 ---
 
@@ -399,5 +400,3 @@ You can override the design without editing extension files.
 ```
 </summary>
 </details>
-
-This fork focuses on additional UI options and some features while building upon the foundation that was already created.
