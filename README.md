@@ -47,7 +47,7 @@ The following functionality comes from the original Infoboard project:
 Additional changes introduced in this fork:
 - toolbar buttons to quickly access themes, settings, all pins, notifications and other
 - configurable injection position and depth (0-999) for autoinject
-- macro prompt injection (`{{InfoBoard}}` / `{{IB}}`)
+- macro prompt injection (`{{InfoBoard}}` / `{{IB}}`) for manual placement
 - resizable side-panel mode
 - configurable inline infoboard count (1-99, default 5) with reverse chunked rendering
 - toast notifications for relationship changes and pin actions
@@ -59,7 +59,8 @@ Additional changes introduced in this fork:
 - NPC `age=""` on `<c />` elements, displayed as a plate next to NPC names
 - swipe / regeneration state preservation
 - rename NPC button in settings
-- debug XML edit fuction
+- debug XML edit
+  - per message for inline infoboard
 
 ---
 
