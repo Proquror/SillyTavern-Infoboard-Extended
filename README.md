@@ -10,12 +10,14 @@ Built for roleplay, long scenes, and NPC-heavy chats.
 
 **⚠️ Requires SillyTavern 1.12+. ⚠️**
 
----
+## Credits
 
-## Features inherited
+Huge thanks to KanonMama for creating the Infoboard extension and providing the foundation this fork is built upon.
 
+All original ideas, implementations, and contributions from the original project belong to their [respective author](https://github.com/KanonMama).
+
+## Features
 The following functionality comes from the original Infoboard project:
-
 - built-in prompt injection
 - per-chat state memory
 - XML infoboard parsing
@@ -33,35 +35,30 @@ The following functionality comes from the original Infoboard project:
 - multiple bar styles
 - full / compact / collapsed panel modes
 - pinned NPCs stay on top in character and relationship lists.
-- relationship filters: Top 1 / Top 3 / Changed only / All
+- relationship  filters: Top 1 / Top 3 / Changed only / All
 - inline / floating / both display modes
 - draggable and resizable floating infoboard
 - debug XML viewer
 - export / import state
 - custom CSS overrides
 
-### Additional features
-
-- 3-tier pin system (Per-Chat / Per-Character / Global) with snapshots
-- - expandable pins popup with `Pin Here` transfer option and `go to` navigation arrow
-- 2 `status` classifications (Positive / Neutral)
-- themes and settings accessible via toolbar buttons
-- - configurable inline infoboard count (default 5)
-- relationship timeline with zoom and milestones
-- toast notifications for relationship changes and pin actions
-- resizable side-panel mode
+Additional changes introduced in this fork:
+- toolbar buttons to quickly access themes and settings
 - configurable injection position and depth for autoinject
 - macro prompt injection (`{{InfoBoard}}` / `{{IB}}`)
-- swipe / regeneration state preservation
-- chunked inline board rendering for long chats
-- debug XML editor
-- prompt encased in `<infoboard_rules>`
-- expanded prompt rules for user-action protection and narrative consistency
-- 7 presence levels exposed via a dedicated `presence=""` attribute (tag-based as fallback)
-- - `focus` → `active` → `near` → `watching` → `background` → `left` → `offscreen`
-- track pinned NPCs offscreen — they must think about their own affairs and shouldn't meta-game what the User is doing
+- resizable side-panel mode
+- configurable inline infoboard count (default 5) with reverse chunked rendering
+- toast notifications for relationship changes and pin actions
+- relationship timeline with zoom and milestones
+- 3-tier pin system (Per-Chat / Per-Character / Global) with snapshots
+  - expandable pins popup with `Pin Here` transfer option and `go to` navigation arrow
+  - pinned NPCs are tracked `offscreen` whel they left
+- presence levels exposed via a dedicated `presence=""` attribute (tag-based as fallback)
 - NPC `age=""` on `<c />` elements, displayed as a plate next to NPC names
+- swipe / regeneration state preservation
 - rename NPC button in settings
+- debug XML edit fuction
+
 
 ---
 
@@ -402,13 +399,5 @@ You can override the design without editing extension files.
 ```
 </summary>
 </details>
-
----
-
-## Credits
-
-Huge thanks to KanonMama for creating the Infoboard extension and providing the foundation this fork to exist.
-
-All original ideas, implementations, and contributions from the original project belong to their [respective author](https://github.com/KanonMama).
 
 This fork focuses on additional UI options and some features while building upon the foundation that was already created.
