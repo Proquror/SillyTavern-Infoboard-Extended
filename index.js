@@ -983,12 +983,14 @@ function GetMergedStateForRendering() {
 
     if (!gPinRegistry?.pinSnapshots || !gPinnedNpcs.length) return merged;
 
-    // Build set of NPC names already in current state (normalized)
-    const stateCharNames = new Set(merged.chars.map(c => NormalizeName(c.name)));
-
     for (const pinnedName of gPinnedNpcs) {
         const normalized = NormalizeName(pinnedName);
-        if (stateCharNames.has(normalized)) continue;
+
+        // Use fuzzy matching so that a pin "Тест" correctly dedups against
+        // an existing char "Тести" (and vice versa). Strict equality on
+        // NormalizeName(...) misses these cases and produces duplicates.
+        const alreadyPresent = merged.chars.some(c => MatchesPinnedName(c.name, pinnedName));
+        if (alreadyPresent) continue;
 
         const snap = gPinRegistry.pinSnapshots[normalized];
         if (!snap) continue;
@@ -3127,7 +3129,13 @@ function BuildStateInjection() {
     if (gPinRegistry?.pinSnapshots && gPinnedNpcs.length) {
         for (const pinnedName of gPinnedNpcs) {
             const normalized = NormalizeName(pinnedName);
-            if (!stateCharNames.has(normalized)) {
+            // Use fuzzy matching — pin name ("Тест") may differ from the actual
+            // char name ("Тести") that the AI is currently using. Strict equality
+            // here would treat the pinned NPC as "missing" and inject a duplicate
+            // line from the snapshot into the AI's prompt.
+            const present = stateCharNames.has(normalized) ||
+                state.chars.some(c => MatchesPinnedName(c.name, pinnedName));
+            if (!present) {
                 const snapshot = gPinRegistry.pinSnapshots[normalized];
                 if (snapshot) {
                     missingPinnedNpcs.push(snapshot);
@@ -3709,9 +3717,39 @@ function GetCharNameByKey(charKey) {
     return null;
 }
 
+/**
+ * Check whether a character/relation/thought name corresponds to a pinned NPC.
+ *
+ * Why this exists: a pinned NPC's stored pin name can differ from the actual
+ * character name returned by the AI (e.g. pin "Тест" vs. AI's "Тести").
+ * The pin snapshot is keyed by the pin name but stores the real char name,
+ * so strict equality on NormalizeName(...) misses the match and causes
+ * duplicate entries in the rendered state.
+ *
+ * Match priority:
+ *   1. Exact normalized equality between charName and pinName.
+ *   2. Exact normalized equality between charName and snapshot.name.
+ *   3. Fuzzy match via NamesLikelyMatch (handles typos / partial forms).
+ */
+function MatchesPinnedName(charName, pinName) {
+    const cn = NormalizeName(charName);
+    const pn = NormalizeName(pinName);
+    if (!cn || !pn) return false;
+    if (cn === pn) return true;
+
+    // Check the snapshot's stored name (real char name might differ from pin name)
+    const snap = gPinRegistry?.pinSnapshots?.[pn];
+    if (snap?.name) {
+        const sn = NormalizeName(snap.name);
+        if (sn && sn === cn) return true;
+        if (NamesLikelyMatch(charName, snap.name)) return true;
+    }
+
+    return NamesLikelyMatch(charName, pinName);
+}
+
 function IsPinnedNpc(name) {
-    const normalized = NormalizeName(name);
-    return gPinnedNpcs.some(pinned => NormalizeName(pinned) === normalized);
+    return gPinnedNpcs.some(pinned => MatchesPinnedName(name, pinned));
 }
 
 /**
@@ -6956,10 +6994,14 @@ function PatchPinnedData(parsed, prevState) {
     });
 
     // Проверяем закрепленных, кого ИИ НЕ вернул (восстановление)
+    // ВАЖНО: проверяем через MatchesPinnedName, а не processedNames.has(normPin),
+    // потому что pin name может отличаться от имени персонажа (pin "Тест" → char "Тести").
+    // Иначе мы бы добавили дубликат персонажа из snapshot.
     gPinnedNpcs.forEach(pinName => {
         const normPin = NormalizeName(pinName);
-        if (!processedNames.has(normPin)) {
-            const oldChar = prevChars.find(ch => NormalizeName(ch.name) === normPin);
+        const alreadyInFinal = finalChars.some(c => MatchesPinnedName(c.name, pinName));
+        if (!alreadyInFinal) {
+            const oldChar = prevChars.find(ch => MatchesPinnedName(ch.name, pinName));
             if (oldChar) {
                 const restoredTags = [...(oldChar.tags || [])];
                 if (!restoredTags.includes(offscreenTag)) {
@@ -6989,7 +7031,7 @@ function PatchPinnedData(parsed, prevState) {
                 } else {
                     // Fallback: try to find the NPC in the current global state (gState)
                     // This preserves imported data (icon, age, tags, mood) that would otherwise be lost
-                    const gStateChar = gState.chars?.find(ch => NormalizeName(ch.name) === normPin);
+                    const gStateChar = gState.chars?.find(ch => MatchesPinnedName(ch.name, pinName));
                     if (gStateChar) {
                         const restoredTags = [...(gStateChar.tags || [])];
                         if (!restoredTags.includes(offscreenTag)) {
@@ -7029,10 +7071,12 @@ function PatchPinnedData(parsed, prevState) {
     // Восстановление связей для закрепленных
     gPinnedNpcs.forEach(pinName => {
         const normPin = NormalizeName(pinName);
-        const charExists = finalChars.some(c => NormalizeName(c.name) === normPin);
+        const charExists = finalChars.some(c => MatchesPinnedName(c.name, pinName));
+        const relAlreadyPresent = processedRels.has(normPin) ||
+            finalRels.some(r => MatchesPinnedName(r.source, pinName));
         
-        if (charExists && !processedRels.has(normPin)) {
-            const oldRel = prevRels.find(rel => NormalizeName(rel.source) === normPin);
+        if (charExists && !relAlreadyPresent) {
+            const oldRel = prevRels.find(rel => MatchesPinnedName(rel.source, pinName));
             if (oldRel) {
                 finalRels.push(oldRel);
             } else {
@@ -7043,7 +7087,7 @@ function PatchPinnedData(parsed, prevState) {
                 } else {
                     // Fallback: try to find the relation in the current global state (gState)
                     // This preserves imported data (status, relationship values) that would otherwise be lost
-                    const gStateRel = gState.rels?.find(rel => NormalizeName(rel.source) === normPin);
+                    const gStateRel = gState.rels?.find(rel => MatchesPinnedName(rel.source, pinName));
                     if (gStateRel) {
                         finalRels.push(gStateRel);
                     } else {
@@ -7065,10 +7109,12 @@ function PatchPinnedData(parsed, prevState) {
     
     gPinnedNpcs.forEach(pinName => {
         const normPin = NormalizeName(pinName);
-        const charExists = finalChars.some(c => NormalizeName(c.name) === normPin);
+        const charExists = finalChars.some(c => MatchesPinnedName(c.name, pinName));
+        const thoughtAlreadyPresent = thoughtNames.has(normPin) ||
+            finalThoughts.some(t => MatchesPinnedName(t.name, pinName));
         
-        if (charExists && !thoughtNames.has(normPin)) {
-            const oldThought = prevThoughts.find(t => NormalizeName(t.name) === normPin);
+        if (charExists && !thoughtAlreadyPresent) {
+            const oldThought = prevThoughts.find(t => MatchesPinnedName(t.name, pinName));
             if (oldThought) {
                 finalThoughts.push(oldThought);
             } else {
@@ -7078,7 +7124,7 @@ function PatchPinnedData(parsed, prevState) {
                     finalThoughts.push({ ...snapshot.thought });
                 } else {
                     // Fallback: try to find the thought in the current global state (gState)
-                    const gStateThought = gState.thoughts?.find(t => NormalizeName(t.name) === normPin);
+                    const gStateThought = gState.thoughts?.find(t => MatchesPinnedName(t.name, pinName));
                     if (gStateThought) finalThoughts.push(gStateThought);
                 }
             }
