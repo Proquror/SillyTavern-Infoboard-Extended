@@ -1,6 +1,6 @@
 # Infoboard for SillyTavern — Extended
 
-**v2.5.0**
+**v2.6.0**
 
 A fork of a state-aware XML infoboard extension for **SillyTavern** by [KanonMama](https://github.com/KanonMama/SillyTavern-Infoboard).
 
@@ -61,6 +61,7 @@ The following functionality comes from the original Infoboard project:
 - - `focus` → `active` → `near` → `watching` → `background` → `left` → `offscreen`
 - track pinned NPCs offscreen — they must think about their own affairs and shouldn't meta-game what the User is doing
 - NPC `age=""` on `<c />` elements, displayed as a plate next to NPC names
+- rename NPC button in settings
 
 ---
 
