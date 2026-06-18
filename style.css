@@ -1516,11 +1516,11 @@
     font-size: 10px;
     letter-spacing: 4px;
     text-transform: uppercase;
-    color: var(--ib-muted);
+    color: var(--ib-dim);
     margin-bottom: 10px;
     position: relative;
     z-index: 2;
-    line-height: 1.2;
+
 }
 
 .ib-title::before,
@@ -2093,7 +2093,7 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: var(--ib-muted);
+    color: var(--ib-dim);
     font-weight: 700;
     margin-bottom: 8px;
 }
@@ -2136,6 +2136,10 @@
     font-size: 13px;
     font-weight: 700;
     color: var(--ib-text);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .ib-char-tags {
@@ -2320,7 +2324,7 @@
     padding: 8px 10px;
     border-radius: 8px;
     background: rgba(255,255,255,0.02);
-    border: none;
+    border: 1px solid var(--ib-soft-border);
     box-shadow: none;
 }
 
@@ -3607,7 +3611,9 @@
 
 .ib-rel-thought {
     margin-top: 8px;
-    background: rgba(255,255,255,0.022);
+    background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.035), transparent 40%),
+        rgba(255,255,255,0.022);
     box-shadow: none;
 }
 
