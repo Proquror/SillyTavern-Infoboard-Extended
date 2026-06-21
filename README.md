@@ -158,11 +158,11 @@ Prompt injection can use the `{{InfoBoard}}` / `{{IB}}` macro or auto-inject.
 
 NPCs can be pinned at three scope levels, resolved with priority **Global > Per-Character > Per-Chat**:
 
-| Tier | Scope | Behavior |
-|---|---|---|
-| **Per-Chat** | Current chat only | NPC is injected into the state for this specific chat |
-| **Per-Character** | All chats with this character card | NPC persists across different chats with the same character |
-| **Global** | Every chat, every character | NPC is always injected regardless of context |
+| Tier | Behavior |
+|---|---|
+| **Per-Chat** | NPC is injected into the state for this specific chat |
+| **Per-Character** | NPC persists across different chats with the same character |
+| **Global** | NPC is always injected regardless of chat or character card |
 
 ### How pinning works
 
@@ -178,7 +178,7 @@ Pin buttons display a small colored tier letter badge (`C`/`H`/`G` in English, `
 
 The pins popup (📍 button) shows all currently active pins in a structured grid with radio-dot columns (perChat / perChar / global), allowing one-click tier switching per NPC.
 
-- **Expanded view** — an expandable section shows pins from other chats and character cards that are not in the current context, with navigation and pin-here actions for each entry. Per-character pins display the character's display name instead of the avatar filename. The expand/collapse state is preserved across popup re-renders.
+- **Expanded view** — an expandable section shows pins from other chats and character cards that are not in the current context, with navigation and pin-here actions for each entry. Per-character pins display the character's display name instead of the avatar filename.
 - - **Pin Here** — pin an NPC directly into the current chat context. If the NPC is already pinned at any level in the chat, the operation is rejected to prevent duplicates.
 - - **Navigate to Character Card** — jump to the source chat or character card of a pinned NPC.
 
